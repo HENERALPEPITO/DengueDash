@@ -8,7 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         drus = [
             {
-                "name": "Iloilo Epidemiology and Surveillance Unit ",
+                "name": "Iloilo Epidemiology and Surveillance Unit",
                 "address": "Plaza Libertad",
                 "type": "CHO/MHO/PHO",
             },
