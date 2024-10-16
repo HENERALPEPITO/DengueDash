@@ -1,0 +1,81 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+
+# Django migrations
+*/migrations/*.py
+*/migrations/*.pyc
+
+# Environment variables file (commonly used for secrets)
+.env
+*.env
+
+# Database files
+*.sqlite3
+*.db
+
+# Django static and media files
+/static/
+/media/
+
+# Ignore Uploaded Pictures
+/profile_pictures/
+
+# Ignore virtual environments (virtualenv, venv, etc.)
+/venv/
+/env/
+/ENV/
+/.venv/
+
+# Logs and debug output
+*.log
+*.pot
+*.mo
+*.log
+
+# Local development settings
+local_settings.py
+
+# Node modules (if using Node.js for frontend)
+node_modules/
+
+# Ignore IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+*~.nib
+*.sublime-workspace
+*.sublime-project
+
+# macOS-specific files
+.DS_Store
+
+# JetBrains specific files
+*.iml
+*.iws
+*.ipr
+
+# Coverage reports (for testing)
+htmlcov/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# pipenv specific
+Pipfile.lock
+
+# Ignore compiled translations
+*.mo
+
+# Ignore celery beat schedule file
+celerybeat-schedule
+
+# Ignore gunicorn PID file
+gunicorn.pid
+
+# Pytest cache
+.pytest_cache/
