@@ -22,9 +22,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         required=True,
     )
 
-    dru = serializers.ChoiceField(
-        choices=DRU.dru_types,
-        required=True,
+    dru = serializers.PrimaryKeyRelatedField(
+        queryset=DRU.objects.all(),
+        required=False,
     )
 
     class Meta:
