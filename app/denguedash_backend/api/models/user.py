@@ -87,6 +87,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         "classification",
     ]
 
+    def __str__(self):
+        return self.username
+
 
 class UserManager(BaseUserManager):
     def create_user(
