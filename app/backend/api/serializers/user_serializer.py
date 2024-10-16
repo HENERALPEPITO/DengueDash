@@ -6,16 +6,21 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # Convert the primary key to string
     classification = serializers.StringRelatedField()
+    dru = serializers.StringRelatedField()
 
     class Meta:
         model = User
-        exclude = [
-            "password",
-            "last_login",
-            "is_active",
-            "is_staff",
-            "is_superuser",
+        fields = [
+            "username",
+            "email",
+            "first_name",
+            "middle_name",
+            "last_name",
+            "sex",
+            "classification",
+            "dru",
         ]
 
 
