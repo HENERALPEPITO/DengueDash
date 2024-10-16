@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
     ):
         classification = extra_fields.pop("classification", None)
         classification = UserClassification.objects.get(
-            id=classification,
+            classification=classification,
         )
 
         user = self.model(
@@ -63,11 +63,13 @@ class UserManager(BaseUserManager):
 
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-
-        # Make sure classification is correctly passed
-        classification = extra_fields.get("classification", None)
-        if not classification:
-            raise ValueError("Superuser must have a classification")
+        # Set the classification_id that links to admin
+        extra_fields.setdefault(
+            "classification_id",
+            UserClassification.objects.filter(classification="Admin")
+            .values_list("id", flat=True)
+            .first(),
+        )
 
         return self.create_user(
             username,
@@ -90,7 +92,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255,
         unique=True,
         blank=False,
-        null=False,
     )
     last_name = models.CharField(
         max_length=50,
@@ -104,7 +105,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     middle_name = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=False,
     )
     sex_choices = [
@@ -135,7 +136,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = [
+        "email",
         "first_name",
+        "middle_name",
         "last_name",
         "sex",
         "classification",
