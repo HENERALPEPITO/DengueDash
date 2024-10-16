@@ -16,81 +16,6 @@ class UserClassification(models.Model):
         return self.classification
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-    )
-    email = (
-        models.EmailField(
-            unique=True,
-        ),
-    )
-    last_name = (
-        models.CharField(
-            max_length=100,
-            blank=False,
-            null=False,
-        ),
-    )
-    first_name = (
-        models.CharField(
-            max_length=100,
-            blank=False,
-            null=False,
-        ),
-    )
-    middle_name = (
-        (
-            models.CharField(
-                max_length=100,
-                blank=True,
-                null=True,
-            ),
-        ),
-    )
-    sex_choices = (
-        [
-            ("male", "Male"),
-            ("female", "Female"),
-        ],
-    )
-    sex = (
-        models.CharField(
-            max_length=6,
-            choices=sex_choices,
-            blank=False,
-            null=False,
-        ),
-    )
-    dru = models.ForeignKey(
-        DRU,
-        on_delete=models.SET_NULL,
-        blank=False,
-        null=True,
-        related_name="users",
-    )
-    classification = models.ForeignKey(
-        UserClassification,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name="users",
-    )
-    is_staff = models.BooleanField(default=False)
-
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = [
-        "first_name",
-        "last_name",
-        "sex",
-        "classification",
-    ]
-
-    def __str__(self):
-        return self.username
-
-
 class UserManager(BaseUserManager):
     def create_user(
         self,
@@ -104,7 +29,9 @@ class UserManager(BaseUserManager):
         **extra_fields,
     ):
         classification = extra_fields.pop("classification", None)
-        classification = UserClassification.objects.get(id=classification)
+        classification = UserClassification.objects.get(
+            id=classification,
+        )
 
         user = self.model(
             username=username,
@@ -114,6 +41,7 @@ class UserManager(BaseUserManager):
             middle_name=middle_name,
             sex=sex,
             classification=classification,
+            **extra_fields,
         )
 
         user.set_password(password)
@@ -151,3 +79,69 @@ class UserManager(BaseUserManager):
             password,
             **extra_fields,
         )
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+    )
+    email = models.EmailField(
+        max_length=255,
+        unique=True,
+        blank=False,
+        null=False,
+    )
+    last_name = models.CharField(
+        max_length=50,
+        blank=False,
+        null=False,
+    )
+    first_name = models.CharField(
+        max_length=50,
+        blank=False,
+        null=False,
+    )
+    middle_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=False,
+    )
+    sex_choices = [
+        ("male", "Male"),
+        ("female", "Female"),
+    ]
+    sex = models.CharField(
+        max_length=6,
+        choices=sex_choices,
+        blank=False,
+        null=False,
+    )
+    dru = models.ForeignKey(
+        DRU,
+        on_delete=models.SET_NULL,
+        blank=False,
+        null=True,
+        related_name="users",
+    )
+    classification = models.ForeignKey(
+        UserClassification,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="users",
+    )
+    is_staff = models.BooleanField(default=False)
+
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = [
+        "first_name",
+        "last_name",
+        "sex",
+        "classification",
+    ]
+
+    objects = UserManager()
+
+    def __str__(self):
+        return self.username
