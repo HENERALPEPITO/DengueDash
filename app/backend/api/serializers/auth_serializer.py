@@ -23,12 +23,16 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = [
+        fields = [
+            "username",
+            "email",
             "password",
-            "last_login",
-            "is_active",
-            "is_staff",
-            "is_superuser",
+            "password_confirm",
+            "first_name",
+            "middle_name",
+            "last_name",
+            "sex",
+            "classification",
         ]
 
     def validate(self, attrs):
