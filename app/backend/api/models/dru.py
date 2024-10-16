@@ -33,8 +33,8 @@ class DRU(models.Model):
     dru_types = [
         ("rhu", "RHU"),
         ("ho", "CHO/MHO/PHO"),
-        ("government_hospital", "Government Hospital"),
-        ("private_hospital", "Private Hospital"),
+        ("gov_hsptl", "Government Hospital"),
+        ("priv_hsptl", "Private Hospital"),
         ("clinic", "Clinic"),
         ("priv_lab", "Private Laboratory"),
         ("pub_lab", "Public Laboratory"),
