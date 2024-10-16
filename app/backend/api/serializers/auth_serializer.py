@@ -3,6 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from ..models.user import UserClassification
+from ..models.dru import DRU
 
 User = get_user_model()
 
@@ -21,6 +22,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         required=True,
     )
 
+    dru = serializers.ChoiceField(
+        choices=DRU.dru_types,
+        required=True,
+    )
+
     class Meta:
         model = User
         fields = [
@@ -32,6 +38,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "middle_name",
             "last_name",
             "sex",
+            "dru",
             "classification",
         ]
 
