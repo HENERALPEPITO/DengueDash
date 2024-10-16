@@ -36,6 +36,9 @@ class DRU(models.Model):
         ("government_hospital", "Government Hospital"),
         ("private_hospital", "Private Hospital"),
         ("clinic", "Clinic"),
+        ("priv_lab", "Private Laboratory"),
+        ("pub_lab", "Public Laboratory"),
+        ("sea_air", "Seaport/Airport"),
     ]
     dru_type = models.CharField(
         max_length=20,
