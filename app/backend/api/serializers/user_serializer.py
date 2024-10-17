@@ -9,6 +9,8 @@ class UserSerializer(serializers.ModelSerializer):
     # Convert the primary key to string
     classification = serializers.StringRelatedField()
     dru = serializers.StringRelatedField()
+    # Show the proper name instead of abbreviated value in tuple
+    sex_display = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -18,10 +20,13 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "middle_name",
             "last_name",
-            "sex",
+            "sex_display",
             "classification",
             "dru",
         ]
+
+    def get_sex_display(self, obj):
+        return obj.get_sex_display()
 
 
 class UserClassificationSerializer(serializers.ModelSerializer):
