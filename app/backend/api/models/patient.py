@@ -2,9 +2,6 @@ from django.db import models
 
 
 class Patient(models.Model):
-    case_id = models.BigIntegerField(
-        editable=False,
-    )
     last_name = models.CharField(
         max_length=100,
         blank=False,
@@ -21,7 +18,7 @@ class Patient(models.Model):
         null=True,
     )
     suffix = models.CharField(
-        max_length=100,
+        max_length=5,
         blank=True,
         null=True,
     )
@@ -34,7 +31,7 @@ class Patient(models.Model):
         ("F", "Female"),
     ]
     sex = models.CharField(
-        max_length=100,
+        max_length=1,
         choices=sex_choices,
         blank=False,
         null=False,
