@@ -1,5 +1,6 @@
 from django.db import models
 from ..models.patient import Patient
+from ..models.user import User
 
 
 class Case(models.Model):
@@ -115,4 +116,11 @@ class Case(models.Model):
         blank=False,
         null=True,
         default=None,
+    )
+    interviewer = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=False,
+        null=True,
+        related_name="user",
     )
