@@ -109,8 +109,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=False,
     )
     sex_choices = [
-        ("male", "Male"),
-        ("female", "Female"),
+        ("M", "Male"),
+        ("F", "Female"),
     ]
     sex = models.CharField(
         max_length=6,

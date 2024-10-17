@@ -30,8 +30,8 @@ class Patient(models.Model):
         null=False,
     )
     sex_choices = [
-        ("m", "Male"),
-        ("f", "Female"),
+        ("M", "Male"),
+        ("F", "Female"),
     ]
     sex = models.CharField(
         max_length=100,
