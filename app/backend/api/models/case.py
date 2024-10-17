@@ -6,6 +6,7 @@ from ..models.user import User
 
 class Case(models.Model):
     case_id = models.BigIntegerField(
+        primary_key=True,
         editable=False,
     )
     date_first_con = models.DateField(
