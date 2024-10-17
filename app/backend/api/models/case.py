@@ -146,3 +146,12 @@ class Case(models.Model):
             self.case_id = prefix
 
         super(Case, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = (
+            "date_onset",
+            "patient",
+        )
+
+    def __str__(self):
+        return self.case_id
