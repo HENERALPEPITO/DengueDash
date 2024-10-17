@@ -123,14 +123,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         on_delete=models.SET_NULL,
         blank=False,
         null=True,
-        related_name="users",
+        related_name="user",
     )
     classification = models.ForeignKey(
         UserClassification,
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name="users",
+        related_name="user",
     )
     is_staff = models.BooleanField(default=False)
 
