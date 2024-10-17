@@ -35,6 +35,7 @@ class Patient(models.Model):
     ]
     sex = models.CharField(
         max_length=100,
+        choices=sex_choices,
         blank=False,
         null=False,
     )
@@ -89,13 +90,14 @@ class Patient(models.Model):
         null=False,
     )
     civil_status_choices = [
-        ("single", "Single"),
-        ("married", "Married"),
-        ("widowed", "Widowed"),
-        ("separated", "Separated"),
+        ("S", "Single"),
+        ("M", "Married"),
+        ("W", "Widowed"),
+        ("SEP", "Separated"),
     ]
     civil_status = models.CharField(
-        max_length=100,
+        max_length=3,
+        choices=civil_status_choices,
         blank=False,
         null=False,
     )
