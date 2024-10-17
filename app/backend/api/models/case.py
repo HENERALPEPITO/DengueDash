@@ -1,15 +1,12 @@
 from django.db import models
+from datetime import datetime
 from ..models.patient import Patient
 from ..models.user import User
 
 
 class Case(models.Model):
-    case = models.ForeignKey(
-        Patient,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name="patient",
+    case_id = models.BigIntegerField(
+        editable=False,
     )
     date_first_con = models.DateField(
         blank=False,
@@ -124,3 +121,28 @@ class Case(models.Model):
         null=True,
         related_name="user",
     )
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="patient",
+    )
+
+    def save(self, *args, **kwargs):
+        current_year = datetime.now().year % 100
+        prefix = current_year * 1000000
+
+        last_record = (
+            Case.objects.filter(case_id__startswith=str(current_year))
+            .order_by("case_id")
+            .last()
+        )
+
+        if last_record:
+            last_case_id = last_record.case_id
+            self.case_id = last_case_id + 1
+        else:
+            self.case_id = prefix
+
+        super(Case, self).save(*args, **kwargs)
