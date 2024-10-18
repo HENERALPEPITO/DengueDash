@@ -21,32 +21,38 @@ class CaseSerializer(serializers.ModelSerializer):
         # NS1 Result Validation
         if data.get("ns1_result") != "PR" and data.get("date_ns1") is None:
             raise CustomValidationException(
-                "Date must not be empty",
+                "NS1 date must not be empty",
             )
         if data.get("ns1_result") == "PR" and data.get("date_ns1") is not None:
             raise CustomValidationException(
-                "Date must be null",
+                "NS1 date must be null",
             )
 
         # IgG ELISA Validation
         if data.get("igg_elisa") != "PR" and data.get("date_igg_elisa") is None:
             raise CustomValidationException(
-                "Date must not be empty",
+                "IgG ELISA date must not be empty",
             )
         if data.get("igg_elisa") == "PR" and data.get("date_igg_elisa") is not None:
             raise CustomValidationException(
-                "Date must be null",
+                "IgG ELISA date must be null",
             )
 
         # IgM ELISA Validation
         if data.get("igm_elisa") != "PR" and data.get("date_igm_elisa") is None:
             raise CustomValidationException(
-                "Date must not be empty",
+                "IgM ELISA date must not be empty",
             )
         if data.get("igm_elisa") == "PR" and data.get("date_igm_elisa") is not None:
             raise CustomValidationException(
-                "Date must be null",
+                "IgM ELISA date must be null",
             )
+
+        # Death Validation
+        if data.get("outcome") == "D" and data.get("date_death") is None:
+            raise CustomValidationException("Death date must not be empty")
+        if data.get("outcome") == "A" and data.get("date_death") is not None:
+            raise CustomValidationException("Death date must be null")
 
         return data
 
