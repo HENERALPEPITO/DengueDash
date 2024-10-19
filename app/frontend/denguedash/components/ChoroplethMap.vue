@@ -1,9 +1,9 @@
 <template>
-  <div style="height: 100vh">
+  <div style="height: 45rem">
     <LMap
       ref="map"
       :zoom="zoom"
-      :center="[10.7202, 122.5621]"
+      :center="[10.73, 122.5521]"
       :use-global-leaflet="false"
       :options="mapOptions"
     >
