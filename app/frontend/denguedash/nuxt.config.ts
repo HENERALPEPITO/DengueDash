@@ -5,4 +5,11 @@ export default defineNuxtConfig({
     enabled: true,
   },
   modules: ["@nuxt/eslint", "@nuxtjs/leaflet"],
+  css: ["~/assets/css/main.css"],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
 });
