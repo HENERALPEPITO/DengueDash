@@ -64,11 +64,15 @@
           >
         </div>
 
-        <div
-          v-if="errorMessage"
-          class="bg-red-500 text-black text-center py-2 rounded"
-        >
-          {{ errorMessage }}
+        <div v-if="errorMessage" class="bg-red-500 text-white py-4 rounded-md">
+          <div class="flex flex-row ml-2">
+            <Icon
+              name="ph:info-fill"
+              class="mr-3 text-2xl"
+              style="color: white"
+            />
+            <p>{{ errorMessage }}</p>
+          </div>
         </div>
 
         <button
