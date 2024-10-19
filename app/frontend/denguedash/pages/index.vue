@@ -1,12 +1,11 @@
 <template>
   <div>
-    <!-- <IndexHeader /> -->
     <IndexDashboard />
     <!-- <TesterComponent /> -->
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   layout: "guest-header",
 });
