@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@nuxtjs/leaflet": "^1.2.2",
+    "chart.js": "^4.4.5",
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-router": "latest"
