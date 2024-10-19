@@ -5,7 +5,7 @@
         <div class="text-3xl font-semibold text-black">Welcome back!</div>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="mt-6 space-y-4">
+      <form @submit.prevent="handleSubmit" class="mt-6 space-y-7">
         <div>
           <label class="block text-black text-sm mb-1">Email</label>
           <input
@@ -55,7 +55,7 @@
           <label class="flex items-center space-x-2">
             <input
               type="checkbox"
-              class="form-checkbox text-green-400 border-gray-600 focus:ring-green-400"
+              class="form-checkbox text-green-400 rounded focus:ring-green-400"
             />
             <span class="text-sm text-gray-400">Remember me</span>
           </label>
