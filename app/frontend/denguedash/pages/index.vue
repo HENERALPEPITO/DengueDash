@@ -1,6 +1,7 @@
 <template>
   <div>
     <IndexHeader />
-    <ChoroplethMap />
+    <IndexDashboard />
+    <!-- <TesterComponent /> -->
   </div>
 </template>
