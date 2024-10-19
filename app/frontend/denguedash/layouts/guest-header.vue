@@ -10,7 +10,7 @@
             <NuxtLink to="/" class="hover:underline">Dashboard</NuxtLink>
           </li>
           <li>
-            <NuxtLink to="/login" class="hover:underline">Login</NuxtLink>
+            <NuxtLink to="/" class="hover:underline">Login</NuxtLink>
           </li>
         </ul>
       </nav>
