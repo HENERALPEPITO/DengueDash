@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  modules: ["@nuxt/eslint", "@nuxtjs/leaflet", "@nuxt/ui"],
+  modules: ["@nuxt/eslint", "@nuxtjs/leaflet", "@nuxt/ui", "@nuxt/icon"],
   css: ["~/assets/css/main.css"],
   postcss: {
     plugins: {
