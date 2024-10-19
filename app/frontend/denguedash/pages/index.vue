@@ -1,7 +1,6 @@
 <template>
-  <div></div>
+  <div>
+    <IndexHeader />
+    <ChoroplethMap />
+  </div>
 </template>
-
-<script lang="ts" setup></script>
-
-<style></style>
