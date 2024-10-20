@@ -30,7 +30,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "username",
             "email",
             "password",
             "password_confirm",
@@ -68,6 +67,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
+        request = self.context.get("request")
+        if request:
+            attrs["username"] = request.data.get("email")
         data = super().validate(attrs)
         user = self.user
         user.last_login = timezone.now()

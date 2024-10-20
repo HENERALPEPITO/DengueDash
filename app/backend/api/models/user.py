@@ -19,12 +19,7 @@ class UserClassification(models.Model):
 class UserManager(BaseUserManager):
     def create_user(
         self,
-        username,
         email,
-        last_name,
-        first_name,
-        middle_name,
-        sex,
         password=None,
         **extra_fields,
     ):
@@ -34,12 +29,7 @@ class UserManager(BaseUserManager):
         )
 
         user = self.model(
-            username=username,
             email=self.normalize_email(email),
-            last_name=last_name,
-            first_name=first_name,
-            middle_name=middle_name,
-            sex=sex,
             classification=classification,
             **extra_fields,
         )
@@ -51,12 +41,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(
         self,
-        username,
         email,
-        last_name,
-        first_name,
-        middle_name,
-        sex,
         password,
         **extra_fields,
     ):
@@ -72,22 +57,13 @@ class UserManager(BaseUserManager):
         )
 
         return self.create_user(
-            username,
             email,
-            last_name,
-            first_name,
-            middle_name,
-            sex,
             password,
             **extra_fields,
         )
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-    )
     email = models.EmailField(
         max_length=255,
         unique=True,
@@ -134,9 +110,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_staff = models.BooleanField(default=False)
 
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
-        "email",
         "first_name",
         "middle_name",
         "last_name",
@@ -147,4 +122,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return self.username
+        return self.email
