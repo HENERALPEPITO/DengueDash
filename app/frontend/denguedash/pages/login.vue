@@ -90,6 +90,7 @@ definePageMeta({
   layout: "guest-header",
 });
 import { ref } from "vue";
+import type { LoginResponse } from "~/types/api-responses";
 
 const { $axios } = useNuxtApp();
 
@@ -104,7 +105,7 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value,
     };
-    const response = await $axios.post("login/", body);
+    const response = await $axios.post<LoginResponse>("login/", body);
     console.log(response.data);
   } catch (error: any) {
     const errorResponse: string = error.response.data["detail"];
