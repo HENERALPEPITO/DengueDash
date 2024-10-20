@@ -107,7 +107,8 @@ const handleSubmit = async () => {
     const response = await $axios.post("login/", body);
     console.log(response.data);
   } catch (error: any) {
-    console.error(error);
+    const errorResponse: string = error.response.data["detail"];
+    errorMessage.value = errorResponse;
   }
 };
 </script>
