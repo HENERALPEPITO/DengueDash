@@ -9,8 +9,7 @@
         <div>
           <label class="block text-black text-sm mb-1">Email</label>
           <input
-            v-model="email"
-            type="email"
+            v-model="username"
             class="w-full px-4 py-2 border border-gray rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
             placeholder="Enter your email"
           />
@@ -86,31 +85,41 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 definePageMeta({
   layout: "guest-header",
 });
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-      showPassword: false,
-      errorMessage: "",
+import { ref } from "vue";
+
+const { $axios } = useNuxtApp();
+
+const username = ref<string>("");
+const password = ref<string>("");
+const showPassword = ref<boolean>(false);
+const errorMessage = ref<string>("");
+
+const handleSubmit = async () => {
+  try {
+    const body = {
+      username: username.value,
+      password: password.value,
     };
-  },
-  methods: {
-    handleSubmit() {
-      if (!this.email || !this.password) {
-        this.errorMessage = "Error signing in";
-        return;
-      }
-      // Add your sign-in logic here
-      this.errorMessage = "";
-      alert("Signed in successfully!");
-    },
-  },
+    const response = await $axios.post("login/", body);
+    console.log(response.data);
+  } catch (error: any) {
+    console.error(error);
+  }
 };
+
+// function handleSubmit() {
+//   if (!email.value || !password.value) {
+//     errorMessage.value = "Error signing in";
+//     return;
+//   }
+//   // Add your sign-in logic here
+//   errorMessage.value = "";
+//   alert("Signed in successfully!");
+// }
 </script>
 
 <style scoped></style>
