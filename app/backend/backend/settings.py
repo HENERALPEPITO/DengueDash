@@ -41,18 +41,20 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "api.middleware.JWTAuthMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -138,13 +140,38 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "api.User"
 
 SIMPLE_JWT = {
-    # "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    # "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_COOKIE": "access_token",  # Cookie name
+    "AUTH_COOKIE_DOMAIN": None,  # Domain where cookies are sent
+    "AUTH_COOKIE_SECURE": False,  # Send over HTTPS only
+    "AUTH_COOKIE_HTTP_ONLY": True,  # Prevent JS access
+    "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
+    "AUTH_COOKIE_SAMESITE": "Lax",  # Should cookie be sent cross site
     "ALGORITHM": "HS256",
 }
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Nuxt 3 frontend during development
 ]
+CORS_ALLOW_CREDENTIALS = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "debug.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}

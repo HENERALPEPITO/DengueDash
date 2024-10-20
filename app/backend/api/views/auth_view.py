@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+from django.conf import settings
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -44,11 +45,14 @@ class LoginView(TokenObtainPairView):
             )
 
             res.set_cookie(
-                key="access_token",
+                key=settings.SIMPLE_JWT["AUTH_COOKIE"],
                 value=access_token,
-                httponly=True,  # Prevent JS access
-                secure=True,  # Send over HTTPS
-                samesite="Strict",  # Prevent CSRF attacks
+                domain=settings.SIMPLE_JWT["AUTH_COOKIE_DOMAIN"],
+                path=settings.SIMPLE_JWT["AUTH_COOKIE_PATH"],
+                expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
+                secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+                httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
+                samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
             )
 
             return res
