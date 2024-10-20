@@ -23,4 +23,8 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  plugins: ["~/plugins/axios.ts"],
+  // typescript: {
+  //   strict: true,
+  // },
 });
