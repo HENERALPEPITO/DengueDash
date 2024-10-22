@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from ..models.user import UserClassification
@@ -70,7 +71,23 @@ class LoginSerializer(TokenObtainPairSerializer):
         request = self.context.get("request")
         if request:
             attrs["username"] = request.data.get("email")
-        data = super().validate(attrs)
+
+        try:
+            data = super().validate(attrs)
+        except AuthenticationFailed:
+            raise AuthenticationFailed(
+                {
+                    "success": False,
+                    "message": "No active account found with the given credentials",
+                }
+            )
+        except Exception:
+            raise AuthenticationFailed(
+                {
+                    "success": False,
+                    "message": "An unexpected error occurred during login.",
+                }
+            )
         user = self.user
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
