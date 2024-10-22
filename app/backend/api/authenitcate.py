@@ -12,7 +12,7 @@ def enforce_csrf(request):
         raise exceptions.PermissionDenied("CSRF Failed: %s" % reason)
 
 
-class CustomAuthentication(JWTAuthentication):
+class CustomJWTAuthentication(JWTAuthentication):
 
     def authenticate(self, request):
         header = self.get_header(request)
