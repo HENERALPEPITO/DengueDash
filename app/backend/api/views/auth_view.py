@@ -37,10 +37,11 @@ class LoginView(TokenObtainPairView):
 
             res = JsonResponse(
                 {
-                    "sucess": True,
+                    "success": True,
                     "message": "Logged in sucessfuly",
                     # todo: remove in the future due to security purposes
                     "access_token": access_token,
+                    "refresh_token": refresh_token,
                 }
             )
 
