@@ -9,7 +9,9 @@ export default function GuestHeader() {
         </Link>
         <ul className="flex space-x-6">
           <li className="hover:underline">Dashboard</li>
-          <li className="hover:underline">Login</li>
+          <Link href="/login">
+            <li className="hover:underline">Login</li>
+          </Link>
         </ul>
       </nav>
     </header>
