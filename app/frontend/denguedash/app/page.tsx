@@ -1,5 +1,11 @@
-import Login from "./pages/login";
+import GuestHeader from "./components/GuestHeader";
+import ChoroplethMapWrapper from "./components/map/ChoroplethMapWrapper";
 
-export default function Home() {
-  return <Login />;
+export default function IndexPage() {
+  return (
+    <>
+      <GuestHeader />
+      <ChoroplethMapWrapper />
+    </>
+  );
 }
