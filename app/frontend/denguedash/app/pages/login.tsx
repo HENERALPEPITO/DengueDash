@@ -10,7 +10,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const loginUser = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       const response: BaseLoginReponse | UserLoggedIn = await authService.login(
@@ -37,7 +37,7 @@ const Login = () => {
           <div className="text-3xl font-semibold text-black">Welcome back!</div>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-7">
+        <form onSubmit={loginUser} className="mt-6 space-y-7">
           <div>
             <label className="block text-black text-sm mb-1">Email</label>
             <input
