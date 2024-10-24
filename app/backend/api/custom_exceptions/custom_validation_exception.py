@@ -11,5 +11,5 @@ class CustomValidationException(APIException):
             self.status_code = status_code
         self.detail = {
             "success": False,
-            "err_msg": detail,
+            "message": detail,
         }
