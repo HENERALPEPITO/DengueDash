@@ -4,7 +4,7 @@ import React from "react";
 import { MapContainer, GeoJSON } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import { Layer, LeafletEventHandlerFn } from "leaflet";
-import geoJsonData from "../../assets/geojsons/iloilo_barangays_random.json";
+import geoJsonData from "@assets/geojsons/iloilo_barangays_random.json";
 
 interface GeoJSONFeature {
   properties: {

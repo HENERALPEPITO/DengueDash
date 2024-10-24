@@ -1,5 +1,5 @@
-import GuestHeader from "./components/GuestHeader";
-import ChoroplethMapWrapper from "./components/map/ChoroplethMapWrapper";
+import GuestHeader from "@components/GuestHeader";
+import ChoroplethMapWrapper from "@components/map/ChoroplethMapWrapper";
 
 export default function IndexPage() {
   return (

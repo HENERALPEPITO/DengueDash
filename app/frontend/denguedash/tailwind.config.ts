@@ -14,6 +14,12 @@ const config: Config = {
       },
     },
   },
+  variants: {
+    extend: {
+      backgroundColor: ["disabled"],
+      cursor: ["disabled"],
+    },
+  },
   plugins: [],
 };
 export default config;

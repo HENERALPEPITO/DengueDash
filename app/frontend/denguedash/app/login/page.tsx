@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import authService from "@/services/auth.service";
-import { BaseLoginReponse, UserLoggedIn } from "../interfaces/auth/user_auth";
-import GuestHeader from "../components/GuestHeader";
+import authService from "@services/auth.service";
+import { BaseLoginReponse, UserLoggedIn } from "@interfaces/auth/user_auth";
+import GuestHeader from "@components/GuestHeader";
 
 const Login = () => {
   const [email, setEmail] = useState("");
