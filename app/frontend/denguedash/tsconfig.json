@@ -20,10 +20,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@assets/*": ["./app/assets/*"],
-      "@components/*": ["./app/components/*"],
-      "@interfaces/*": ["./app/interfaces/*"],
-      "@services/*": ["./app/services/*"]
+      "@assets/*": ["./src/app/assets/*"],
+      "@components/*": ["./src/app/components/*"],
+      "@interfaces/*": ["./src/app/interfaces/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "include": [
