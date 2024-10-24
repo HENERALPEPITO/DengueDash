@@ -19,7 +19,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@assets/*": ["./app/assets/*"],
+      "@components/*": ["./app/components/*"],
+      "@interfaces/*": ["./app/interfaces/*"],
+      "@services/*": ["./app/services/*"]
     }
   },
   "include": [
@@ -27,7 +31,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/_app.js"
+    "app/_app.js",
+    "app/components/ChoroplethMap.jsx"
   ],
   "exclude": ["node_modules"]
 }
