@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import authService from "@services/auth.service";
+import { useRouter } from "next/navigation";
 import { BaseLoginReponse, UserLoggedIn } from "@interfaces/auth/user_auth";
 import GuestHeader from "@components/GuestHeader";
+import authService from "@services/auth.service";
 
 const Login = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -18,14 +20,12 @@ const Login = () => {
         email,
         password
       );
-      if (response.success == true) {
-        console.log(response);
+      console.log(response);
+      if (response.success) {
+        router.push("/user/dashboard");
       } else {
         setErrorMessage(response.message);
       }
-      console.log(response);
-      const res = await authService.getUserData();
-      console.log(res);
     } catch (error) {
       console.log(error);
     }

@@ -1,11 +1,11 @@
 import GuestHeader from "@components/GuestHeader";
-import ChoroplethMapWrapper from "@components/map/ChoroplethMapWrapper";
+import StatDashboard from "./components/stat_dashboard/StatDashboard";
 
 export default function IndexPage() {
   return (
     <>
       <GuestHeader />
-      <ChoroplethMapWrapper />
+      <StatDashboard />
     </>
   );
 }

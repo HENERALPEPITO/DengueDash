@@ -1,5 +1,4 @@
 import axios from "axios";
-import { UserLoggedIn } from "@/app/interfaces/auth/user_auth";
 
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_DJANGO_URL,
@@ -11,11 +10,11 @@ export const axiosInstance = axios.create({
 
 const login = async (email: string, password: string) => {
   try {
-    const response: UserLoggedIn = await axiosInstance.post("login/", {
+    const response = await axiosInstance.post("login/", {
       email: email,
       password: password,
     });
-    return response;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return error.response.data;
