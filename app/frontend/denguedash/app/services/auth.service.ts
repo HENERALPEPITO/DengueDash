@@ -1,10 +1,8 @@
-import { UserLoggedIn } from "@/app/interfaces/auth/user_auth";
 import axios from "axios";
-
-// const API_URL = process.env.DJANGO_URL; // we're reading this value from .env file
+import { UserLoggedIn } from "@/app/interfaces/auth/user_auth";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL: process.env.NEXT_PUBLIC_DJANGO_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
