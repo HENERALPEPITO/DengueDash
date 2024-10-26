@@ -2,8 +2,11 @@
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
-import { BaseLoginReponse, UserLoggedIn } from "@interfaces/auth/user_auth";
-import GuestHeader from "@components/GuestHeader";
+import {
+  BaseLoginReponse,
+  UserLoggedIn,
+} from "@/app/interfaces/auth/user-auth.interface";
+import GuestHeader from "@/app/components/GuestHeader";
 import authService from "@services/auth.service";
 
 const Login = () => {
