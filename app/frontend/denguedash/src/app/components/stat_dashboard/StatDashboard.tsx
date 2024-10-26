@@ -1,4 +1,4 @@
-import ChoroplethMapWrapper from "../map/ChoroplethMapWrapper";
+import ChoroplethMapWrapper from "@components/map/ChoroplethMapWrapper";
 
 export default function StatDashboard() {
   return (
