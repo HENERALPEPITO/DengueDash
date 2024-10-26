@@ -73,3 +73,10 @@ class UserDetailView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+
+class AuthCheckView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, _):
+        return JsonResponse({"is_authenticated": True})

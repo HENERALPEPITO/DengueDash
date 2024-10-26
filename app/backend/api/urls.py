@@ -5,6 +5,7 @@ from .views.auth_view import (
     LoginView,
     UserClassificationView,
     UserDetailView,
+    AuthCheckView,
 )
 from .views.patient_case_view import PatientCaseView
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("classifications/", UserClassificationView.as_view(), name="classifications"),
+    path("auth/check", AuthCheckView.as_view(), name="auth-check"),
     path("user/", UserDetailView.as_view(), name="user"),
     path("case/create/", PatientCaseView.as_view(), name="create-case"),
 ]
