@@ -32,6 +32,18 @@ const getUserData = async () => {
   }
 };
 
-const authService = { login, getUserData };
+const authenticateUser = async () => {
+  try {
+    const response = await axiosInstance.get("auth/check");
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return { is_authenticated: false, message: error.response };
+    }
+    return { is_authenticated: false, message: "Unknown error" };
+  }
+};
+
+const authService = { login, getUserData, authenticateUser };
 
 export default authService;
