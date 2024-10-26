@@ -19,20 +19,18 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
       "@assets/*": ["./src/app/assets/*"],
       "@components/*": ["./src/app/components/*"],
+      "@hooks/*": ["./src/app/hooks/*"],
       "@interfaces/*": ["./src/app/interfaces/*"],
-      "@services/*": ["./src/services/*"]
+      "@lib/*": ["./src/app/lib/*"],
+      "@services/*": ["./src/services/*"],
+      "@utils/*": ["./src/app/utils/*"],
+      // Third Party
+      "@shadcn/*": ["./src/shadcn/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "app/_app.js",
-    "app/components/ChoroplethMap.jsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
