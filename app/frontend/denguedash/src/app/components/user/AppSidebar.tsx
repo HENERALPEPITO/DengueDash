@@ -182,7 +182,7 @@ export default function AppSidebar() {
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     <activeTeam.logo className="size-4" />
                   </div>
-                  <div className="ml-2 grid flex-1 text-2xl text-left leading-tight">
+                  <div className="ml-1 grid flex-1 text-2xl text-left leading-tight">
                     <span className="truncate font-semibold">DengueDash</span>
                   </div>
                 </SidebarMenuButton>
