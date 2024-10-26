@@ -6,7 +6,7 @@ import {
   BaseLoginReponse,
   UserLoggedIn,
 } from "@/app/interfaces/auth/user-auth.interface";
-import GuestHeader from "@/app/components/GuestHeader";
+import GuestHeader from "@/app/components/guest/GuestHeader";
 import authService from "@services/auth.service";
 
 const Login = () => {
