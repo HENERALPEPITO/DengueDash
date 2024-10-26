@@ -5,7 +5,9 @@ export default function Home() {
   return (
     <>
       <GuestHeader />
-      <StatDashboard />
+      <div className="container py-6 w-5/6 mx-auto">
+        <StatDashboard />
+      </div>
     </>
   );
 }
