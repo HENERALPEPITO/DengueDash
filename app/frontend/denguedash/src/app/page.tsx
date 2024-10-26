@@ -1,7 +1,7 @@
-import GuestHeader from "@components/GuestHeader";
+import GuestHeader from "@/app/components/GuestHeader";
 import StatDashboard from "./components/stat_dashboard/StatDashboard";
 
-export default function IndexPage() {
+export default function Home() {
   return (
     <>
       <GuestHeader />
