@@ -20,13 +20,13 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@assets/*": ["./src/app/assets/*"],
-      "@components/*": ["./src/app/components/*"],
-      "@hooks/*": ["./src/app/hooks/*"],
-      "@interfaces/*": ["./src/app/interfaces/*"],
-      "@lib/*": ["./src/app/lib/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@interfaces/*": ["./src/interfaces/*"],
+      "@lib/*": ["./src/lib/*"],
       "@services/*": ["./src/services/*"],
-      "@utils/*": ["./src/app/utils/*"],
+      "@utils/*": ["./src/utils/*"],
       // Third Party
       "@shadcn/*": ["./src/shadcn/*"]
     }
