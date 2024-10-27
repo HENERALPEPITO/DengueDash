@@ -5,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@shadcn/components/ui/sidebar";
-import AppSidebar from "../components/user/AppSidebar";
+import AppSidebar from "@components/user/AppSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,

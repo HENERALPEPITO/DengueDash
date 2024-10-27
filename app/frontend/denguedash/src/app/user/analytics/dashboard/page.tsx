@@ -1,4 +1,4 @@
-import StatDashboard from "@/app/components/stat_dashboard/StatDashboard";
+import StatDashboard from "@components/stat_dashboard/StatDashboard";
 
 export default function Dashboard() {
   return (

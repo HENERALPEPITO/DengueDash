@@ -1,5 +1,5 @@
-import GuestHeader from "@/app/components/guest/GuestHeader";
-import StatDashboard from "./components/stat_dashboard/StatDashboard";
+import GuestHeader from "@components/guest/GuestHeader";
+import StatDashboard from "@components/stat_dashboard/StatDashboard";
 
 export default function Home() {
   return (
