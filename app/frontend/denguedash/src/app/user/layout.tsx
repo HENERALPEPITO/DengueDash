@@ -1,8 +1,11 @@
+"use client";
+
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@shadcn/components/ui/sidebar";
+import AppSidebar from "../components/user/AppSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,12 +15,21 @@ import {
   BreadcrumbSeparator,
 } from "@/shadcn/components/ui/breadcrumb";
 import { Separator } from "@/shadcn/components/ui/separator";
-import AppSidebar from "../components/user/AppSidebar";
+import { useEffect, useState } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [segment, setSegment] = useState<string | null>(null);
+  useEffect(() => {
+    setSegment(window.location.pathname.split("/")[2]);
+  }, []);
+
+  if (segment == null) {
+    return null;
+  }
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar sectionSegment={segment} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
