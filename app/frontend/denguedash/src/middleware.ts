@@ -14,5 +14,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/user/dashboard"],
+  matcher: ["/user/analytics/dashboard", "/user/forms/case-report-form"],
 };

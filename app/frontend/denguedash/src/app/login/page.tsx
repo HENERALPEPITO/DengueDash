@@ -25,7 +25,7 @@ const Login = () => {
       );
       console.log(response);
       if (response.success) {
-        router.push("/user/dashboard");
+        router.push("/user/analytics/dashboard");
       } else {
         setErrorMessage(response.message);
       }
