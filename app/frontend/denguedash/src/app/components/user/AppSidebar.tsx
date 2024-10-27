@@ -55,117 +55,120 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@shadcn/components/ui/sidebar";
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Analytics",
-      url: "#",
-      icon: TrendingUpDown,
-      isActive: false,
-      items: [
-        {
-          title: "Charts",
-          url: "#",
-        },
-        {
-          title: "Forecasting",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Forms",
-      url: "#",
-      icon: FolderMinus,
-      items: [
-        {
-          title: "Case Report Form",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Data Tables",
-      url: "#",
-      icon: Table,
-      items: [
-        {
-          title: "Dengue Reports",
-          url: "#",
-        },
-        {
-          title: "Another Report",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+
+type AppSidebarProps = {
+  sectionSegment: string;
 };
 
-export default function AppSidebar() {
+export default function AppSidebar({ sectionSegment }: AppSidebarProps) {
+  const data = {
+    user: {
+      name: "shadcn",
+      email: "m@example.com",
+      avatar: "/avatars/shadcn.jpg",
+    },
+    teams: [
+      {
+        name: "Acme Inc",
+        logo: GalleryVerticalEnd,
+        plan: "Enterprise",
+      },
+      {
+        name: "Acme Corp.",
+        logo: AudioWaveform,
+        plan: "Startup",
+      },
+      {
+        name: "Evil Corp.",
+        logo: Command,
+        plan: "Free",
+      },
+    ],
+    navMain: [
+      {
+        title: "Analytics",
+        url: "analytics",
+        icon: TrendingUpDown,
+        items: [
+          {
+            title: "Dashboard",
+            url: "/user/analytics/dashboard",
+          },
+          {
+            title: "Forecasting",
+            url: "forecasting",
+          },
+        ],
+      },
+      {
+        title: "Forms",
+        url: "forms",
+        icon: FolderMinus,
+        items: [
+          {
+            title: "Case Report Form",
+            url: "/user/forms/case-report-form",
+          },
+        ],
+      },
+      {
+        title: "Data Tables",
+        url: "#",
+        icon: Table,
+        items: [
+          {
+            title: "Dengue Reports",
+            url: "#",
+          },
+          {
+            title: "Another Report",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Settings",
+        url: "#",
+        icon: Settings2,
+        items: [
+          {
+            title: "General",
+            url: "#",
+          },
+          {
+            title: "Team",
+            url: "#",
+          },
+          {
+            title: "Billing",
+            url: "#",
+          },
+          {
+            title: "Limits",
+            url: "#",
+          },
+        ],
+      },
+    ],
+    projects: [
+      {
+        name: "Design Engineering",
+        url: "#",
+        icon: Frame,
+      },
+      {
+        name: "Sales & Marketing",
+        url: "#",
+        icon: PieChart,
+      },
+      {
+        name: "Travel",
+        url: "#",
+        icon: Map,
+      },
+    ],
+  };
+
   const [activeTeam] = React.useState(data.teams[0]);
 
   return (
@@ -199,7 +202,7 @@ export default function AppSidebar() {
               <Collapsible
                 key={item.title}
                 asChild
-                defaultOpen={item.isActive} // open tab onLoad
+                defaultOpen={sectionSegment == item.url} // open tab onLoad
                 className="group/collapsible"
               >
                 <SidebarMenuItem>
