@@ -4,7 +4,10 @@ export const FormDataSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   middleName: z.string().min(1, "Middle name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  dateOfBirth: z.date({
+    required_error: "Date of first vaccination is required",
+    invalid_type_error: "Invalid date format",
+  }),
   sex: z.string().min(1, "Sex is required"),
   caStreet: z.string().min(1, "Current address street is required"),
   caBarangay: z.string().min(1, "Current address barangay is required"),
@@ -16,8 +19,14 @@ export const FormDataSchema = z.object({
   pCity: z.string().min(1, "Permanent address city is required"),
   pProvince: z.string().min(1, "Permanent address province is required"),
   civilStatus: z.string().min(1, "Civil status is required"),
-  dateFirstVax: z.string().min(1, "Date of first vaccination is required"),
-  dateLastVax: z.string().min(1, "Date of last vaccination is required"),
+  dateFirstVax: z.date({
+    required_error: "Date of first vaccination is required",
+    invalid_type_error: "Invalid date format",
+  }),
+  dateLastVax: z.date({
+    required_error: "Date of first vaccination is required",
+    invalid_type_error: "Invalid date format",
+  }),
 
   // email: z.string().min(1, "Email is required").email("Invalid email address"),
   country: z.string().min(1, "Country is required"),
