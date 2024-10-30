@@ -17,90 +17,283 @@ import { CalendarIcon } from "lucide-react";
 
 type Inputs = z.infer<typeof FormDataSchema>;
 
+const sexOptions = [
+  {
+    value: "F",
+    label: "Female",
+  },
+  {
+    value: "M",
+    label: "Male",
+  },
+];
+
+const booleanOptions = [
+  {
+    value: true,
+    label: "Yes",
+  },
+  {
+    value: false,
+    label: "No",
+  },
+];
+
+const civilStatusOptions = [
+  {
+    value: "S",
+    label: "Single",
+  },
+  {
+    value: "M",
+    label: "Married",
+  },
+  {
+    value: "SEP",
+    label: "Separated",
+  },
+  {
+    value: "W",
+    label: "Widowed",
+  },
+];
+
+const clinicalClassOptions = [
+  {
+    value: "N",
+    label: "No warning signs",
+  },
+  {
+    value: "W",
+    label: "With warning signs",
+  },
+  {
+    value: "S",
+    label: "Severe Dengue",
+  },
+];
+
+const labResultOptions = [
+  {
+    value: "P",
+    label: "Positive",
+  },
+  {
+    value: "N",
+    label: "Negative",
+  },
+  {
+    value: "E",
+    label: "Equivocal",
+  },
+  {
+    value: "PR",
+    label: "Pending Result",
+  },
+];
+
+const caseClassOptions = [
+  {
+    value: "C",
+    label: "Confirmed",
+  },
+  {
+    value: "P",
+    label: "Probable",
+  },
+  {
+    value: "S",
+    label: "Suspect",
+  },
+];
+
+const outcomeOptions = [
+  {
+    value: "A",
+    label: "Alive",
+  },
+  {
+    value: "D",
+    label: "Dead",
+  },
+];
+
 const steps = [
   {
     id: "Step 1",
     name: "Personal Information",
-    fields: [
+    subunits: [
       {
-        varName: "firstName",
-        fieldLabel: "First Name",
+        name: "Personal Detail",
+        fields: [
+          {
+            inputType: "input",
+            varName: "firstName",
+            fieldLabel: "First Name",
+          },
+          {
+            inputType: "input",
+            varName: "middleName",
+            fieldLabel: "Middle Name",
+          },
+          { inputType: "input", varName: "lastName", fieldLabel: "Last Name" },
+          {
+            inputType: "select",
+            varName: "sex",
+            fieldLabel: "Sex",
+            selectOptions: sexOptions,
+          },
+          {
+            inputType: "select",
+            varName: "civil_status",
+            fieldLabel: "Civil Status",
+            selectOptions: civilStatusOptions,
+          },
+          {
+            inputType: "date",
+            varName: "dateOfBirth",
+            fieldLabel: "Date of Birth",
+          },
+        ],
       },
       {
-        varName: "middleName",
-        fieldLabel: "Middle Name",
+        name: "Current Address",
+        fields: [
+          { inputType: "input", varName: "caStreet", fieldLabel: "Street" },
+          { inputType: "input", varName: "caBarangay", fieldLabel: "Barangay" },
+          { inputType: "input", varName: "caCity", fieldLabel: "City" },
+          { inputType: "input", varName: "caProvince", fieldLabel: "Province" },
+        ],
       },
       {
-        varName: "lastName",
-        fieldLabel: "Last Name",
+        name: "Permanent Address",
+        fields: [
+          { inputType: "input", varName: "pHouseNo", fieldLabel: "House No." },
+          { inputType: "input", varName: "pStreet", fieldLabel: "Street" },
+          { inputType: "input", varName: "pBarangay", fieldLabel: "Barangay" },
+          { inputType: "input", varName: "pCity", fieldLabel: "City" },
+          { inputType: "input", varName: "pProvince", fieldLabel: "Province" },
+        ],
       },
       {
-        varName: "dateOfBirth",
-        fieldLabel: "Date of Birth",
-      },
-      {
-        varName: "sex",
-        fieldLabel: "Sex",
-      },
-      {
-        varName: "caStreet",
-        fieldLabel: "Current Address - Street",
-      },
-      {
-        varName: "caBarangay",
-        fieldLabel: "Current Address - Barangay",
-      },
-      {
-        varName: "caCity",
-        fieldLabel: "Current Address - Municipality",
-      },
-      {
-        varName: "caProvince",
-        fieldLabel: "Current Address - Province",
-      },
-      {
-        varName: "pHouseNo",
-        fieldLabel: "Permanent Address - House No.",
-      },
-      {
-        varName: "pStreet",
-        fieldLabel: "Permanent Address - Street",
-      },
-      {
-        varName: "pBarangay",
-        fieldLabel: "Permanent Address - Barangay",
-      },
-      {
-        varName: "pCity",
-        fieldLabel: "Permanent Address - Municipality",
-      },
-      {
-        varName: "pProvince",
-        fieldLabel: "Permanent Address - Province",
-      },
-      {
-        varName: "civilStatus",
-        fieldLabel: "Civil Status",
-      },
-      {
-        varName: "dateFirstVax",
-        fieldLabel: "Date of First Vaccination",
-      },
-      {
-        varName: "dateLastVax",
-        fieldLabel: "Date of Last Vaccination",
+        name: "Vaccination",
+        fields: [
+          {
+            inputType: "date",
+            varName: "dateFirstVax",
+            fieldLabel: "Date of First Vaccination",
+          },
+          {
+            inputType: "date",
+            varName: "dateLastVax",
+            fieldLabel: "Date of Last Vaccination",
+          },
+        ],
       },
     ],
   },
   {
     id: "Step 2",
     name: "Clinical Status",
-    fields: [
-      { varName: "country", fieldLabel: "Country" },
-      { varName: "state", fieldLabel: "State" },
-      { varName: "city", fieldLabel: "City" },
-      { varName: "street", fieldLabel: "Street" },
-      { varName: "zip", fieldLabel: "ZIP Code" },
+    subunits: [
+      {
+        name: "Consultation",
+        fields: [
+          {
+            inputType: "date",
+            varName: "date_con",
+            fieldLabel: "Date Admitted/Consulted/Seen",
+          },
+          {
+            inputType: "select",
+            varName: "is_admt",
+            fieldLabel: "Is Admitted?",
+            selectOptions: booleanOptions,
+          },
+          {
+            inputType: "date",
+            varName: "date_onset",
+            fieldLabel: "Date Onset of Illness",
+          },
+          {
+            inputType: "select",
+            varName: "clncl_class",
+            fieldLabel: "Clinical Classification",
+            selectOptions: clinicalClassOptions,
+          },
+        ],
+      },
+      {
+        name: "Laboratory Results",
+        fields: [
+          {
+            inputType: "select",
+            varName: "ns1_result",
+            fieldLabel: "NS1",
+            selectOptions: labResultOptions,
+          },
+          {
+            inputType: "date",
+            varName: "date_ns1",
+            fieldLabel: "Date done (NS1)",
+          },
+          {
+            inputType: "select",
+            varName: "igg_elisa",
+            fieldLabel: "IgG ELISA",
+            selectOptions: labResultOptions,
+          },
+          {
+            inputType: "date",
+            varName: "date_igg_elisa",
+            fieldLabel: "Date done (IgG ELISA)",
+          },
+          {
+            inputType: "select",
+            varName: "igm_elisa",
+            fieldLabel: "IgM ELISA",
+            selectOptions: labResultOptions,
+          },
+          {
+            inputType: "date",
+            varName: "date_igm_elisa",
+            fieldLabel: "Date done (IgM ELISA)",
+          },
+          {
+            inputType: "select",
+            varName: "pcr",
+            fieldLabel: "PCR",
+            selectOptions: labResultOptions,
+          },
+          {
+            inputType: "date",
+            varName: "date_pcr",
+            fieldLabel: "Date done (PCR)",
+          },
+        ],
+      },
+      {
+        name: "Outcome",
+        fields: [
+          {
+            inputType: "select",
+            varName: "case_class",
+            fieldLabel: "Case Classification",
+            selectOptions: caseClassOptions,
+          },
+          {
+            inputType: "select",
+            varName: "outcome",
+            fieldLabel: "Outcome",
+            selectOptions: outcomeOptions,
+          },
+          {
+            inputType: "date",
+            varName: "date_death",
+            fieldLabel: "Date of Death",
+          },
+        ],
+      },
     ],
   },
 ];
@@ -127,7 +320,11 @@ export default function MultiStepForm() {
   type FieldName = keyof Inputs;
 
   const next = async () => {
-    const fields = steps[currentStep].fields.map((field) => field.varName);
+    // const fields = steps[currentStep].fields.map((field) => field.varName);
+    const fields =
+      steps[currentStep].subunits?.flatMap((subunit) =>
+        subunit.fields.map((field) => field.varName)
+      ) || [];
     const output = await trigger(fields as FieldName[], { shouldFocus: true });
 
     if (!output) return;
@@ -175,86 +372,99 @@ export default function MultiStepForm() {
       </div>
 
       {/* Form */}
-      <div className="border border-grey rounded-lg p-5 mt-4">
+      <div className="border border-grey rounded-lg px-5 pb-5 mt-4">
         <form onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <div>
-              <h2 className="text-xl font-semibold leading-7 text-gray-900">
-                Personal Information
-              </h2>
-              <Separator className="mt-3" />
+              {steps[0].subunits.map((subunit) => (
+                <div key={subunit.name}>
+                  <h2 className="mt-7 ext-xl font-semibold leading-7 text-gray-900">
+                    {subunit.name}
+                  </h2>
+                  <Separator className="mt-3" />
 
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
-                {steps[0].fields.map((field) => (
-                  <div key={field.varName} className="sm:col-span-3">
-                    <label
-                      htmlFor={field.varName}
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      {field.fieldLabel}
-                    </label>
-                    <div className="mt-2">
-                      {["dateOfBirth", "dateFirstVax", "dateLastVax"].includes(
-                        field.varName
-                      ) ? (
-                        <Controller
-                          control={control}
-                          name={field.varName as FieldName}
-                          render={({ field: { onChange, value } }) => (
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <button
-                                  type="button"
-                                  className="flex items-center justify-between w-full rounded-md border-0 py-1.5 px-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                  <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
+                    {subunit.fields.map((field) => (
+                      <div key={field.varName} className="sm:col-span-3">
+                        <label
+                          htmlFor={field.varName}
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          {field.fieldLabel}
+                        </label>
+                        <div className="mt-2">
+                          {field.inputType === "select" ? (
+                            <select
+                              id={field.varName}
+                              {...register(field.varName as FieldName)}
+                              className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                            >
+                              {/* <option value="">Select your sex</option>
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                              <option value="other">Other</option> */}
+                              {field.selectOptions?.map((option) => (
+                                <option
+                                  key={String(option.value)}
+                                  value={String(option.value)}
                                 >
-                                  <span>
-                                    {value
-                                      ? format(value, "PPP")
-                                      : "Pick a date"}
-                                  </span>
-                                  <CalendarIcon className="h-4 w-4 opacity-50" />
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent className="p-0 bg-white shadow-lg border rounded-md">
-                                <Calendar
-                                  // selected={value}
-                                  onSelect={(date) => onChange(date)}
-                                  mode="single"
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          ) : [
+                              "dateOfBirth",
+                              "dateFirstVax",
+                              "dateLastVax",
+                            ].includes(field.varName) ? (
+                            <Controller
+                              control={control}
+                              name={field.varName as FieldName}
+                              render={({ field: { onChange, value } }) => (
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className="flex items-center justify-between w-full rounded-md border-0 py-1.5 px-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                                    >
+                                      <span>
+                                        {value
+                                          ? format(value, "PPP")
+                                          : "Pick a date"}
+                                      </span>
+                                      <CalendarIcon className="h-4 w-4 opacity-50" />
+                                    </button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="p-0 bg-white shadow-lg border rounded-md">
+                                    <Calendar
+                                      onSelect={(date) => onChange(date)}
+                                      mode="single"
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                              )}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              id={field.varName}
+                              {...register(field.varName as FieldName)}
+                              className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                            />
                           )}
-                        />
-                      ) : (
-                        <input
-                          type="text"
-                          id={field.varName}
-                          {...register(field.varName as FieldName)}
-                          className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                        />
-                      )}
-                      {errors[field.varName as FieldName] && (
-                        <p className="mt-2 text-sm text-red-400">
-                          {errors[field.varName as FieldName]?.message}
-                        </p>
-                      )}
-                    </div>
+                          {errors[field.varName as FieldName] && (
+                            <p className="mt-2 text-sm text-red-400">
+                              {errors[field.varName as FieldName]?.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
-
-          {currentStep === 2 && (
-            <>
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Complete
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Thank you for your submission.
-              </p>
-            </>
           )}
         </form>
 
