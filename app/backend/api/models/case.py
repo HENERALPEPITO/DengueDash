@@ -9,20 +9,14 @@ class Case(models.Model):
         primary_key=True,
         editable=False,
     )
-    date_first_con = models.DateField(
+    date_con = models.DateField(
         blank=False,
         null=True,
         default=None,
     )
-    place_con = models.CharField(
-        max_length=100,
+    is_admt = models.BooleanField(
         blank=False,
-        null=True,
-    )
-    date_admt = models.DateField(
-        blank=False,
-        null=True,
-        default=None,
+        null=False,
     )
     date_onset = models.DateField(
         blank=False,
