@@ -105,11 +105,11 @@ class Patient(models.Model):
     )
     date_first_vax = models.DateField(
         blank=False,
-        null=False,
+        null=True,
     )
     date_last_vax = models.DateField(
         blank=False,
-        null=False,
+        null=True,
     )
 
     def __str__(self):
