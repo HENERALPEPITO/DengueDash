@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,9 +14,8 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { Separator } from "@/shadcn/components/ui/separator";
-import { formSchema } from "@lib/schema";
+import { formSchema } from "@/lib/case-report-form/schema";
 
-// Define the options
 const OPTIONS = {
   sex: [
     { value: "F", label: "Female" },
@@ -38,10 +37,10 @@ const OPTIONS = {
     { value: "S", label: "Severe Dengue" },
   ],
   labResult: [
+    { value: "PR", label: "Pending Result" },
     { value: "P", label: "Positive" },
     { value: "N", label: "Negative" },
     { value: "E", label: "Equivocal" },
-    { value: "PR", label: "Pending Result" },
   ],
   caseClass: [
     { value: "C", label: "Confirmed" },
@@ -238,16 +237,46 @@ const steps = [
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [useCurrentAddress, setUseCurrentAddress] = useState(false);
+
   const {
     register,
     handleSubmit,
     reset,
     trigger,
     control,
+    setValue,
+    getValues,
+    watch,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
+  } = useForm<FormValues>({ resolver: zodResolver(formSchema) });
+
+  const ns1Result = watch("ns1_result");
+  const iggElisaResult = watch("igg_elisa");
+  const igmElisaResult = watch("igm_elisa");
+  const pcrResult = watch("pcr");
+  const outcome = watch("outcome");
+
+  const [isDateNs1Disabled, setDateNs1Disabled] = useState(true);
+  const [isDateIggElisaDisabled, setDateIggElisaDisabled] = useState(false);
+  const [isDateIgmElisaDisabled, setDateIgmElisaDisabled] = useState(false);
+  const [isDatePcrDisabled, setDatePcrDisabled] = useState(false);
+  const [isDateDeathDisabled, setDateDeathDisabled] = useState(false);
+
+  useEffect(() => {
+    setDateNs1Disabled(ns1Result === "PR" || !ns1Result);
+    setDateIggElisaDisabled(iggElisaResult === "PR" || !iggElisaResult);
+    setDateIgmElisaDisabled(igmElisaResult === "PR" || !igmElisaResult);
+    setDatePcrDisabled(pcrResult === "PR" || !pcrResult);
+    setDateDeathDisabled(outcome === "A" || !outcome);
+
+    // Reset the date value to null if it should be disabled
+    if (ns1Result === "PR") setValue("date_ns1", undefined);
+    if (iggElisaResult === "PR") setValue("date_igg_elisa", undefined);
+    if (igmElisaResult === "PR") setValue("date_igm_elisa", undefined);
+    if (pcrResult === "PR") setValue("date_pcr", undefined);
+    if (outcome === "A") setValue("date_death", undefined);
+  }, [ns1Result, iggElisaResult, igmElisaResult, pcrResult, outcome, setValue]);
 
   const processForm: SubmitHandler<FormValues> = (data) => {
     console.log("Form Submitted:", data);
@@ -256,11 +285,6 @@ export default function MultiStepForm() {
   };
 
   const next = async () => {
-    // if (currentStep < steps.length - 1) {
-    //   setCurrentStep((prev) => prev + 1);
-    // } else {
-    //   handleSubmit(processForm)();
-    // }
     const fields = steps[currentStep].subunits.flatMap((subunit) =>
       subunit.fields.map((field) => field.varName)
     );
@@ -282,9 +306,35 @@ export default function MultiStepForm() {
     }
   };
 
-  const renderField = (field: any) => {
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUseCurrentAddress(event.target.checked);
+
+    if (event.target.checked) {
+      // Copy current address values to permanent address fields
+      setValue("pHouseNo", getValues("caStreet"));
+      setValue("pStreet", getValues("caBarangay"));
+      setValue("pBarangay", getValues("caCity"));
+      setValue("pCity", getValues("caProvince"));
+      setValue("pProvince", getValues("caProvince"));
+    }
+  };
+
+  const renderField = (field: any, disabled = false) => {
     const isDate = field.inputType === "date";
     const isSelect = field.inputType === "select";
+
+    const isDisabled =
+      field.varName === "date_ns1"
+        ? isDateNs1Disabled
+        : field.varName === "date_igg_elisa"
+          ? isDateIggElisaDisabled
+          : field.varName === "date_igm_elisa"
+            ? isDateIgmElisaDisabled
+            : field.varName === "date_pcr"
+              ? isDatePcrDisabled
+              : field.varName === "date_death"
+                ? isDateDeathDisabled
+                : false;
 
     if (isDate) {
       return (
@@ -297,14 +347,21 @@ export default function MultiStepForm() {
                 <button
                   type="button"
                   className="flex items-center justify-between w-full rounded-md border-0 py-1.5 px-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                  disabled={isDisabled}
                 >
-                  <span>{value ? format(value, "PPP") : "Pick a date"}</span>
-                  <CalendarIcon className="h-4 w-4 opacity-50" />
+                  <span className={isDisabled ? "text-gray-500" : ""}>
+                    {value ? format(value, "PPP") : "Pick a date"}
+                  </span>
+                  <CalendarIcon
+                    className={`h-4 w-4 ${isDisabled ? "text-gray-500" : "text-gray-900"}`}
+                  />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="p-0 bg-white shadow-lg border rounded-md">
-                <Calendar onSelect={(date) => onChange(date)} mode="single" />
-              </PopoverContent>
+              {!isDisabled && (
+                <PopoverContent className="p-0 bg-white shadow-lg border rounded-md">
+                  <Calendar onSelect={(date) => onChange(date)} mode="single" />
+                </PopoverContent>
+              )}
             </Popover>
           )}
         />
@@ -316,6 +373,7 @@ export default function MultiStepForm() {
         <select
           {...register(field.varName as keyof FormValues)}
           className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+          disabled={disabled}
         >
           {field.selectOptions.map(
             (option: { value: string; label: string }) => (
@@ -334,6 +392,7 @@ export default function MultiStepForm() {
         id={field.varName}
         {...register(field.varName)}
         className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+        disabled={disabled}
       />
     );
   };
@@ -375,12 +434,28 @@ export default function MultiStepForm() {
               </h2>
               <Separator className="mt-3" />
               <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
+                {subunit.name === "Permanent Address" && (
+                  <div className="sm:col-span-6">
+                    <label className="inline-flex items-center text-sm font-medium text-gray-700">
+                      <input
+                        type="checkbox"
+                        onChange={handleCheckboxChange}
+                        checked={useCurrentAddress}
+                        className="mr-2"
+                      />
+                      Same as Current Address
+                    </label>
+                  </div>
+                )}
                 {subunit.fields.map((field) => (
                   <div key={field.varName} className="sm:col-span-3">
                     <label className="block text-sm font-medium leading-6 text-gray-900">
                       {field.fieldLabel}
                     </label>
-                    {renderField(field)}
+                    {renderField(
+                      field,
+                      subunit.name === "Permanent Address" && useCurrentAddress
+                    )}
                     {errors[field.varName as keyof FormValues] && (
                       <p className="text-red-500 text-sm">
                         {errors[field.varName as keyof FormValues]?.message}
