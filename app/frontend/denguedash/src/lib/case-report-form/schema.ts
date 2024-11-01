@@ -31,11 +31,13 @@ export const createFormSchema = (useCurrentAddress: boolean) => {
       p_province: useCurrentAddress
         ? z.string().optional()
         : z.string().min(1, "Permanent Province Address is required"),
-      data_first_vax: z.date().optional(),
+      date_first_vax: z.date().optional(),
       date_last_vax: z.date().optional(),
-      date_con: z.date().optional(),
+      date_con: z.date({ required_error: "Date of Consultation is required" }),
       is_admt: z.string().optional(),
-      date_onset: z.date().optional(),
+      date_onset: z.date({
+        required_error: "Date of Onset Illness is required",
+      }),
       clncl_class: z.enum(["N", "W", "S"]),
       ns1_result: z.enum(["P", "N", "E", "PR"]),
       date_ns1: z.date().optional(),
