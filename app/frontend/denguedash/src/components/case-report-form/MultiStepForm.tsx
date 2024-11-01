@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,330 +14,18 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import { Separator } from "@/shadcn/components/ui/separator";
-import { formSchema } from "@/lib/case-report-form/schema";
+import { createFormSchema } from "@/lib/case-report-form/schema";
+import { steps } from "@/lib/case-report-form/objects";
 
-const OPTIONS = {
-  sex: [
-    {
-      value: "F",
-      label: "Female",
-    },
-    {
-      value: "M",
-      label: "Male",
-    },
-  ],
-  boolean: [
-    {
-      value: true,
-      label: "Yes",
-    },
-    {
-      value: false,
-      label: "No",
-    },
-  ],
-  civilStatus: [
-    {
-      value: "S",
-      label: "Single",
-    },
-    {
-      value: "M",
-      label: "Married",
-    },
-    {
-      value: "SEP",
-      label: "Separated",
-    },
-    {
-      value: "W",
-      label: "Widowed",
-    },
-  ],
-  clinicalClass: [
-    {
-      value: "N",
-      label: "No warning signs",
-    },
-    {
-      value: "W",
-      label: "With warning signs",
-    },
-    {
-      value: "S",
-      label: "Severe Dengue",
-    },
-  ],
-  labResult: [
-    {
-      value: "PR",
-      label: "Pending Result",
-    },
-    {
-      value: "P",
-      label: "Positive",
-    },
-    {
-      value: "N",
-      label: "Negative",
-    },
-    {
-      value: "E",
-      label: "Equivocal",
-    },
-  ],
-  caseClass: [
-    {
-      value: "C",
-      label: "Confirmed",
-    },
-    {
-      value: "P",
-      label: "Probable",
-    },
-    {
-      value: "S",
-      label: "Suspect",
-    },
-  ],
-  outcome: [
-    {
-      value: "A",
-      label: "Alive",
-    },
-    {
-      value: "D",
-      label: "Dead",
-    },
-  ],
-};
-
-type FormValues = z.infer<typeof formSchema>;
-
-const steps = [
-  {
-    id: "Step 1",
-    name: "Personal Information",
-    subunits: [
-      {
-        name: "Personal Detail",
-        fields: [
-          {
-            inputType: "input",
-            varName: "firstName",
-            fieldLabel: "First Name",
-          },
-          {
-            inputType: "input",
-            varName: "middleName",
-            fieldLabel: "Middle Name",
-          },
-          {
-            inputType: "input",
-            varName: "lastName",
-            fieldLabel: "Last Name",
-          },
-          {
-            inputType: "select",
-            varName: "sex",
-            fieldLabel: "Sex",
-            selectOptions: OPTIONS.sex,
-          },
-          {
-            inputType: "select",
-            varName: "civil_status",
-            fieldLabel: "Civil Status",
-            selectOptions: OPTIONS.civilStatus,
-          },
-          {
-            inputType: "date",
-            varName: "dateOfBirth",
-            fieldLabel: "Date of Birth",
-          },
-        ],
-      },
-      {
-        name: "Current Address",
-        fields: [
-          {
-            inputType: "input",
-            varName: "caStreet",
-            fieldLabel: "Street",
-          },
-          {
-            inputType: "input",
-            varName: "caBarangay",
-            fieldLabel: "Barangay",
-          },
-          {
-            inputType: "input",
-            varName: "caCity",
-            fieldLabel: "City",
-          },
-          {
-            inputType: "input",
-            varName: "caProvince",
-            fieldLabel: "Province",
-          },
-        ],
-      },
-      {
-        name: "Permanent Address",
-        fields: [
-          {
-            inputType: "input",
-            varName: "pHouseNo",
-            fieldLabel: "House No.",
-          },
-          {
-            inputType: "input",
-            varName: "pStreet",
-            fieldLabel: "Street",
-          },
-          {
-            inputType: "input",
-            varName: "pBarangay",
-            fieldLabel: "Barangay",
-          },
-          {
-            inputType: "input",
-            varName: "pCity",
-            fieldLabel: "City",
-          },
-          {
-            inputType: "input",
-            varName: "pProvince",
-            fieldLabel: "Province",
-          },
-        ],
-      },
-      {
-        name: "Vaccination",
-        fields: [
-          {
-            inputType: "date",
-            varName: "dateFirstVax",
-            fieldLabel: "Date of First Vaccination",
-          },
-          {
-            inputType: "date",
-            varName: "dateLastVax",
-            fieldLabel: "Date of Last Vaccination",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "Step 2",
-    name: "Clinical Status",
-    subunits: [
-      {
-        name: "Consultation",
-        fields: [
-          {
-            inputType: "date",
-            varName: "date_con",
-            fieldLabel: "Date Admitted/Consulted/Seen",
-          },
-          {
-            inputType: "select",
-            varName: "is_admt",
-            fieldLabel: "Is Admitted?",
-            selectOptions: OPTIONS.boolean,
-          },
-          {
-            inputType: "date",
-            varName: "date_onset",
-            fieldLabel: "Date Onset of Illness",
-          },
-          {
-            inputType: "select",
-            varName: "clncl_class",
-            fieldLabel: "Clinical Classification",
-            selectOptions: OPTIONS.clinicalClass,
-          },
-        ],
-      },
-      {
-        name: "Laboratory Results",
-        fields: [
-          {
-            inputType: "select",
-            varName: "ns1_result",
-            fieldLabel: "NS1",
-            selectOptions: OPTIONS.labResult,
-          },
-          {
-            inputType: "date",
-            varName: "date_ns1",
-            fieldLabel: "Date done (NS1)",
-          },
-          {
-            inputType: "select",
-            varName: "igg_elisa",
-            fieldLabel: "IgG ELISA",
-            selectOptions: OPTIONS.labResult,
-          },
-          {
-            inputType: "date",
-            varName: "date_igg_elisa",
-            fieldLabel: "Date done (IgG ELISA)",
-          },
-          {
-            inputType: "select",
-            varName: "igm_elisa",
-            fieldLabel: "IgM ELISA",
-            selectOptions: OPTIONS.labResult,
-          },
-          {
-            inputType: "date",
-            varName: "date_igm_elisa",
-            fieldLabel: "Date done (IgM ELISA)",
-          },
-          {
-            inputType: "select",
-            varName: "pcr",
-            fieldLabel: "PCR",
-            selectOptions: OPTIONS.labResult,
-          },
-          {
-            inputType: "date",
-            varName: "date_pcr",
-            fieldLabel: "Date done (PCR)",
-          },
-        ],
-      },
-      {
-        name: "Outcome",
-        fields: [
-          {
-            inputType: "select",
-            varName: "case_class",
-            fieldLabel: "Case Classification",
-            selectOptions: OPTIONS.caseClass,
-          },
-          {
-            inputType: "select",
-            varName: "outcome",
-            fieldLabel: "Outcome",
-            selectOptions: OPTIONS.outcome,
-          },
-          {
-            inputType: "date",
-            varName: "date_death",
-            fieldLabel: "Date of Death",
-          },
-        ],
-      },
-    ],
-  },
-];
+type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [useCurrentAddress, setUseCurrentAddress] = useState(false);
+
+  const formSchema = useMemo(() => {
+    return createFormSchema(useCurrentAddress);
+  }, [useCurrentAddress]);
 
   const {
     register,
@@ -413,11 +101,11 @@ export default function MultiStepForm() {
 
     if (event.target.checked) {
       // Copy current address values to permanent address fields
-      setValue("pHouseNo", getValues("caStreet"));
-      setValue("pStreet", getValues("caBarangay"));
-      setValue("pBarangay", getValues("caCity"));
-      setValue("pCity", getValues("caProvince"));
-      setValue("pProvince", getValues("caProvince"));
+      setValue("p_house_no", getValues("ca_house_no"));
+      setValue("p_street", getValues("ca_street"));
+      setValue("p_barangay", getValues("ca_barangay"));
+      setValue("p_city", getValues("ca_city"));
+      setValue("p_province", getValues("ca_province"));
     }
   };
 
@@ -490,7 +178,7 @@ export default function MultiStepForm() {
 
     return (
       <input
-        type="text"
+        type={field.inputType == "number" ? "number" : "text"}
         id={field.varName}
         {...register(field.varName)}
         className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
