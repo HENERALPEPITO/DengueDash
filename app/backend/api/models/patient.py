@@ -36,11 +36,9 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
-    ca_house_no = (
-        models.IntegerField(
-            blank=False,
-            null=False,
-        ),
+    ca_house_no = models.IntegerField(
+        blank=False,
+        null=False,
     )
     ca_street = models.CharField(
         max_length=100,
