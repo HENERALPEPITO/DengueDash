@@ -52,7 +52,7 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
-    ca_municipality = models.CharField(
+    ca_city = models.CharField(
         max_length=100,
         blank=False,
         null=False,
@@ -76,7 +76,7 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
-    p_municipality = models.CharField(
+    p_city = models.CharField(
         max_length=100,
         blank=False,
         null=False,
