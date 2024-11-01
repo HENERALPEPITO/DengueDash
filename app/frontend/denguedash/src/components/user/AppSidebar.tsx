@@ -111,12 +111,12 @@ export default function AppSidebar({ sectionSegment }: AppSidebarProps) {
       },
       {
         title: "Data Tables",
-        url: "#",
+        url: "data-tables",
         icon: Table,
         items: [
           {
             title: "Dengue Reports",
-            url: "#",
+            url: "/user/data-tables/dengue-reports",
           },
           {
             title: "Another Report",
