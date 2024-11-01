@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, GeoJSON } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import { Layer, LeafletEventHandlerFn } from "leaflet";
 import geoJsonData from "@assets/geojsons/iloilo_barangays_random.json";
+import { BarangayData } from "@/interfaces/map/barangay-data.interface";
+import fetchService from "@/services/fetch.service";
 
 interface GeoJSONFeature {
   properties: {
@@ -15,36 +17,60 @@ interface GeoJSONFeature {
 
 export default function ChoroplethMap() {
   const geoJson: GeoJsonObject = geoJsonData as GeoJsonObject;
+  const [dengueData, setDengueData] = useState<BarangayData[]>([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  useEffect(() => {
+    fetchBarangayData();
+  }, []);
+
+  const fetchBarangayData = async () => {
+    try {
+      const response: BarangayData[] =
+        await fetchService.getDengueCountPerBarangay();
+      setDengueData(response);
+      setDataLoaded(true);
+    } catch (error) {
+      console.error("Failed to fetch barangay data:", error);
+    }
+  };
+
+  const getBarangayCaseCount = (barangayName: string): number => {
+    const barangayData = dengueData.find(
+      (data) => data.barangay === barangayName
+    );
+    return barangayData ? barangayData.case_count : 0;
+  };
 
   const geoStyler = (feature: GeoJSONFeature | undefined) => {
     if (!feature) return {};
     return {
       color: "white",
       weight: 1,
-      fillColor: getColor(feature.properties.count),
+      fillColor: getColor(getBarangayCaseCount(feature.properties.shape4)),
       fillOpacity: 0.5,
     };
   };
 
   const getColor = (cases: number): string => {
-    return cases > 150
+    return cases > 75
       ? "#800026"
-      : cases > 100
+      : cases > 50
         ? "#BD0026"
-        : cases > 75
+        : cases > 30
           ? "#E31A1C"
-          : cases > 50
+          : cases > 20
             ? "#FC4E2A"
-            : cases > 30
+            : cases > 15
               ? "#FD8D3C"
-              : cases > 20
+              : cases > 10
                 ? "#FEB24C"
-                : cases > 10
+                : cases > 5
                   ? "#FED976"
                   : "#FFEDA0";
   };
 
-  const highlightFeature: LeafletEventHandlerFn = (e) => {
+  const highlightFeature: LeafletEventHandlerFn = (e: any) => {
     const layer = e.target;
 
     layer.setStyle({
@@ -56,7 +82,7 @@ export default function ChoroplethMap() {
     layer.bringToFront();
   };
 
-  const resetHighlight: LeafletEventHandlerFn = (e) => {
+  const resetHighlight: LeafletEventHandlerFn = (e: any) => {
     const layer = e.target;
 
     layer.setStyle({
@@ -73,7 +99,7 @@ export default function ChoroplethMap() {
     });
 
     layer.bindPopup(
-      `<b>${feature.properties.shape4}</b><br>${feature.properties.count} cases`
+      `<b>${feature.properties.shape4}</b><br>${getBarangayCaseCount(feature.properties.shape4)} cases`
     );
   };
 
@@ -93,8 +119,9 @@ export default function ChoroplethMap() {
       keyboard={false}
       zoomControl={false}
     >
-      {geoJsonData && (
+      {dataLoaded && (
         <GeoJSON
+          key={JSON.stringify(dengueData)} // Force re-render when dengueData changes
           data={geoJson}
           style={geoStyler}
           onEachFeature={mapOnEachFeature}
