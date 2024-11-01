@@ -9,6 +9,7 @@ from .views.auth_view import (
 )
 from .views.patient_case_view import PatientCaseView
 from .views.case_report_view import CaseReportView
+from .views.dengue_count_view import BarangayCountView
 
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path("user/", UserDetailView.as_view(), name="user"),
     path("case/create/", PatientCaseView.as_view(), name="create-case"),
     path("dengue-case-reports", CaseReportView.as_view(), name="case-reports"),
+    path("cases-per-barangay", BarangayCountView.as_view(), name="cases-per-barangay"),
 ]
