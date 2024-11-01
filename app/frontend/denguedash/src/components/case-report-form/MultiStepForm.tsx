@@ -18,38 +18,98 @@ import { formSchema } from "@/lib/case-report-form/schema";
 
 const OPTIONS = {
   sex: [
-    { value: "F", label: "Female" },
-    { value: "M", label: "Male" },
+    {
+      value: "F",
+      label: "Female",
+    },
+    {
+      value: "M",
+      label: "Male",
+    },
   ],
   boolean: [
-    { value: true, label: "Yes" },
-    { value: false, label: "No" },
+    {
+      value: true,
+      label: "Yes",
+    },
+    {
+      value: false,
+      label: "No",
+    },
   ],
   civilStatus: [
-    { value: "S", label: "Single" },
-    { value: "M", label: "Married" },
-    { value: "SEP", label: "Separated" },
-    { value: "W", label: "Widowed" },
+    {
+      value: "S",
+      label: "Single",
+    },
+    {
+      value: "M",
+      label: "Married",
+    },
+    {
+      value: "SEP",
+      label: "Separated",
+    },
+    {
+      value: "W",
+      label: "Widowed",
+    },
   ],
   clinicalClass: [
-    { value: "N", label: "No warning signs" },
-    { value: "W", label: "With warning signs" },
-    { value: "S", label: "Severe Dengue" },
+    {
+      value: "N",
+      label: "No warning signs",
+    },
+    {
+      value: "W",
+      label: "With warning signs",
+    },
+    {
+      value: "S",
+      label: "Severe Dengue",
+    },
   ],
   labResult: [
-    { value: "PR", label: "Pending Result" },
-    { value: "P", label: "Positive" },
-    { value: "N", label: "Negative" },
-    { value: "E", label: "Equivocal" },
+    {
+      value: "PR",
+      label: "Pending Result",
+    },
+    {
+      value: "P",
+      label: "Positive",
+    },
+    {
+      value: "N",
+      label: "Negative",
+    },
+    {
+      value: "E",
+      label: "Equivocal",
+    },
   ],
   caseClass: [
-    { value: "C", label: "Confirmed" },
-    { value: "P", label: "Probable" },
-    { value: "S", label: "Suspect" },
+    {
+      value: "C",
+      label: "Confirmed",
+    },
+    {
+      value: "P",
+      label: "Probable",
+    },
+    {
+      value: "S",
+      label: "Suspect",
+    },
   ],
   outcome: [
-    { value: "A", label: "Alive" },
-    { value: "D", label: "Dead" },
+    {
+      value: "A",
+      label: "Alive",
+    },
+    {
+      value: "D",
+      label: "Dead",
+    },
   ],
 };
 
@@ -73,7 +133,11 @@ const steps = [
             varName: "middleName",
             fieldLabel: "Middle Name",
           },
-          { inputType: "input", varName: "lastName", fieldLabel: "Last Name" },
+          {
+            inputType: "input",
+            varName: "lastName",
+            fieldLabel: "Last Name",
+          },
           {
             inputType: "select",
             varName: "sex",
@@ -96,20 +160,56 @@ const steps = [
       {
         name: "Current Address",
         fields: [
-          { inputType: "input", varName: "caStreet", fieldLabel: "Street" },
-          { inputType: "input", varName: "caBarangay", fieldLabel: "Barangay" },
-          { inputType: "input", varName: "caCity", fieldLabel: "City" },
-          { inputType: "input", varName: "caProvince", fieldLabel: "Province" },
+          {
+            inputType: "input",
+            varName: "caStreet",
+            fieldLabel: "Street",
+          },
+          {
+            inputType: "input",
+            varName: "caBarangay",
+            fieldLabel: "Barangay",
+          },
+          {
+            inputType: "input",
+            varName: "caCity",
+            fieldLabel: "City",
+          },
+          {
+            inputType: "input",
+            varName: "caProvince",
+            fieldLabel: "Province",
+          },
         ],
       },
       {
         name: "Permanent Address",
         fields: [
-          { inputType: "input", varName: "pHouseNo", fieldLabel: "House No." },
-          { inputType: "input", varName: "pStreet", fieldLabel: "Street" },
-          { inputType: "input", varName: "pBarangay", fieldLabel: "Barangay" },
-          { inputType: "input", varName: "pCity", fieldLabel: "City" },
-          { inputType: "input", varName: "pProvince", fieldLabel: "Province" },
+          {
+            inputType: "input",
+            varName: "pHouseNo",
+            fieldLabel: "House No.",
+          },
+          {
+            inputType: "input",
+            varName: "pStreet",
+            fieldLabel: "Street",
+          },
+          {
+            inputType: "input",
+            varName: "pBarangay",
+            fieldLabel: "Barangay",
+          },
+          {
+            inputType: "input",
+            varName: "pCity",
+            fieldLabel: "City",
+          },
+          {
+            inputType: "input",
+            varName: "pProvince",
+            fieldLabel: "Province",
+          },
         ],
       },
       {
@@ -249,7 +349,9 @@ export default function MultiStepForm() {
     getValues,
     watch,
     formState: { errors },
-  } = useForm<FormValues>({ resolver: zodResolver(formSchema) });
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+  });
 
   const ns1Result = watch("ns1_result");
   const iggElisaResult = watch("igg_elisa");
