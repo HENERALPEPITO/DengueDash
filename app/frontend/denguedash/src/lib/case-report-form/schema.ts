@@ -6,6 +6,7 @@ export const createFormSchema = (useCurrentAddress: boolean) => {
       first_name: z.string().min(1, "First Name is required"),
       middle_name: z.string().optional(),
       last_name: z.string().min(1, "Last Name is required"),
+      suffix: z.string().optional(),
       sex: z.enum(["F", "M"]).refine((val) => val !== undefined, {
         message: "Sex is required",
       }),
