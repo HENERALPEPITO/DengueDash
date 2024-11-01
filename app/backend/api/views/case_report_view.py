@@ -7,6 +7,6 @@ from api.pagination import APIPagination
 
 class CaseReportView(ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    queryset = Case.objects.select_related("patient")
+    queryset = Case.objects.all().order_by("-date_con")
     serializer_class = CaseReportSerializer
     pagination_class = APIPagination
