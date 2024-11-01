@@ -21,7 +21,7 @@ import {
   Case,
   DengueReportPagination,
 } from "@interfaces/dengue-reports/dengue-reports.interface";
-import getService from "@services/get.service";
+import getService from "@/services/fetch.service";
 
 export default function Component() {
   const [cases, setCases] = useState<Case[]>([]);
