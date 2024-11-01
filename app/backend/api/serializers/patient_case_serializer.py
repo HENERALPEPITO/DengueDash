@@ -61,19 +61,21 @@ class CaseSerializer(serializers.ModelSerializer):
         patient_data = validated_data.pop("patient")
 
         # Find or create the patient
-        patient, _ = Patient.objects.get_or_create(
+        patient, _ = Patient.objects.update_or_create(
             first_name=patient_data["first_name"],
             last_name=patient_data["last_name"],
             middle_name=patient_data.get("middle_name", ""),
+            suffix=patient_data.get("suffix", ""),
             date_of_birth=patient_data["date_of_birth"],
+            sex=patient_data["sex"],
             defaults=patient_data,
         )
 
         # Check if a case with the same patient and date_onset already exists
-        date_onset = validated_data["date_onset"]
+        date_con = validated_data["date_con"]
         if Case.objects.filter(
             patient=patient,
-            date_onset=date_onset,
+            date_con=date_con,
         ).exists():
             raise serializers.ValidationError(
                 {"err_msg": "Case already exists"},
