@@ -54,7 +54,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "api.middleware.JWTAuthMiddleware",
+    "api.middleware.JWTAuthMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -133,6 +133,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "api.authenticate.CustomJWTAuthentication"
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
@@ -153,7 +154,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Nuxt 3 frontend during development
+    "http://localhost:3000",  # Next.js frontend during development
 ]
 CORS_ALLOW_CREDENTIALS = True
 
