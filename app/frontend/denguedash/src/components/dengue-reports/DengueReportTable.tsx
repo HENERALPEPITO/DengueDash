@@ -22,7 +22,7 @@ import {
   Case,
   DengueReportPagination,
 } from "@interfaces/dengue-reports/dengue-reports.interface";
-import getService from "@/services/fetch.service";
+import fetchService from "@/services/fetch.service";
 
 export default function Component() {
   const [cases, setCases] = useState<Case[]>([]);
@@ -39,7 +39,7 @@ export default function Component() {
     setIsLoading(true);
     try {
       const response: DengueReportPagination =
-        await getService.getDengueReports(page, itemsPerPage);
+        await fetchService.getDengueReports(page, itemsPerPage);
       const data: Case[] = response.results;
       setCases(data);
 
