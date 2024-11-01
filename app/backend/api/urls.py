@@ -8,6 +8,7 @@ from .views.auth_view import (
     AuthCheckView,
 )
 from .views.patient_case_view import PatientCaseView
+from .views.case_report_view import CaseReportView
 
 
 urlpatterns = [
@@ -18,4 +19,5 @@ urlpatterns = [
     path("auth/check", AuthCheckView.as_view(), name="auth-check"),
     path("user/", UserDetailView.as_view(), name="user"),
     path("case/create/", PatientCaseView.as_view(), name="create-case"),
+    path("case-reports", CaseReportView.as_view(), name="case-reports"),
 ]
