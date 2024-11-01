@@ -11,8 +11,7 @@ class Case(models.Model):
     )
     date_con = models.DateField(
         blank=False,
-        null=True,
-        default=None,
+        null=False,
     )
     is_admt = models.BooleanField(
         blank=False,
@@ -144,7 +143,7 @@ class Case(models.Model):
 
     class Meta:
         unique_together = (
-            "date_onset",
+            "date_con",
             "patient",
         )
 
