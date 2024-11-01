@@ -16,6 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Separator } from "@/shadcn/components/ui/separator";
 import { createFormSchema } from "@/lib/case-report-form/schema";
 import { steps } from "@/lib/case-report-form/objects";
+import postService from "@/services/post.service";
 
 type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
@@ -68,9 +69,61 @@ export default function MultiStepForm() {
     if (outcome === "A") setValue("date_death", undefined);
   }, [ns1Result, iggElisaResult, igmElisaResult, pcrResult, outcome, setValue]);
 
-  const processForm: SubmitHandler<FormValues> = (data) => {
-    console.log("Form Submitted:", data);
+  const processForm: SubmitHandler<FormValues> = async (data) => {
+    const formatDate = (dateString: string | number | Date) => {
+      const date = new Date(dateString);
+      return date.toISOString().split("T")[0]; // Extracts "YYYY-MM-DD"
+    };
+    const transformedData = {
+      patient: {
+        first_name: data.first_name,
+        middle_name: data.middle_name,
+        last_name: data.last_name,
+        date_of_birth: formatDate(data.date_of_birth),
+        sex: data.sex,
+        ca_house_no: data.ca_house_no,
+        ca_street: data.ca_street,
+        ca_barangay: data.ca_barangay,
+        ca_city: data.ca_city,
+        ca_province: data.ca_province,
+        p_house_no: data.p_house_no,
+        p_street: data.p_street,
+        p_barangay: data.p_barangay,
+        p_city: data.p_city,
+        p_province: data.p_province,
+        civil_status: data.civil_status,
+        date_first_vax: data.date_first_vax
+          ? formatDate(data.date_first_vax)
+          : null,
+        date_last_vax: data.date_last_vax
+          ? formatDate(data.date_last_vax)
+          : null,
+      },
+      date_onset: formatDate(data.date_onset),
+      date_con: formatDate(data.date_con),
+      is_admt: data.is_admt === "true" ? true : false,
+      clncl_class: data.clncl_class,
+      ns1_result: data.ns1_result,
+      date_ns1: data.date_ns1 ? formatDate(data.date_ns1) : null,
+      igg_elisa: data.igg_elisa,
+      date_igg_elisa: data.date_igg_elisa
+        ? formatDate(data.date_igg_elisa)
+        : null,
+      igm_elisa: data.igm_elisa,
+      date_igm_elisa: data.date_igm_elisa
+        ? formatDate(data.date_igm_elisa)
+        : null,
+      pcr: data.pcr,
+      case_class: data.case_class,
+      outcome: data.outcome,
+      date_death: data.date_death ? formatDate(data.date_death) : null,
+      interviewer: 1, // todo: get the current user id
+    };
+
+    await postService.submitForm(transformedData);
+
     reset();
+    setUseCurrentAddress(false);
     setCurrentStep(0);
   };
 
