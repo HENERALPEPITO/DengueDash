@@ -72,13 +72,17 @@ export default function MultiStepForm() {
   const processForm: SubmitHandler<FormValues> = async (data) => {
     const formatDate = (dateString: string | number | Date) => {
       const date = new Date(dateString);
-      return date.toISOString().split("T")[0]; // Extracts "YYYY-MM-DD"
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     };
     const transformedData = {
       patient: {
         first_name: data.first_name,
         middle_name: data.middle_name,
         last_name: data.last_name,
+        suffix: data.suffix ? data.suffix : null,
         date_of_birth: formatDate(data.date_of_birth),
         sex: data.sex,
         ca_house_no: data.ca_house_no,
