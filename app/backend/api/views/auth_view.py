@@ -62,8 +62,9 @@ class LoginView(TokenObtainPairView):
 
 
 class UserClassificationView(generics.ListAPIView):
-    queryset = UserClassification.objects.exclude(classification="Admin")
     permission_classes = (permissions.AllowAny,)
+
+    queryset = UserClassification.objects.exclude(classification="Admin")
     serializer_class = UserClassificationSerializer
 
 
