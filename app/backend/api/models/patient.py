@@ -98,11 +98,6 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
-    is_indigent = models.IntegerField(
-        blank=False,
-        null=False,
-        default=0,
-    )
     date_first_vax = models.DateField(
         blank=False,
         null=True,
