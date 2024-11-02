@@ -3,7 +3,7 @@ import DengueCountDeaths from "../charts/DengueCountDeaths";
 
 export default function StatDashboard() {
   return (
-    <div className="flex lg:flex-row gap-6">
+    <div className="flex flex-col lg:flex-row gap-6">
       {/* Choropleth Map */}
       <div className="border border-grey rounded-lg flex-1">
         <div className="p-4">
