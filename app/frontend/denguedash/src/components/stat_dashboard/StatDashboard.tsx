@@ -1,8 +1,9 @@
 import ChoroplethMapWrapper from "@components/map/ChoroplethMapWrapper";
+import DengueCountDeaths from "../charts/DengueCountDeaths";
 
 export default function StatDashboard() {
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
+    <div className="flex lg:flex-row gap-6">
       {/* Choropleth Map */}
       <div className="border border-grey rounded-lg flex-1">
         <div className="p-4">
@@ -14,12 +15,16 @@ export default function StatDashboard() {
         <ChoroplethMapWrapper />
       </div>
       {/* Right Side */}
-      <div className="border border-grey rounded-lg flex-1">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold">
-            322,343 <span className="text-red-500">+63,728</span>
-          </h2>
-          <p className="text-gray-600">Reported COVI</p>
+      <div className="flex flex-col flex-1 gap-3">
+        <div className="border border-grey rounded-lg">
+          <div className="p-4">
+            <DengueCountDeaths />
+          </div>
+        </div>
+        <div className="border border-grey rounded-lg">
+          <div className="p-4">
+            <DengueCountDeaths />
+          </div>
         </div>
       </div>
     </div>
