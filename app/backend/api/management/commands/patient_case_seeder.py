@@ -10,8 +10,22 @@ from api.models.user import User
 class Command(BaseCommand):
     help = "Seed random initial patient case data"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "consult_year",
+            type=int,
+            help="Indicates the year of consultation",
+        )
+        parser.add_argument(
+            "num_entries",
+            type=int,
+            help="Indicates the number of cases to be created",
+        )
+
     def handle(self, *args, **kwargs):
         fake = Faker()
+        consult_year = kwargs["consult_year"]
+        num_entries = kwargs["num_entries"]
 
         interviewer = User.objects.get(id=1)
 
@@ -198,7 +212,7 @@ class Command(BaseCommand):
             "Rizal (La Paz)",
         ]
 
-        for _ in range(500):
+        for _ in range(num_entries):
             first_name = fake.first_name()
             last_name = fake.last_name()
             middle_name = fake.first_name()
@@ -228,7 +242,9 @@ class Command(BaseCommand):
                 date_last_vax=fake.date_this_decade(),
             )
 
-            date_con = fake.date_this_year()
+            start_con_date = datetime(consult_year, 1, 1)
+            end_con_date = datetime(consult_year, 12, 31)
+            date_con = fake.date_time_between_dates(start_con_date, end_con_date)
             is_admt = random.choice([True, False])
             date_onset = date_con - timedelta(days=random.randint(1, 20))
             clncl_class = random.choice(["N", "W", "S"])
@@ -284,4 +300,8 @@ class Command(BaseCommand):
                 patient=patient,
             )
 
-        self.stdout.write(self.style.SUCCESS("Successfully created 500 cases"))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully seeded the database with {num_entries} fake patient cases."
+            )
+        )
