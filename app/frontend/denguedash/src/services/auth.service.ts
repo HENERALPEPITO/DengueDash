@@ -8,6 +8,13 @@ export const axiosInstance = axios.create({
   },
 });
 
+export const axiosOpen = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_DJANGO_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 const login = async (email: string, password: string) => {
   try {
     const response = await axiosInstance.post("login/", {
