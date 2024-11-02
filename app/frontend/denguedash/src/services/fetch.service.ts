@@ -1,4 +1,4 @@
-import { axiosInstance } from "./auth.service";
+import { axiosInstance, axiosOpen } from "./auth.service";
 
 const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
   try {
@@ -15,7 +15,7 @@ const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
 const getDengueCountPerBarangay = async (year: number | null = null) => {
   try {
     const yearQuery = year ? `?year=${year}` : "";
-    const response = await axiosInstance.get(
+    const response = await axiosOpen.get(
       `cases-per-barangay`.concat(yearQuery)
     );
     return response.data;
@@ -25,6 +25,20 @@ const getDengueCountPerBarangay = async (year: number | null = null) => {
   }
 };
 
-const fetchService = { getDengueReports, getDengueCountPerBarangay };
+const getYearlyDengueCount = async () => {
+  try {
+    const response = await axiosOpen.get(`cases-per-year`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching yearly dengue count:", error);
+    throw error;
+  }
+};
+
+const fetchService = {
+  getDengueReports,
+  getDengueCountPerBarangay,
+  getYearlyDengueCount,
+};
 
 export default fetchService;
