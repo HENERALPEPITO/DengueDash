@@ -5,7 +5,7 @@ import { MapContainer, GeoJSON } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import { Layer, LeafletEventHandlerFn } from "leaflet";
 import geoJsonData from "@assets/geojsons/iloilo_barangays_random.json";
-import { BarangayData } from "@/interfaces/map/barangay-data.interface";
+import { BarangayData } from "@/interfaces/map/map.interface";
 import fetchService from "@/services/fetch.service";
 
 interface GeoJSONFeature {
@@ -53,15 +53,15 @@ export default function ChoroplethMap() {
   };
 
   const getColor = (cases: number): string => {
-    return cases > 75
+    return cases > 100
       ? "#800026"
-      : cases > 50
+      : cases > 75
         ? "#BD0026"
-        : cases > 30
+        : cases > 50
           ? "#E31A1C"
-          : cases > 20
+          : cases > 30
             ? "#FC4E2A"
-            : cases > 15
+            : cases > 20
               ? "#FD8D3C"
               : cases > 10
                 ? "#FEB24C"
