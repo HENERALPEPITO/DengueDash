@@ -5,7 +5,11 @@ import fetchService from "@/services/fetch.service";
 import { useEffect, useState, useRef } from "react";
 import Chart, { ChartOptions, ChartData } from "chart.js/auto";
 
-export default function DengueCountDeaths() {
+type DengueCountDeathsProps = {
+  height: string;
+};
+
+export default function DengueCountDeaths({ height }: DengueCountDeathsProps) {
   const [data, setData] = useState<ComboCountDeaths[]>([]);
 
   const chartRef = useRef<HTMLCanvasElement | null>(null);
@@ -63,6 +67,7 @@ export default function DengueCountDeaths() {
     // Configuration options for the chart
     const options: ChartOptions<"bar"> = {
       responsive: true,
+      maintainAspectRatio: false,
       scales: {
         y: {
           type: "linear",
@@ -114,14 +119,8 @@ export default function DengueCountDeaths() {
   }, [data]); // Re-run when 'data' changes
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">
-        Dengue Cases and Deaths Over the Years
-      </h1>
-      <p className="text-sm text-gray-600">As of October 19, 2024</p>
-      <div className="pt-3">
-        <canvas ref={chartRef} />
-      </div>
+    <div className="p-2" style={{ height: height }}>
+      <canvas ref={chartRef} />
     </div>
   );
 }
