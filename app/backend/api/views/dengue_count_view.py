@@ -25,8 +25,24 @@ class BarangayCountView(APIView):
             .order_by("-case_count")
         )
 
+        deaths_per_barangay = (
+            cases.filter(outcome="D")
+            .values("patient__ca_barangay")
+            .annotate(death_count=Count("case_id"))
+        )
+
+        death_counts = {
+            item["patient__ca_barangay"]: item["death_count"]
+            for item in deaths_per_barangay
+        }
+
         data = [
-            {"barangay": item["patient__ca_barangay"], "case_count": item["case_count"]}
+            {
+                "barangay": item["patient__ca_barangay"],
+                "case_count": item["case_count"],
+                # Default is 0 if no deaths
+                "death_count": death_counts.get(item["patient__ca_barangay"], 0),
+            }
             for item in cases_per_barangay
         ]
 
