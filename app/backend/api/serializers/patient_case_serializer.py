@@ -81,6 +81,15 @@ class CaseSerializer(serializers.ModelSerializer):
                 {"err_msg": "Case already exists"},
             )
 
+        # Check if a case with the same patient that is already dead
+        if Case.objects.filter(
+            patient=patient,
+            outcome="D",
+        ).exists():
+            raise serializers.ValidationError(
+                {"err_msg": "Patient is already dead"},
+            )
+
         # Create and return the new case linked to the patient
         return Case.objects.create(
             patient=patient,
