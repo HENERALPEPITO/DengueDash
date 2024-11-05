@@ -1,39 +1,43 @@
 "use client";
 
-import { BarangayData } from "@/interfaces/map/map.interface";
 import { useEffect, useRef } from "react";
 import Chart, { ChartOptions, ChartData } from "chart.js/auto";
 
-type TopBarangayCountProps = {
+type CustomChartProps = {
   height: string;
-  dengueData: BarangayData[];
+  data: { label: string; value: number }[];
+  backgroundColor: string;
+  yLabel: string;
+  displayLegend: boolean;
 };
 
-export default function TopBarangayCount({
+export default function SimpleBarChart({
   height,
-  dengueData,
-}: TopBarangayCountProps) {
+  data,
+  backgroundColor,
+  yLabel,
+  displayLegend,
+}: CustomChartProps) {
   const chartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
-    if (dengueData.length === 0) return;
+    if (data.length === 0) return;
 
-    const barangay = dengueData.map((item) => item.barangay);
-    const cases = dengueData.map((item) => item.case_count);
+    const labels = data.map((item) => item.label);
+    const values = data.map((item) => item.value);
 
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
 
     const chartData: ChartData<"bar"> = {
-      labels: barangay,
+      labels,
       datasets: [
         {
           type: "bar" as const,
-          label: "Cases",
-          data: cases,
-          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          data: values,
+          backgroundColor: backgroundColor,
           yAxisID: "y",
         },
       ],
@@ -48,13 +52,13 @@ export default function TopBarangayCount({
           position: "left",
           title: {
             display: true,
-            text: "No. of Cases",
+            text: `No of ${yLabel}`,
           },
         },
       },
       plugins: {
         legend: {
-          display: false,
+          display: displayLegend,
         },
       },
     };
@@ -62,11 +66,7 @@ export default function TopBarangayCount({
     if (chartRef.current) {
       chartInstance.current = new Chart(chartRef.current, {
         type: "bar",
-        data: chartData as ChartData<
-          "bar",
-          (number | [number, number] | null)[],
-          unknown
-        >,
+        data: chartData,
         options,
       });
     }
@@ -76,7 +76,7 @@ export default function TopBarangayCount({
         chartInstance.current.destroy();
       }
     };
-  }, [dengueData]);
+  }, [data, backgroundColor, yLabel, displayLegend]);
 
   return (
     <div className="p-2" style={{ height: height }}>
