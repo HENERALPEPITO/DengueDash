@@ -5,79 +5,24 @@
 \section{Overview}
 \label{sec:overview}
 
-This section gives the reader an overview of the real world problem that needs to be solved. It describes the exigency of the proposed solution. The consequences to the affected stakeholders that the problem may bring if it not addressed. Discussion must not be too technical or too detailed.
-   
-\textcolor{red}{This section ends with a discussion on the problem/s faced by or that still exist in the specific
-technology or field (e.g., limitations of existing software or algorithms). 
-The problem statement would lead to the research objectives.}
+From 2020 to 2022, dengue cases declined due to reduced surveillance during the COVID-19 pandemic, but cases surged in 2023 as restrictions were lifted. This year saw an increase in dengue outbreaks worldwide, with over five million cases and more than 5,000 deaths reported in over 80 countries. (Bosano, 2023) Dengue is endemic in the Philippines, leading to longer and more widespread seasonal outbreaks. Globally, dengue infections have increased significantly, posing a major public health challenge. The World Health Organization (WHO) reported a ten-fold rise in cases between 2000 and 2019, with a peak in 2019 when the disease spread across 129 countries.
 
+Public health responses are strained in some areas due to limited resources and multiple outbreaks. WHO is focusing on preparedness, vector control, and raising awareness, particularly about severe dengue symptoms, which can be life-threatening for individuals who contract the virus a second time. Despite the rising number of cases, the WHO does not recommend travel or trade restrictions.
 
-It is   easy to include a figure in JPG or PNG format as shown in the  following example.  
-Make sure that you explain what the figure is all about, and that you refer to your figure.  
-For example, \figref{fig:disneystock} shows a graph of the performance of Disney stock from the 1980s to 2012.
-  
-%--- the following example shows how to include a figure in PNG format
-\begin{figure}[t]                %-- use [t] to place figure at top, [b] to place at the bottom, [h] for here
-   \centering                    %-- use this to center the figure
-   \includegraphics{DisneyChart.png}      %-- include image file named as "disneychart.png" 
-   \caption{This is the figure's caption -- Disney stock chart.
-   	Captions should fully describe the figure in a concise manner  such that there is not need to refer to the text when figuring out the graphic.}
-    \label{fig:disneystock}
-\end{figure}
+Iloilo City and Province are intensifying efforts to curb the rising dengue cases. As of August 10, 2023, the Iloilo Provincial Health Office recorded 4,585 cases and 10 deaths, a 319\% increase from last year’s 1,095 cases and one death. Governor Arthur Defensor Jr. confirmed that the province has reached the dengue outbreak threshold based on Department of Health (DOH) criteria, and a formal declaration is pending. Local government units (LGUs) have been informed, and the province's disaster management office is on blue alert, indicating disaster mode. (Lena, 2024)
 
-
-Some notes on citing references.   
-When using APA format, the author-date method of citation is  followed.   
-This means that the author's last name and the year of publication for the source should  appear in the text, and a complete reference should appear in the reference list.
-
-
-Here are some examples on how to do the referencing (note author's name and years are different from commented examples).  
-For APA citation details, refer to \url{http://www.ctan.org/tex-archive/biblio/bibtex/contrib/apacite/}. 
-
-\begin{itemize}
- \item \citeA{kartch:2000:ERA} compared reaction times...
- \item In a recent study of reaction times \cite{kartch:2000:ERA}...
- \item In \citeyearNP{kartch:2000:ERA}, \citeauthor{kartch:2000:ERA} compared reaction times...
- \item \shortciteA{fedkiw:2001:VSO} compared reaction times... 
- \item In a recent study of reaction times \cite{fedkiw:2001:VSO}...
- \item In \citeyearNP{fedkiw:2001:VSO}, \shortciteauthor{fedkiw:2001:VSO}, compared reaction times...
-\end{itemize}
-
-The following are references from journal articles \cite{Park:2006:DSI, Pellacini:2005:LAH, sako:2001:SSB}.
- Here's an MS thesis document \cite{yee:2000:SSA}, and this is from PhD dissertation \cite{kartch:2000:ERA}. 
- For a book, reference is given as  \cite{parke:1996:CFA}. 
- Proceedings from a conference samples are \cite{Jobs95, fedkiw:2001:VSO, levoy:2000:TDM}.  
- The sample bibliography file named \textbf{myreferences.bib} is from the SIGGRAPH \LaTeX{}  template.  
- You can use a text editor to view the contents of the bib file.  
- It is your task to create your own bibliography file.  
- For those who downloaded papers from ACM or IEEE sites, there is a BibTeX link that you can click; thereafter, you just simply need to copy and paste the BibTeX entry into your own bibliography file.
-
-The following shows how to include a program source code (or algorithm).  
-The verbatim environment, as the name suggests, outputs text (including white spaces) as is...
-
-\begin{verbatim}
-               #include <stdio.h>
-               main()
-               {
-                    printf("Hello world!\n");
-               }
-\end{verbatim}
-
-Alternatively, you can also use the \emph{lstlisting} environment from the \textbf{listings} package.
+In Iloilo City, 649 dengue cases were recorded during the same period, with two deaths. Cases cluster in 40 out of 180 barangays, meaning multiple cases are being reported in these areas over several weeks. The city’s health officer, Dr. Roland Jay Fortuna, reported high utilization of non-COVID-19 hospital beds, reaching over 76\%, prompting concerns about hospital capacity.  
+This study explores the monitoring and forecasting of dengue outbreaks by analyzing key factors such as temperature, relative humidity, and historical dengue cases, using different models. The findings aim to provide an advanced, AI-driven alternative for dengue prevention and control, targeting agencies like the Department of Health (DOH). By aligning with the national AI Roadmap, particularly in Iloilo City, this research aspires to improve outbreak responses through cutting-edge technology rather than traditional reporting methods.
 
 \section{Problem Statement}
-\textcolor{red}{DO NOT FORGET to write the statement of the research problem here, i.e., before the Research Objectives.}
-
-A problem statement is your research problem written explicitly.  
-The problem statement should do four things: 
-\begin{enumerate}
-	\item Specify and describe the problem (with appropriate citations) 
-	\item  Provide evidence of the problem’s existence  
-	\item Explain the consequences of NOT solving the problem  
-	\item 	Identify what is not known about the problem that should be known.
-	\item Subdivide the main problem into several subproblems.
-\end{enumerate}
-
+The problem being addressed here is that dengue cases remain a critical public health issue worldwide,
+ with rising cases attributed to the easing of COVID-19 restrictions and increased global mobility. 
+ From 2020 to 2022, dengue cases saw a temporary decline due to reduced surveillance efforts amidst the pandemic. 
+ However, 2023 witnessed a significant resurgence, with over five million cases and more than 5,000 deaths reported 
+ across 80 countries, indicating the continued vulnerability of dengue-endemic regions like the Philippines. 
+ In Iloilo City and Province, dengue cases surged dramatically by 319\% as of August 2023, 
+ with local health systems struggling to manage the influx. High hospitalization rates due to dengue, with over
+  76\% of non-COVID-19 hospital beds occupied, have raised concerns about healthcare capacity and the need for enhanced predictive measures. 
 
 \section{Research Objectives}
 \label{sec:researchobjectives}
@@ -85,8 +30,9 @@ The problem statement should do four things:
 \subsection{General Objective}
 \label{sec:generalobjective}
 
-This subsection states the over--all goal that must be achieved to answer the problem.
-Address the following: Given your research challenge or opportunity, how do you intend  to solve it? What is the output of your research?
+This study aims to develop an AI-based dengue forecasting and monitoring system for Iloilo City and Province. 
+The system will use Long Short-Term Memory (LSTM) to predict dengue case trends based on climate data and 
+historical dengue cases to help public health officials in possible dengue case outbreaks.
 
 
 \subsection{Specific Objectives}
@@ -96,125 +42,51 @@ Address the following: Given your research challenge or opportunity, how do you 
 %  \begin{comment} ... \end{comment} is used for multiple lines of comment
 %
 
-This subsection is an elaboration of the general objective.  
-It states the specific steps that must be undertaken to accomplish the general objective.  
-These objectives must be \textbf{S}pecific, \textbf{M}easurable, \textbf{A}ttainable, \textbf{R}ealistic, \textbf{T}ime-bounded. Also, they are manageable and communicable.  
+Specifically, this study aims to develop a system that can:
 
-A specific objective start with ``to $<$verb$>$'' for example: to design/survey/review/analyze.
-
-Studying a particular programming language or development tool (e.g., to study Windows/Object-Oriented/Graphics/C++ programming) to  accomplish the general objective is inherent in all thesis and, therefore, must not be included here.
-
-
-\begin{comment}
-% IPR acknowledgement: the following sentences and examples are from Ethel Ong's slides 
-%     on Research Objectives
-How to formulate your research objectives:
-1. Identify what research steps do you need to perform to achieve your general objective.
-2. Identify the questions that must be answered for you to achieve your general objective.
-    Thereafter, convert these questions into action statements
-
-Example #1:
-
-Research Question:
-  What are the general features of a web-based learning environment?
-
-Specific Objective:
-   To review existing web-based learning environment that teaches language learning for children
-
-
-Example #2:
-
-Research Question:
-   How will you represent commonsense knowledge for use by computer systems?
-
-Specific Objective:
-   To identify knowledge representation approaches used by existing story generation systems
-
-Example #3:
-Research Question:
-   What types of storytelling knowledge are needed to generate stories?
-
-Specific Objective:
-    To identify the different types of storytelling knowledge used in generating stories
-
-Example #4:
-Research Question:
-    What machine learning approaches will you utilize?
-
-Specific Objective:
-    To determine existing machine learning algorithms [that can be used in training the computer system to detect cyberbullying cases] 
-
-Example #5: Research Question:
-    How will your research output be evaluated?
-
-Specific Objective:
-    To define evaluation metrics for validating the accuracy of the translation
-
-\end{comment}
-
-%
-%  The following are example specific objectives; replace them with your own 
-%
 
 \begin{enumerate}
-   \item To compare and contrast existing algorithms (on what problem?);
-   \item To develop a new algorithm (for what purpose?)
-   \item To analyze the algorithm (based on what criteria?)
+   \item Predict weekly dengue cases using climate variables such as temperature, rainfall, and relative humidity, along with historical dengue case data.
+   \item Compare the performance of LSTM-based deep learning models with traditional forecasting methods, including ARIMA and the mathematical model Kalman Filtering.
+   \item Generate automated alerts for local government units (LGUs) and public health agencies to enhance preparedness and resource allocation.
+   \item Provide a user-friendly interface that displays forecasted dengue trends and outbreak hotspots for better decision-making by public health stakeholders.
 \end{enumerate}
 
 
 \section{Scope and Limitations of the Research}
 \label{sec:scopelimitations}
 
-This section discusses the boundaries (with respect to the objectives) of the research and the constraints within 
-which the research will be developed.
-
-\begin{comment}
-
-%
-% IPR acknowledgement: the sentences inside this comment are from Ethel Ong's slides on Scope and Limitations of the Research
-%
-Generally, one paragraph should be allotted for each of your research objectives.
-
-Each paragraph contains a brief overview of the concept/theory and the purpose of doing the associated objective.
-
-Each paragraph also includes a description of the scope/limitation of your study.
-
-* Please refer to the slides for examples.
-
-\end{comment}
+This study aimed to develop an AI-based dengue forecasting and monitoring system specifically designed for Iloilo City. The system focuses on two major features: dengue case prediction and risk area identification. The dengue case prediction feature utilizes climate variables—such as temperature, rainfall, and relative humidity—along with historical dengue case data to forecast monthly dengue cases. The results will be displayed in a user-friendly interface, providing public health officials with actionable insights to enhance outbreak management and resource allocation.
+However, this study has several limitations. The accuracy of the dengue case predictions heavily relies on the quality and completeness of the input data. Inconsistent or incomplete historical data may lead to reduced prediction accuracy. Additionally, the model’s performance may fluctuate based on variations in climate patterns, which are not always predictable.
+The model utilizes advanced machine learning techniques, but it cannot account for all factors influencing dengue transmissions, such as socio-economic conditions or public health interventions, which may further impact case dynamics.
+Finally, the dataset used for training the predictive models has not undergone peer review but has been validated by local public health experts to ensure its relevance and accuracy for the study's context. As a result, the findings should be interpreted with caution, and ongoing validation and adjustments may be necessary to enhance the model's robustness and applicability in real-world settings.
 
 
 \section{Significance of the Research}
 \label{sec:significance}
 
-This section explains why research must be done in this area.
- It rationalizes the objective of the research with that of the stated problem. 
- Avoid including sentences such as ``This research will be beneficial to the proponent/department/college'' as this is already an inherent requirement of all BSCS majors.  Focus on the research's contribution to the Computer Science field.
+This study’s development of an AI-based dengue forecasting and monitoring system has wide-reaching significance for various stakeholders in Iloilo City:
 
-The following are guide questions that may help your formulate the significance of your research. 
-
-
-%
-% IPR acknowledgement: the following list of items are from Ethel Ong's slides on Significance of the Research
-%
 \begin{itemize}
-\item  What is the relevance of your work to the computer science community? 
+\item  Public Health Agencies: Organizations like the Department of Health (DOH) and local health units in Iloilo City and Province stand to benefit greatly from the system. With dengue predictions, we can help these agencies optimize their response strategies and implement targeted prevention measures in high-risk areas before cases escalate.
+\end{itemize}
 
 \begin{itemize} 
-\item What will be your technical contributions, in terms of algorithms, or approaches, or new domain? 
-\item What is your value-added compared to existing systems? 
+\item Local Government Units (LGUs): LGUs can use the system to support their disaster management and health initiatives by proactively addressing dengue outbreaks. The predictive insights allow for more efficient planning and resource deployment in barangays and communities most vulnerable to outbreaks, improving overall public health outcomes.
 \end{itemize}
 
-\item What will be your contributions to society in general? 
-    \begin{itemize}
-      \item Who will benefit from your system? 
-      \item Who are your target users and how will this system benefit them? 
-   \end{itemize}
+
+\begin{itemize} 
+\item Healthcare Facilities: Hospitals and clinics, which currently face high bed occupancy rates during dengue season will benefit from early outbreak forecasts that can help in managing patient inflow and ensuring adequate hospital capacity. 
+ \end{itemize}
+
+
+\begin{itemize} 
+\item Researchers and Policymakers: This AI-driven approach contributes valuable insights for researchers studying infectious disease patterns and policymakers focused on strengthening the national AI Roadmap. The system's data can support broader initiatives for sustainable health infrastructure and inform policy decisions on resource allocation for dengue control.
 \end{itemize}
 
-\begin{comment}
-If applicable, describe possible commercialization and/or innovation in your research.
-\end{comment}
 
+\begin{itemize} 
+\item Community Members: By reducing the frequency and severity of outbreaks, this study ultimately benefits the community at large. This allows for timely awareness campaigns and community engagement initiatives, empowering residents with knowledge and preventative measures to protect themselves and reduce the spread of dengue.
+\end{itemize}
 
