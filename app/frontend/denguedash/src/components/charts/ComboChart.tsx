@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   ComposedChart,
 } from "recharts";
-import { ComboCountDeaths } from "@/interfaces/charts/charts.interface";
+import { ComboCountDeaths } from "@interfaces/dashboard/dashboard.interface";
 import { useEffect, useState } from "react";
 import fetchService from "@/services/fetch.service";
 

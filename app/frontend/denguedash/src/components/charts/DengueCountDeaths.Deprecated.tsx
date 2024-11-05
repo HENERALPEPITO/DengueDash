@@ -1,6 +1,6 @@
 "use client";
 
-import { ComboCountDeaths } from "@interfaces/charts/charts.interface";
+import { ComboCountDeaths } from "@interfaces/dashboard/dashboard.interface";
 import fetchService from "@/services/fetch.service";
 import { useEffect, useState, useRef } from "react";
 import Chart, { ChartOptions, ChartData } from "chart.js/auto";
