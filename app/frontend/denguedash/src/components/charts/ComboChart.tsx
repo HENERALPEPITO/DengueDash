@@ -90,7 +90,7 @@ export default function ComboChart() {
           />
           <Line
             yAxisId="right"
-            type="monotone"
+            type="linear"
             dataKey="death_count"
             stroke="#ff6384"
             name="Deaths"
