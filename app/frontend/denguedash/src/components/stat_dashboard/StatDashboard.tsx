@@ -62,7 +62,7 @@ export default function StatDashboard() {
           <div className="border border-grey rounded-lg ">
             <ChartHeader
               title={"Number of Dengue Cases in Iloilo City"}
-              date={"As of October 19, 2024"}
+              date={"October 19, 2024"}
             />
             <DengueCountDeaths height={"328px"} />
           </div>
@@ -71,7 +71,7 @@ export default function StatDashboard() {
             <div className="border border-grey rounded-lg flex-1">
               <ChartHeader
                 title={"Number of Dengue Cases in Iloilo City"}
-                date={"As of October 19, 2024"}
+                date={"October 19, 2024"}
               />
               <ChoroplethMap dengueData={barangayData} />
             </div>
@@ -80,7 +80,7 @@ export default function StatDashboard() {
               <div className="border border-grey rounded-lg">
                 <ChartHeader
                   title={"Top Barangays with most Dengue Cases"}
-                  date={"As of October 19, 2024"}
+                  date={"October 19, 2024"}
                 />
                 <SimpleBarChart
                   height="328px"
@@ -93,7 +93,7 @@ export default function StatDashboard() {
               <div className="border border-grey rounded-lg">
                 <ChartHeader
                   title={"Top Barangays with most Mortality Cases"}
-                  date={"As of October 19, 2024"}
+                  date={"October 19, 2024"}
                 />
                 <SimpleBarChart
                   height="328px"
