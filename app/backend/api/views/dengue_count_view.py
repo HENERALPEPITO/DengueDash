@@ -2,11 +2,51 @@ from django.db.models import Count, Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
+from datetime import datetime
 from api.models.case import Case
 from api.serializers.dengue_count_serializer import (
+    CurrentDengueCountSerializer,
     MapDengueCountSerializer,
     YearlyDengueCountSerializer,
 )
+
+
+class CurrentDengueCountView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        current_year = datetime.now().year
+        current_week = datetime.now().isocalendar()[1]
+
+        total_cases = Case.objects.filter(
+            date_con__year=current_year,
+        ).count()
+
+        total_deaths = Case.objects.filter(
+            outcome="D",
+            date_con__year=current_year,
+        ).count()
+
+        weekly_cases = Case.objects.filter(
+            date_con__year=current_year,
+            date_con__week=current_week,
+        ).count()
+
+        weekly_deaths = Case.objects.filter(
+            outcome="D",
+            date_con__year=current_year,
+            date_con__week=current_week,
+        ).count()
+
+        data = {
+            "total_cases": total_cases,
+            "total_deaths": total_deaths,
+            "weekly_cases": weekly_cases,
+            "weekly_deaths": weekly_deaths,
+        }
+
+        serializer = CurrentDengueCountSerializer(data, many=False)
+        return Response(serializer.data)
 
 
 class BarangayCountView(APIView):
