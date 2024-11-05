@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { MapContainer, GeoJSON } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import { Layer, LeafletEventHandlerFn } from "leaflet";
 import geoJsonData from "@assets/geojsons/iloilo_barangays_random.json";
 import { BarangayData } from "@/interfaces/map/map.interface";
-import fetchService from "@/services/fetch.service";
 
 interface GeoJSONFeature {
   properties: {
@@ -15,25 +13,12 @@ interface GeoJSONFeature {
   };
 }
 
-export default function ChoroplethMap() {
+type ChoroplethMapProps = {
+  dengueData: BarangayData[];
+};
+
+export default function ChoroplethMap({ dengueData }: ChoroplethMapProps) {
   const geoJson: GeoJsonObject = geoJsonData as GeoJsonObject;
-  const [dengueData, setDengueData] = useState<BarangayData[]>([]);
-  const [dataLoaded, setDataLoaded] = useState(false);
-
-  useEffect(() => {
-    fetchBarangayData();
-  }, []);
-
-  const fetchBarangayData = async () => {
-    try {
-      const response: BarangayData[] =
-        await fetchService.getDengueCountPerBarangay();
-      setDengueData(response);
-      setDataLoaded(true);
-    } catch (error) {
-      console.error("Failed to fetch barangay data:", error);
-    }
-  };
 
   const getBarangayCaseCount = (barangayName: string): number => {
     const barangayData = dengueData.find(
@@ -119,14 +104,12 @@ export default function ChoroplethMap() {
       keyboard={false}
       zoomControl={false}
     >
-      {dataLoaded && (
-        <GeoJSON
-          key={JSON.stringify(dengueData)} // Force re-render when dengueData changes
-          data={geoJson}
-          style={geoStyler}
-          onEachFeature={mapOnEachFeature}
-        />
-      )}
+      <GeoJSON
+        key={JSON.stringify(dengueData)}
+        data={geoJson}
+        style={geoStyler}
+        onEachFeature={mapOnEachFeature}
+      />
     </MapContainer>
   );
 }
