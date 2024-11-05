@@ -1,12 +1,12 @@
 "use client";
 
-import DengueCountDeaths from "../charts/DengueCountDeaths";
 import ChartHeader from "./ChartHeader";
 import { BarangayData } from "@/interfaces/map/map.interface";
 import fetchService from "@/services/fetch.service";
 import { useEffect, useMemo, useState } from "react";
-import ChoroplethMap from "../map/ChoroplethMap";
-import SimpleBarChart from "../charts/SimpleBarChart";
+import ChoroplethMap from "@components/map/ChoroplethMap";
+import ComboChart from "@components/charts/ComboChart";
+import BarChart from "../charts/BarChart";
 
 const transformData = (data: any, labelKey: string, valueKey: string) => {
   return data.map((item: { [key: string]: any }) => ({
@@ -64,7 +64,7 @@ export default function StatDashboard() {
               title={"Number of Dengue Cases in Iloilo City"}
               date={"October 19, 2024"}
             />
-            <DengueCountDeaths height={"328px"} />
+            <ComboChart />
           </div>
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Choropleth Map */}
@@ -82,12 +82,18 @@ export default function StatDashboard() {
                   title={"Top Barangays with most Dengue Cases"}
                   date={"October 19, 2024"}
                 />
-                <SimpleBarChart
+                {/* <SimpleBarChart
                   height="328px"
                   data={topBarangays}
                   yLabel="Cases"
                   backgroundColor="#3182CE"
                   displayLegend={false}
+                /> */}
+                <BarChart
+                  cardHeight="328px"
+                  data={topBarangays}
+                  yLabel="Cases"
+                  barColor="#3182CE"
                 />
               </div>
               <div className="border border-grey rounded-lg">
@@ -95,12 +101,18 @@ export default function StatDashboard() {
                   title={"Top Barangays with most Mortality Cases"}
                   date={"October 19, 2024"}
                 />
-                <SimpleBarChart
+                {/* <SimpleBarChart
                   height="328px"
                   data={topBarangaysDeaths}
                   yLabel="Death Cases"
                   backgroundColor="#ee2d60"
                   displayLegend={false}
+                /> */}
+                <BarChart
+                  cardHeight="328px"
+                  data={topBarangaysDeaths}
+                  yLabel="Death Cases"
+                  barColor="#ee2d60"
                 />
               </div>
             </div>
