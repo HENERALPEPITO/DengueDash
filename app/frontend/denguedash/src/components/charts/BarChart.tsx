@@ -51,7 +51,6 @@ export default function BarChart({
             label={{
               value: `No. of ${yLabel}`,
               angle: -90,
-              //   offset: -10,
               dx: -20,
               style: { fontSize: 12, fill: "#64748b" },
             }}
