@@ -26,9 +26,9 @@ urlpatterns = [
     path("case/create/", PatientCaseView.as_view(), name="create-case"),
     path("dengue-case-reports", CaseReportView.as_view(), name="case-reports"),
     path(
-        "current-dengue-count",
+        "current-case-count",
         CurrentDengueCountView.as_view(),
-        name="current-dengue-count",
+        name="current-case-count",
     ),
     path("cases-per-barangay", BarangayCountView.as_view(), name="cases-per-barangay"),
     path("cases-per-year", YearlyDengueCountStatView.as_view(), name="cases-per-year"),
