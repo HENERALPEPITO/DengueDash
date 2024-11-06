@@ -4,11 +4,11 @@ import ChartHeader from "./ChartHeader";
 import { BarangayData } from "@/interfaces/map/map.interface";
 import fetchService from "@/services/fetch.service";
 import { useEffect, useMemo, useState } from "react";
+import ChoroplethMap from "@components/map/ChoroplethMap";
 import ComboChart from "@components/charts/ComboChart";
 import BarChart from "@components/charts/BarChart";
 import StatCard from "./StatCard";
 import { CurrentCaseCount } from "@/interfaces/dashboard/dashboard.interface";
-import ChoroplethMapWrapper from "../map/ChoroplethMapWrapper";
 
 const transformData = (data: any, labelKey: string, valueKey: string) => {
   return data.map((item: { [key: string]: any }) => ({
@@ -109,7 +109,7 @@ export default function StatDashboard() {
                 title={"Number of Dengue Cases in Iloilo City"}
                 date={"October 19, 2024"}
               />
-              <ChoroplethMapWrapper dengueData={barangayData} />
+              <ChoroplethMap dengueData={barangayData} />
             </div>
             {/* Right Side */}
             <div className="flex flex-col flex-1 gap-3">
