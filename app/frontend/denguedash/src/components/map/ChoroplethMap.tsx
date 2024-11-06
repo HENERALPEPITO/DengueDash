@@ -13,7 +13,7 @@ interface GeoJSONFeature {
   };
 }
 
-type ChoroplethMapProps = {
+export type ChoroplethMapProps = {
   dengueData: BarangayData[];
 };
 
