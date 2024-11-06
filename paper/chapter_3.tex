@@ -1,64 +1,110 @@
 %   Filename    : chapter_4.tex 
 \chapter{Research Methodology}
-This chapter lists and discusses the specific steps and activities that will be performed  to accomplish the project. 
+This chapter lists and discusses the specific steps and activities that will be performed to accomplish the project. 
 The discussion covers the activities from pre-proposal to Final SP Writing.
 
 \section{Research Activities}
 Research activities include inquiry, survey, research, brainstorming, canvassing, consultation, review, interview, observe, experiment, design, test, document, etc.  
-Be sure that for each method, process, or algorithm used, there is a justification why that method was chosen.
-The methodology also includes the following information:
+For each method, process, or algorithm used, there is a justification as to why that method was chosen.
 
+\subsection{Development Framework (Waterfall)}
+The Waterfall model is used to systematically approach the project development.
+
+\subsection{Development Tools}
+\subsubsection{Software}
+
+\textbf{GitHub} \\
+GitHub is a cloud-based platform that uses Git, an open-source version control system, to track file changes (GitHub Docs, n.d.). According to Sewers (2023), it is the most popular collaboration tool with over 100 million users and 420 million repositories. It stores source code, manages system versions, and serves as a repository for LaTeX files used in this research.
+
+\textbf{Visual Studio Code} \\
+Visual Studio Code (VS Code) is a lightweight, cross-platform source code editor developed by Microsoft (2021). Although not a full IDE, it supports features such as syntax highlighting, code completion, and debugging. Due to its support for various programming languages, it is chosen as the primary code editor.
+
+\textbf{Django} \\
+Django is a free, open-source Python-based web framework that facilitates secure web application development by abstracting complexities (MDN Web Docs, 2024). It adheres to the Model-View-Template (MVT) architecture, providing a clean codebase by separating data models, business logic, and presentation layers.
+
+\textbf{Next.js} \\
+Statista (2024) claims React is the most popular front-end framework, but it has limitations like routing and performance optimizations. Next.js, built on React, addresses these limitations, enhancing the development experience through features such as hot module replacement, TypeScript support, and a rich plugin ecosystem.
+
+\textbf{Postman} \\
+Postman is a freemium API platform that provides a user-friendly interface to create and manage API requests (Postman API Platform, n.d.).
+
+\subsection{Hardware}
+The application development is carried out on laptops with at least an 11th-gen Intel i5 CPU and 16GB RAM.
+
+\subsubsection{Packages}
+\textbf{Django Rest Framework} \\
+Django Rest Framework (DRF) is a third-party package for Django that simplifies the development of robust Web APIs by providing features such as Serialization, Authentication, and a Browsable API (Christie, n.d.).
+
+\textbf{Leaflet} \\
+The application includes a Choropleth Map to display case counts, utilizing Leaflet—an open-source JavaScript package known for its performance and usability.
+
+\textbf{Chart.js} \\
+Chart.js provides data storytelling through various chart types. It is open-source and highly customizable, leveraging HTML5's canvas for compatibility across modern browsers.
+
+\textbf{Tailwind CSS} \\
+Tailwind CSS offers utility classes for creating custom designs directly in HTML (Tailwind CSS Docs, n.d.), making it an efficient choice for this project.
+
+\textbf{Shadcn} \\
+Shadcn offers open-source UI boilerplate components compatible with modern frameworks like Next.js, enhancing flexibility and customizability.
+
+\section{Model and Algorithm}
+\textbf{Data Preprocessing and Feature Selection:}
 \begin{itemize}
-   \item who is responsible for the task
-   \item the resource person to be contacted
-   \item what will be done
-   \item when and how long will the activity be done
-   \item where will it be done
-   \item why should be activity be done
+	\item Clean and preprocess the dataset, handling missing values and outliers.
+	\item Select important features such as temperature, rainfall, and humidity.
 \end{itemize}
 
-\textcolor{red}{DO NOT FORGET to cite your references.}
+\textbf{Model Selection and Justification:}
+\begin{itemize}
+	\item Train an LSTM model due to its efficiency in handling long-term data relationships.
+	\item Compare performance with ARIMA, SARIMA, and Kalman Filter.
+\end{itemize}
+
+\textbf{Seasonal ARIMA (SARIMA):}
+\begin{itemize}
+	\item Set seasonal parameters based on observed seasonality in cases.
+	\item Apply SARIMA to capture short-term and seasonal trends.
+\end{itemize}
+
+\textbf{Kalman Filter:}
+\begin{itemize}
+	\item Use Kalman Filter for real-time updates and handle missing values dynamically.
+\end{itemize}
+
+\textbf{LSTM (Long Short-Term Memory) Neural Network:}
+\begin{itemize}
+	\item Build a sequential LSTM model with tuned hyperparameters.
+\end{itemize}
+
+\textbf{Model Evaluation:}
+\begin{itemize}
+	\item Evaluate performance with Mean Absolute Error (MAE), RMSE, and R-squared metrics.
+\end{itemize}
 
 \section{Calendar of Activities}
 
-A Gantt chart showing the schedule of the activities should be included as a table. For example:
+A Gantt chart showing the schedule of the activities is included below. Each bullet represents approximately one week of activity.
 
-Table \ref{tab:timetableactivities} shows a Gantt chart of the activities.  Each bullet represents approximately
-one week worth of activity.
-
-%
-%  the following commands will be used for filling up the bullets in the Gantt chart
-%
 \newcommand{\weekone}{\textbullet}
 \newcommand{\weektwo}{\textbullet \textbullet}
 \newcommand{\weekthree}{\textbullet \textbullet \textbullet}
 \newcommand{\weekfour}{\textbullet \textbullet \textbullet \textbullet}
 
-%
-%  alternative to bullet is a star 
-%
-\begin{comment}
-   \newcommand{\weekone}{$\star$}
-   \newcommand{\weektwo}{$\star \star$}
-   \newcommand{\weekthree}{$\star \star \star$}
-   \newcommand{\weekfour}{$\star \star \star \star$ }
-\end{comment}
-
-
-
-\begin{table}[ht]   %t means place on top, replace with b if you want to place at the bottom
-\centering
-\caption{Timetable of Activities} \vspace{0.25em}
-\begin{tabular}{|p{2in}|c|c|c|c|c|c|c|c|} \hline
-\centering Activities (2009) & Jan   & Feb & Mar & Apr & May & Jun & Jul \\ \hline
-Study on Prerequisite Knowledge      &   &  & ~~~\weektwo & \weekfour &  &  &  \\ \hline
-Review of Existing Racing Strategies & ~~~\weektwo  & \weekfour & \weekfour & \weekfour &  &  &  \\ \hline
-Identification of Best Features      &   &  &  & \weekfour & \weektwo~~~ &  &  \\ \hline
-Development of Racing Strategies     &   &  &  & ~~~\weektwo & \weekfour & \weektwo~~~ &  \\ \hline
-Simulation of Racing Strategies      &   &  &  & ~~~\weektwo & \weekfour & \weekthree~~ &  \\ \hline
-Analysis and Interpretation of the Results &   &  &  &  & \weekfour & \weekfour & \weekone~~~~~ \\ \hline
-Documentation & ~~~\weektwo  & \weekfour & \weekfour & \weekfour & \weekfour & \weekfour & \weektwo~~~ \\ \hline
-\end{tabular}
-\label{tab:timetableactivities}
+\begin{table}[ht]
+	\centering
+	\caption{Timetable of Activities} \vspace{0.25em}
+	\begin{tabular}{|p{2in}|c|c|c|c|c|c|c|c|} \hline
+		Activities (2024) & Aug & Sept & Oct & Nov & Dec \\ \hline
+		Project Initiation and Team Formation & \weektwo & & & & \\ \hline
+		Literature Review and Data Gathering & \weektwo & \weekfour & & & \\ \hline
+		Data Cleaning and Feature Selection & & \weektwo & & \weekone & \\ \hline
+		
+		
+		Creating System Dashboard & & \weekone & \weektwo & \weekone & \\ \hline
+		Analysis and Interpretation of Results & & & \weekone & & \\ \hline
+		Documentation & & \weekone & \weekfour & \weekone & \\ \hline
+	\end{tabular}
+	\label{tab:timetableactivities}
 \end{table}
 
+\end{document}
