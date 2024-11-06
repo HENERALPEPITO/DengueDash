@@ -1,262 +1,147 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
-Fedkiw%
-, Stam%
-\BCBL {}\ \BBA {} Jensen%
-}{%
-Fedkiw%
+Ahmadini%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {2001}}%
-}]{%
-fedkiw:2001:VSO}
-\APACinsertmetastar {%
-fedkiw:2001:VSO}%
-\begin{APACrefauthors}%
-Fedkiw, R.%
-, Stam, J.%
-\BCBL {}\ \BBA {} Jensen, H\BPBI W.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2001}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Visual Simulation of Smoke} {Visual simulation of
-  smoke}.{\BBCQ}
-\newblock
-\BIn{} E.~Fiume\ (\BED), \APACrefbtitle {Proceedings of SIGGRAPH 2001}
-  {Proceedings of siggraph 2001}\ (\BPGS\ 15--22).
-\newblock
-\APACaddressPublisher{}{ACM Press / ACM SIGGRAPH}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Jobson%
-, Rahman%
-\BCBL {}\ \BBA {} Woodell%
-}{%
-Jobson%
+Ahmadini%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {1995}}%
+{\protect \APACyear {2021}}%
 }]{%
-Jobs95}
+ahmadini2021analysis}
 \APACinsertmetastar {%
-Jobs95}%
+ahmadini2021analysis}%
 \begin{APACrefauthors}%
-Jobson, D\BPBI J.%
-, Rahman, Z.%
-\BCBL {}\ \BBA {} Woodell, G\BPBI A.%
+Ahmadini, A\BPBI A\BPBI H.%
+, Naeem, M.%
+, Aamir, M.%
+, Dewan, R.%
+, Alshqaq, S\BPBI S\BPBI A.%
+\BCBL {}\ \BBA {} Mashwani, W\BPBI K.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{1995}{}{}.
+\APACrefYearMonthDay{2021}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {Retinex image processing: Improved fidelity to direct
-  visual observation} {Retinex image processing: Improved fidelity to direct
-  visual observation}.{\BBCQ}
+{\BBOQ}\APACrefatitle {Analysis and forecast of the number of deaths, recovered
+  cases, and confirmed cases from COVID-19 for the top four affected countries
+  using Kalman filter} {Analysis and forecast of the number of deaths,
+  recovered cases, and confirmed cases from covid-19 for the top four affected
+  countries using kalman filter}.{\BBCQ}
 \newblock
-\BIn{} \APACrefbtitle {Proceedings of the IS\&T Fourth Color Imaging
-  Conference: Color Science, Systems, and Applications} {Proceedings of the
-  is\&t fourth color imaging conference: Color science, systems, and
-  applications}\ (\BVOL~4, \BPGS\ 124--125).
+\APACjournalVolNumPages{Frontiers in Physics}{9}{}{629320}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Kartch%
+Arroyo-Marioli%
+, Bullano%
+, Kucinskas%
+\BCBL {}\ \BBA {} Rond{\'o}n-Moreno%
 }{%
-Kartch%
-}{%
-{\protect \APACyear {2000}}%
-}]{%
-kartch:2000:ERA}
-\APACinsertmetastar {%
-kartch:2000:ERA}%
-\begin{APACrefauthors}%
-Kartch, D.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYear{2000}.
-\unskip\
-\newblock
-\APACrefbtitle {Efficient Rendering and Compression for Full-Parallax
-  Computer-Generated Holographic Stereograms} {Efficient rendering and
-  compression for full-parallax computer-generated holographic stereograms}\
-  \APACtypeAddressSchool {\BUPhD}{}{}.
-\unskip\
-\newblock
-\APACaddressSchool {}{Cornell University}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Levoy%
+Arroyo-Marioli%
 \ \protect \BOthers {.}}{%
-Levoy%
+{\protect \APACyear {2021}}%
+}]{%
+arroyo2021tracking}
+\APACinsertmetastar {%
+arroyo2021tracking}%
+\begin{APACrefauthors}%
+Arroyo-Marioli, F.%
+, Bullano, F.%
+, Kucinskas, S.%
+\BCBL {}\ \BBA {} Rond{\'o}n-Moreno, C.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2021}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Tracking R of COVID-19: A new real-time estimation using
+  the Kalman filter} {Tracking r of covid-19: A new real-time estimation using
+  the kalman filter}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{PloS one}{16}{1}{e0244474}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Li%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {2000}}%
-}]{%
-levoy:2000:TDM}
-\APACinsertmetastar {%
-levoy:2000:TDM}%
-\begin{APACrefauthors}%
-Levoy, M.%
-, Pulli, K.%
-, Curless, B.%
-, Rusinkiewicz, S.%
-, Koller, D.%
-, Pereira, L.%
-\BDBL {}Fulk, D.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2000}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {The Digital Michelangelo Project} {The digital
-  michelangelo project}.{\BBCQ}
-\newblock
-\BIn{} K.~Akeley\ (\BED), \APACrefbtitle {Proceedings of SIGGRAPH 2000}
-  {Proceedings of siggraph 2000}\ (\BPGS\ 131--144).
-\newblock
-\APACaddressPublisher{New York}{ACM Press / ACM SIGGRAPH}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Park%
-, Linsen%
-, Kreylos%
-, Owens%
-\BCBL {}\ \BBA {} Hamann%
-}{%
-Park%
+Li%
 \ \protect \BOthers {.}}{%
-{\protect \APACyear {2006}}%
+{\protect \APACyear {2022}}%
 }]{%
-Park:2006:DSI}
+li2022applications}
 \APACinsertmetastar {%
-Park:2006:DSI}%
+li2022applications}%
 \begin{APACrefauthors}%
-Park, S\BPBI W.%
-, Linsen, L.%
-, Kreylos, O.%
-, Owens, J\BPBI D.%
-\BCBL {}\ \BBA {} Hamann, B.%
+Li, X.%
+, Feng, S.%
+, Hou, N.%
+, Li, H.%
+, Zhang, S.%
+, Jian, Z.%
+\BCBL {}\ \BBA {} Zi, Q.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{2006}{{\APACmonth{03}}\slash {\APACmonth{04}}}{}.
+\APACrefYearMonthDay{2022}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {Discrete Sibson interpolation} {Discrete sibson
-  interpolation}.{\BBCQ}
+{\BBOQ}\APACrefatitle {Applications of Kalman filtering in time series
+  prediction} {Applications of kalman filtering in time series
+  prediction}.{\BBCQ}
 \newblock
-\APACjournalVolNumPages{IEEE Transactions on Visualization and Computer
-  Graphics}{12}{2}{243--253}.
+\BIn{} \APACrefbtitle {International Conference on Intelligent Robotics and
+  Applications} {International conference on intelligent robotics and
+  applications}\ (\BPGS\ 520--531).
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Parke%
-\ \BBA {} Waters%
+Ligue%
+\ \BBA {} Ligue%
 }{%
-Parke%
-\ \BBA {} Waters%
+Ligue%
+\ \BBA {} Ligue%
 }{%
-{\protect \APACyear {1996}}%
+{\protect \APACyear {2022}}%
 }]{%
-parke:1996:CFA}
+ligue2022deep}
 \APACinsertmetastar {%
-parke:1996:CFA}%
+ligue2022deep}%
 \begin{APACrefauthors}%
-Parke, F\BPBI I.%
-\BCBT {}\ \BBA {} Waters, K.%
+Ligue, K\BPBI D\BPBI B.%
+\BCBT {}\ \BBA {} Ligue, K\BPBI J\BPBI B.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYear{1996}.
+\APACrefYearMonthDay{2022}{}{}.
 \newblock
-\APACrefbtitle {Computer Facial Animation} {Computer facial animation}.
+{\BBOQ}\APACrefatitle {Deep Learning Approach to Forecasting Dengue Cases in
+  Davao City Using Long Short-term Memory (LSTM).} {Deep learning approach to
+  forecasting dengue cases in davao city using long short-term memory
+  (lstm).}{\BBCQ}
 \newblock
-\APACaddressPublisher{}{A. K. Peters}.
+\APACjournalVolNumPages{Philippine Journal of Science}{151}{3}{}.
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Pellacini%
-\ \protect \BOthers {.}}{%
-Pellacini%
-\ \protect \BOthers {.}}{%
-{\protect \APACyear {2005}}%
+RabDashDC%
+}{%
+RabDashDC%
+}{%
+{\protect \APACyear {2024}}%
 }]{%
-Pellacini:2005:LAH}
+rabdash}
 \APACinsertmetastar {%
-Pellacini:2005:LAH}%
+rabdash}%
 \begin{APACrefauthors}%
-Pellacini, F.%
-, Vidim{\v{c}}e, K.%
-, Lefohn, A.%
-, Mohr, A.%
-, Leone, M.%
-\BCBL {}\ \BBA {} Warren, J.%
+RabDashDC.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{2005}{{\APACmonth{08}}}{}.
+\APACrefYearMonthDay{2024}{}{}.
 \newblock
-{\BBOQ}\APACrefatitle {Lpics: a Hybrid Hardware-Accelerated Relighting Engine
-  for Computer Cinematography} {Lpics: a hybrid hardware-accelerated relighting
-  engine for computer cinematography}.{\BBCQ}
+\APACrefbtitle {RabDash DC.} {Rabdash dc.}
 \newblock
-\APACjournalVolNumPages{ACM Transactions on Graphics}{24}{3}{464--470}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Sako%
-\ \BBA {} Fujimura%
-}{%
-Sako%
-\ \BBA {} Fujimura%
-}{%
-{\protect \APACyear {2000}}%
-}]{%
-sako:2001:SSB}
-\APACinsertmetastar {%
-sako:2001:SSB}%
-\begin{APACrefauthors}%
-Sako, Y.%
-\BCBT {}\ \BBA {} Fujimura, K.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2000}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Shape Similarity by Homotropic Deformation} {Shape
-  similarity by homotropic deformation}.{\BBCQ}
-\newblock
-\APACjournalVolNumPages{The Visual Computer}{16}{1}{47--61}.
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
-Yee%
-}{%
-Yee%
-}{%
-{\protect \APACyear {2000}}%
-}]{%
-yee:2000:SSA}
-\APACinsertmetastar {%
-yee:2000:SSA}%
-\begin{APACrefauthors}%
-Yee, Y\BPBI L\BPBI H.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYear{2000}.
-\unskip\
-\newblock
-\APACrefbtitle {Spatiotemporal sensistivity and visual attention for efficient
-  rendering of dynamic environments} {Spatiotemporal sensistivity and visual
-  attention for efficient rendering of dynamic environments}\
-  \APACtypeAddressSchool {\BUMTh}{}{}.
-\unskip\
-\newblock
-\APACaddressSchool {}{Cornell University}.
+\begin{APACrefURL} [{Use the date of access}]\url{https://rabdash.com}
+  \end{APACrefURL}
 \PrintBackRefs{\CurrentBib}
 
 \end{thebibliography}
