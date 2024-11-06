@@ -62,6 +62,97 @@ Arroyo-Marioli, F.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Cheong%
+, Burkart%
+, Leit{\~a}o%
+\BCBL {}\ \BBA {} Lakes%
+}{%
+Cheong%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2013}}%
+}]{%
+cheong2013assessing}
+\APACinsertmetastar {%
+cheong2013assessing}%
+\begin{APACrefauthors}%
+Cheong, Y\BPBI L.%
+, Burkart, K.%
+, Leit{\~a}o, P\BPBI J.%
+\BCBL {}\ \BBA {} Lakes, T.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2013}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Assessing weather effects on dengue disease in Malaysia}
+  {Assessing weather effects on dengue disease in malaysia}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{International journal of environmental research and
+  public health}{10}{12}{6319--6334}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Col{\'o}n-Gonz{\'a}lez%
+, Fezzi%
+, Lake%
+\BCBL {}\ \BBA {} Hunter%
+}{%
+Col{\'o}n-Gonz{\'a}lez%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2013}}%
+}]{%
+colon2013effects}
+\APACinsertmetastar {%
+colon2013effects}%
+\begin{APACrefauthors}%
+Col{\'o}n-Gonz{\'a}lez, F\BPBI J.%
+, Fezzi, C.%
+, Lake, I\BPBI R.%
+\BCBL {}\ \BBA {} Hunter, P\BPBI R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2013}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {The effects of weather and climate change on dengue}
+  {The effects of weather and climate change on dengue}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{PLoS neglected tropical diseases}{7}{11}{e2503}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hii%
+, Zhu%
+, Ng%
+, Ng%
+\BCBL {}\ \BBA {} Rockl{\"o}v%
+}{%
+Hii%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2012}}%
+}]{%
+hii2012forecast}
+\APACinsertmetastar {%
+hii2012forecast}%
+\begin{APACrefauthors}%
+Hii, Y\BPBI L.%
+, Zhu, H.%
+, Ng, N.%
+, Ng, L\BPBI C.%
+\BCBL {}\ \BBA {} Rockl{\"o}v, J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Forecast of dengue incidence using temperature and
+  rainfall} {Forecast of dengue incidence using temperature and
+  rainfall}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{PLoS neglected tropical diseases}{6}{11}{e1908}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Li%
 \ \protect \BOthers {.}}{%
 Li%

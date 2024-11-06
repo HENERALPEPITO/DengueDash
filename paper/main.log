@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.8.31)  6 NOV 2024 09:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.8.31)  6 NOV 2024 10:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -486,6 +486,15 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
  (chapter_1.tex
 Chapter 1.
 
+LaTeX Warning: Citation `bosano2023who' undefined on input line 8.
+
+
+LaTeX Warning: Citation `WHO2024' undefined on input line 8.
+
+
+LaTeX Warning: Citation `lena2024' undefined on input line 10.
+
+
 
 [1
 
@@ -495,7 +504,7 @@ Chapter 1.
 [2]
 
 [3]
-Overfull \hbox (0.85988pt too wide) in paragraph at lines 71--72
+Overfull \hbox (0.85988pt too wide) in paragraph at lines 69--70
 []\OT1/cmr/m/n/12 Public Health Agen-cies: Or-ga-ni-za-tions like the De-part-m
 ent of Health (DOH)
  []
@@ -516,16 +525,42 @@ Chapter 2.
 
 ]
 
-[6])
+[6]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.63 \\ W
+         e will utilize weather data, including variables such as temperatur...
+
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `tbp') on input line 71.
+
+
+Overfull \hbox (1344.87888pt too wide) in paragraph at lines 72--81
+[][] 
+ []
+
+)
 
 [7]
+
+[8]
 \openout2 = `chapter_3.aux'.
 
  (chapter_3.tex
 Chapter 3.
 
 
-[8
+[9
 
 
 
@@ -542,21 +577,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 57--57
 
 )
 
-[9]
+[10]
 \openout2 = `chapter_4.aux'.
 
  (chapter_4.tex
 Chapter 4.
 )
 
-[10
+[11
 
 
 
 
 ] (main.bbl)
 
-[11
+[12
 
 
 
@@ -567,7 +602,7 @@ Chapter 4.
 Appendix A.
 )
 
-[12
+[13
 
 
 ]
@@ -577,7 +612,7 @@ Appendix A.
 Appendix B.
 )
 
-[13
+[14
 
 
 
@@ -588,12 +623,16 @@ Appendix B.
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-07-20>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
  ) 
 Here is how much of TeX's memory you used:
- 6905 strings out of 473899
- 113885 string characters out of 5719856
- 1938960 words of memory out of 5000000
- 29595 multiletter control sequences out of 15000+600000
+ 6921 strings out of 473899
+ 114138 string characters out of 5719856
+ 1939960 words of memory out of 5000000
+ 29611 multiletter control sequences out of 15000+600000
  566292 words of font info for 66 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  79i,10n,84p,1300b,319s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -609,9 +648,9 @@ Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Kurt Matthew
 <C:/Users/Kurt Matthew Amodia/AppData/Local/Programs/MiKTeX/fonts/type1/public/
 amsfonts/cm/cmti12.pfb><C:/Users/Kurt Matthew Amodia/AppData/Local/Programs/MiK
 TeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (19 pages, 133650 bytes).
+Output written on main.pdf (20 pages, 139840 bytes).
 PDF statistics:
- 109 PDF objects out of 1000 (max. 8388607)
+ 112 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
