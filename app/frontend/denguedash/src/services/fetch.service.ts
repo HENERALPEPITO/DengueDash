@@ -12,6 +12,16 @@ const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
   }
 };
 
+const getCurrentCaseCount = async () => {
+  try {
+    const response = await axiosOpen.get(`current-case-count`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching current case count:", error);
+    throw error;
+  }
+};
+
 const getDengueCountPerBarangay = async (year: number | null = null) => {
   try {
     const yearQuery = year ? `?year=${year}` : "";
@@ -37,6 +47,7 @@ const getYearlyDengueCount = async () => {
 
 const fetchService = {
   getDengueReports,
+  getCurrentCaseCount,
   getDengueCountPerBarangay,
   getYearlyDengueCount,
 };

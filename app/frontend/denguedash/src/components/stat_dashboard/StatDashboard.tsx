@@ -6,7 +6,10 @@ import fetchService from "@/services/fetch.service";
 import { useEffect, useMemo, useState } from "react";
 import ChoroplethMap from "@components/map/ChoroplethMap";
 import ComboChart from "@components/charts/ComboChart";
-import BarChart from "../charts/BarChart";
+import BarChart from "@components/charts/BarChart";
+import { Card } from "@/shadcn/components/ui/card";
+import StatCard from "./StatCard";
+import { CurrentCaseCount } from "@/interfaces/dashboard/dashboard.interface";
 
 const transformData = (data: any, labelKey: string, valueKey: string) => {
   return data.map((item: { [key: string]: any }) => ({
@@ -16,6 +19,7 @@ const transformData = (data: any, labelKey: string, valueKey: string) => {
 };
 
 export default function StatDashboard() {
+  const [caseData, setCaseData] = useState<CurrentCaseCount | null>(null);
   const [barangayData, setBarangayData] = useState<BarangayData[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const topBarangays = useMemo(() => {
@@ -40,6 +44,16 @@ export default function StatDashboard() {
     return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
   }, [barangayData]);
 
+  const fetchCurrentCaseCount = async () => {
+    try {
+      const response: CurrentCaseCount =
+        await fetchService.getCurrentCaseCount();
+      setCaseData(response);
+    } catch (error) {
+      console.error("Failed to fetch current case count:", error);
+    }
+  };
+
   const fetchBarangayData = async () => {
     try {
       const response: BarangayData[] =
@@ -52,6 +66,7 @@ export default function StatDashboard() {
   };
 
   useEffect(() => {
+    fetchCurrentCaseCount();
     fetchBarangayData();
   }, []);
 
@@ -59,6 +74,28 @@ export default function StatDashboard() {
     <div className="flex flex-col gap-3">
       {dataLoaded && (
         <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-2">
+            <StatCard
+              title={"Weekly Case"}
+              value={caseData?.weekly_cases.toString() || "0"}
+              icon={"fluent-emoji-high-contrast:mosquito"}
+            />
+            <StatCard
+              title={"Weekly Death"}
+              value={caseData?.weekly_deaths.toString() || "0"}
+              icon={"healthicons:death"}
+            />
+            <StatCard
+              title={"Cumulative Case"}
+              value={caseData?.total_cases.toString() || "0"}
+              icon={"healthicons:malaria-outbreak-outline"}
+            />
+            <StatCard
+              title={"Cumulative Death"}
+              value={caseData?.total_deaths.toString() || "0"}
+              icon={"healthicons:chart-death-rate-decreasing-outline"}
+            />
+          </div>
           <div className="border border-grey rounded-lg ">
             <ChartHeader
               title={"Number of Dengue Cases in Iloilo City"}
