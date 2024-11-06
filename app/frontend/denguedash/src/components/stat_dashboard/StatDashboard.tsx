@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import ChoroplethMap from "@components/map/ChoroplethMap";
 import ComboChart from "@components/charts/ComboChart";
 import BarChart from "@components/charts/BarChart";
-import { Card } from "@/shadcn/components/ui/card";
 import StatCard from "./StatCard";
 import { CurrentCaseCount } from "@/interfaces/dashboard/dashboard.interface";
 
