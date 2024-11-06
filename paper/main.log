@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.8.31)  6 NOV 2024 14:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.8.31)  6 NOV 2024 20:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -350,7 +350,8 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 LaTeX Warning: Unused global option(s):
     [onepage].
 
-(main.aux)
+(main.aux (title_page.aux) (abstract.aux) (chapter_1.aux) (chapter_2.aux)
+(chapter_3.aux))
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
@@ -432,14 +433,14 @@ LaTeX Info: Redefining \BHBI on input line 130.
 \openout2 = `abstract.aux'.
 
  (abstract.tex
-LaTeX Font Info:    Trying to load font information for U+msa on input line 17.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 16.
 
 
 (C:\Users\Kurt Matthew Amodia\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\
 umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 17.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 16.
 
 
 (C:\Users\Kurt Matthew Amodia\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\
@@ -501,7 +502,7 @@ LaTeX Warning: Citation `lena2024' undefined on input line 10.
 [2]
 
 [3]
-Overfull \hbox (0.85988pt too wide) in paragraph at lines 69--70
+Overfull \hbox (0.85988pt too wide) in paragraph at lines 68--69
 []\OT1/cmr/m/n/12 Public Health Agen-cies: Or-ga-ni-za-tions like the De-part-m
 ent of Health (DOH)
  []
@@ -585,18 +586,15 @@ L3 programming layer <2024-07-20>
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) )
 (\end occurred when \iftrue on line 22 was incomplete)
 (\end occurred when \ifx on line 22 was incomplete)
 (\end occurred when \ifnum on line 22 was incomplete) 
 Here is how much of TeX's memory you used:
- 6798 strings out of 473899
- 110439 string characters out of 5719856
- 1938960 words of memory out of 5000000
- 29523 multiletter control sequences out of 15000+600000
+ 6813 strings out of 473899
+ 110957 string characters out of 5719856
+ 1939960 words of memory out of 5000000
+ 29528 multiletter control sequences out of 15000+600000
  566121 words of font info for 66 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  79i,10n,84p,1297b,242s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -611,7 +609,7 @@ i6.pfb><C:/Users/Kurt Matthew Amodia/AppData/Local/Programs/MiKTeX/fonts/type1/
 public/amsfonts/cm/cmmi8.pfb><C:/Users/Kurt Matthew Amodia/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Kurt Matthew Amodi
 a/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb>
-Output written on main.pdf (17 pages, 133990 bytes).
+Output written on main.pdf (17 pages, 134430 bytes).
 PDF statistics:
  97 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

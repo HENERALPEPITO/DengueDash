@@ -13,17 +13,7 @@ Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_2.aux
 Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_3.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
-A level-1 auxiliary file: chapter_4.aux
-Illegal, another \bibstyle command---line 10 of file main.aux
- : \bibstyle
- :          {apacite}
-I'm skipping whatever remains of this command
-Reallocating 'name_of_file' (item size: 1) to 13 items.
-Reallocating 'name_of_file' (item size: 1) to 15 items.
-A level-1 auxiliary file: appendix_A.aux
-Reallocating 'name_of_file' (item size: 1) to 15 items.
-A level-1 auxiliary file: appendix_B.aux
+I found no \bibdata command---while reading file main.aux
 Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
 Reallocating 'global_strs' (item size: 1) to 4000000 items.
@@ -33,55 +23,57 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
-Database file #1: myreferences.bib
-Warning--entry type for "bosano2023who" isn't style-file defined
---line 19 of file myreferences.bib
-Warning--entry type for "lena2024" isn't style-file defined
---line 35 of file myreferences.bib
-Warning--entry type for "WHO2024" isn't style-file defined
---line 51 of file myreferences.bib
-Warning--entry type for "rabdash" isn't style-file defined
---line 67 of file myreferences.bib
+Warning--I didn't find a database entry for "bosano2023who"
+Warning--I didn't find a database entry for "WHO2024"
+Warning--I didn't find a database entry for "lena2024"
+Warning--I didn't find a database entry for "rabdash"
+Warning--I didn't find a database entry for "ligue2022deep"
+Warning--I didn't find a database entry for "li2022applications"
+Warning--I didn't find a database entry for "ahmadini2021analysis"
+Warning--I didn't find a database entry for "arroyo2021tracking"
+Warning--I didn't find a database entry for "colon2013effects"
+Warning--I didn't find a database entry for "cheong2013assessing"
+Warning--I didn't find a database entry for "hii2012forecast"
 apacite.bst [2013/07/21 v6.03 APA bibliography style]
-You've used 11 entries,
+You've used 0 entries,
             6951 wiz_defined-function locations,
-            1343 strings with 12996 characters,
-and the built_in function-call counts, 23336 in all, are:
-= -- 3027
-> -- 209
-< -- 1056
-+ -- 1155
-- -- 24
-* -- 1404
-:= -- 3978
-add.period$ -- 46
-call.type$ -- 11
-change.case$ -- 188
+            1284 strings with 10860 characters,
+and the built_in function-call counts, 43 in all, are:
+= -- 0
+> -- 0
+< -- 0
++ -- 0
+- -- 0
+* -- 1
+:= -- 32
+add.period$ -- 0
+call.type$ -- 0
+change.case$ -- 0
 chr.to.int$ -- 0
-cite$ -- 22
-duplicate$ -- 639
-empty$ -- 857
-format.name$ -- 365
-if$ -- 4503
+cite$ -- 0
+duplicate$ -- 0
+empty$ -- 1
+format.name$ -- 0
+if$ -- 1
 int.to.chr$ -- 0
-int.to.str$ -- 33
+int.to.str$ -- 0
 missing$ -- 0
-newline$ -- 285
-num.names$ -- 88
-pop$ -- 331
+newline$ -- 3
+num.names$ -- 0
+pop$ -- 0
 preamble$ -- 1
-purify$ -- 44
+purify$ -- 0
 quote$ -- 0
-skip$ -- 1716
+skip$ -- 1
 stack$ -- 0
-substring$ -- 1260
-swap$ -- 345
-text.length$ -- 29
+substring$ -- 0
+swap$ -- 0
+text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 1
-type$ -- 1232
+type$ -- 0
 warning$ -- 0
-while$ -- 122
+while$ -- 0
 width$ -- 0
-write$ -- 365
+write$ -- 2
 (There was 1 error message)
