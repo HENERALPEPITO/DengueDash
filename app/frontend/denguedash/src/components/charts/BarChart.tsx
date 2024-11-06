@@ -23,7 +23,7 @@ export default function BarChart({
   barColor,
 }: BarChartProps) {
   return (
-    <div className={`w-full h-[${cardHeight}] mx-2`}>
+    <div className={`w-full mx-2`} style={{ height: cardHeight }}>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={data}
