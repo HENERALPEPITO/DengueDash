@@ -6,7 +6,7 @@ export interface CurrentCaseCount {
 }
 
 export interface ComboCountDeaths {
-  year: number;
+  label: string;
   case_count: number;
   death_count: number;
 }

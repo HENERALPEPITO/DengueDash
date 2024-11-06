@@ -35,12 +35,13 @@ const getDengueCountPerBarangay = async (year: number | null = null) => {
   }
 };
 
-const getYearlyDengueCount = async () => {
+const getCasesDeaths = async (year: number | null = null) => {
   try {
-    const response = await axiosOpen.get(`cases-per-year`);
+    const yearQuery = year ? `?year=${year}` : "";
+    const response = await axiosOpen.get(`cases-deaths`.concat(yearQuery));
     return response.data;
   } catch (error) {
-    console.error("Error fetching yearly dengue count:", error);
+    console.error("Error fetching dengue cases and deaths count:", error);
     throw error;
   }
 };
@@ -49,7 +50,7 @@ const fetchService = {
   getDengueReports,
   getCurrentCaseCount,
   getDengueCountPerBarangay,
-  getYearlyDengueCount,
+  getCasesDeaths,
 };
 
 export default fetchService;

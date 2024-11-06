@@ -21,7 +21,7 @@ export default function ComboChart() {
     const fetchDengueCountDeaths = async () => {
       try {
         const response: ComboCountDeaths[] =
-          await fetchService.getYearlyDengueCount();
+          await fetchService.getCasesDeaths(2024);
         setData(response);
       } catch (error) {
         console.error("Failed to fetch dengue count deaths:", error);
@@ -43,7 +43,7 @@ export default function ComboChart() {
             stroke="#e2e8f0"
           />
           <XAxis
-            dataKey="year"
+            dataKey="label"
             stroke="#64748b"
             fontSize={12}
             tickLine={false}
