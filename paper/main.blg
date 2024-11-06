@@ -1,0 +1,77 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 8 items.
+The style file: apacite.bst
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: title_page.aux
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+A level-1 auxiliary file: abstract.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_1.aux
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_2.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_3.aux
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Database file #1: myreferences.bib
+Warning--entry type for "bosano2023who" isn't style-file defined
+--line 19 of file myreferences.bib
+Warning--entry type for "lena2024" isn't style-file defined
+--line 35 of file myreferences.bib
+Warning--entry type for "WHO2024" isn't style-file defined
+--line 51 of file myreferences.bib
+Warning--entry type for "rabdash" isn't style-file defined
+--line 67 of file myreferences.bib
+apacite.bst [2013/07/21 v6.03 APA bibliography style]
+You've used 11 entries,
+            6951 wiz_defined-function locations,
+            1340 strings with 12955 characters,
+and the built_in function-call counts, 23336 in all, are:
+= -- 3027
+> -- 209
+< -- 1056
++ -- 1155
+- -- 24
+* -- 1404
+:= -- 3978
+add.period$ -- 46
+call.type$ -- 11
+change.case$ -- 188
+chr.to.int$ -- 0
+cite$ -- 22
+duplicate$ -- 639
+empty$ -- 857
+format.name$ -- 365
+if$ -- 4503
+int.to.chr$ -- 0
+int.to.str$ -- 33
+missing$ -- 0
+newline$ -- 285
+num.names$ -- 88
+pop$ -- 331
+preamble$ -- 1
+purify$ -- 44
+quote$ -- 0
+skip$ -- 1716
+stack$ -- 0
+substring$ -- 1260
+swap$ -- 345
+text.length$ -- 29
+text.prefix$ -- 0
+top$ -- 1
+type$ -- 1232
+warning$ -- 0
+while$ -- 122
+width$ -- 0
+write$ -- 365
+(There were 4 warnings)
