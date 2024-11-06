@@ -62,6 +62,31 @@ Arroyo-Marioli, F.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Bosano%
+}{%
+Bosano%
+}{%
+{\protect \APACyear {2023}}%
+}]{%
+bosano2023who}
+\APACinsertmetastar {%
+bosano2023who}%
+\begin{APACrefauthors}%
+Bosano, R.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2023}{}{}.
+\newblock
+\APACrefbtitle {WHO: PH most affected by dengue in Western Pacific.} {Who: Ph
+  most affected by dengue in western pacific.}
+\newblock
+\begin{APACrefURL} [{Use the date of
+  access}]\url{https://news.abs-cbn.com/spotlight/12/22/23/who-ph-most-affected-by-dengue-in-western-pacific}
+  \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Cheong%
 , Burkart%
 , Leit{\~a}o%
@@ -153,6 +178,30 @@ Hii, Y\BPBI L.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Lena%
+}{%
+Lena%
+}{%
+{\protect \APACyear {2024}}%
+}]{%
+lena2024}
+\APACinsertmetastar {%
+lena2024}%
+\begin{APACrefauthors}%
+Lena, P.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+\APACrefbtitle {Iloilo beefs up efforts amid hike in dengue cases.} {Iloilo
+  beefs up efforts amid hike in dengue cases.}
+\newblock
+\begin{APACrefURL} [{Use the date of
+  access}]\url{https://www.pna.gov.ph/articles/1231208} \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Li%
 \ \protect \BOthers {.}}{%
 Li%
@@ -210,6 +259,30 @@ Ligue, K\BPBI D\BPBI B.%
   (lstm).}{\BBCQ}
 \newblock
 \APACjournalVolNumPages{Philippine Journal of Science}{151}{3}{}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Organization%
+}{%
+Organization%
+}{%
+{\protect \APACyear {2024}}%
+}]{%
+WHO2024}
+\APACinsertmetastar {%
+WHO2024}%
+\begin{APACrefauthors}%
+Organization, W\BPBI H.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+\APACrefbtitle {Dengue and severe dengue.} {Dengue and severe dengue.}
+\newblock
+\begin{APACrefURL} [{Use the date of
+  access}]\url{https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue}
+  \end{APACrefURL}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%

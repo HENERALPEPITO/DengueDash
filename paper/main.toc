@@ -17,5 +17,5 @@
 \contentsline {section}{\numberline {3.2}Calendar of Activities}{10}{}%
 \contentsline {chapter}{\numberline {4}Preliminary Results/System Prototype}{11}{}%
 \contentsline {chapter}{References}{12}{}%
-\contentsline {chapter}{\numberline {A}Appendix Title}{13}{}%
-\contentsline {chapter}{\numberline {B}Resource Persons}{14}{}%
+\contentsline {chapter}{\numberline {A}Appendix Title}{14}{}%
+\contentsline {chapter}{\numberline {B}Resource Persons}{15}{}%
