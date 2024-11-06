@@ -14,7 +14,7 @@ class MapDengueCountSerializer(serializers.Serializer):
     death_count = serializers.IntegerField()
 
 
-class YearlyDengueCountSerializer(serializers.Serializer):
-    year = serializers.IntegerField()
+class DengueCountDeathsSerializer(serializers.Serializer):
+    label = serializers.CharField()
     case_count = serializers.IntegerField()
     death_count = serializers.IntegerField()

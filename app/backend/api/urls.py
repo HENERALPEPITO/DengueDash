@@ -12,7 +12,7 @@ from .views.case_report_view import CaseReportView
 from .views.dengue_count_view import (
     CurrentDengueCountView,
     BarangayCountView,
-    YearlyDengueCountStatView,
+    DengueCountDeathsView,
 )
 
 
@@ -31,5 +31,5 @@ urlpatterns = [
         name="current-case-count",
     ),
     path("cases-per-barangay", BarangayCountView.as_view(), name="cases-per-barangay"),
-    path("cases-per-year", YearlyDengueCountStatView.as_view(), name="cases-per-year"),
+    path("cases-deaths", DengueCountDeathsView.as_view(), name="cases-deaths"),
 ]
