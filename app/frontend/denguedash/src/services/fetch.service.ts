@@ -12,9 +12,10 @@ const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
   }
 };
 
-const getQuickStat = async () => {
+const getQuickStat = async (year: number | null = null) => {
   try {
-    const response = await axiosOpen.get(`quick-stat`);
+    const yearQuery = year ? `?year=${year}` : "";
+    const response = await axiosOpen.get(`quick-stat`.concat(yearQuery));
     return response.data;
   } catch (error) {
     console.error("Error fetching current case count:", error);
