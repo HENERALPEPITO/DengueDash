@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ...models.dru import DRU
+from dru.models import DRU
 
 
 class Command(BaseCommand):

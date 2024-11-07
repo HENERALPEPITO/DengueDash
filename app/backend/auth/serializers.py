@@ -3,9 +3,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from ..custom_exceptions.custom_validation_exception import CustomValidationException
-from ..models.user import UserClassification
-from ..models.dru import DRU
+from api.custom_exceptions.custom_validation_exception import CustomValidationException
+from user.models import UserClassification
+from dru.models import DRU
 
 User = get_user_model()
 
@@ -69,8 +69,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        request = self.context.get("request")
-        if request:
+        if request := self.context.get("request"):
             attrs["username"] = request.data.get("email")
 
         try:

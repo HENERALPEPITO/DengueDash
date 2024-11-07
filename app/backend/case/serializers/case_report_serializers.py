@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from api.models.patient import Patient
-from api.models.case import Case
+from case.models import (
+    Case,
+    Patient,
+)
 
 
 class CaseReportPatientSerializer(serializers.ModelSerializer):
