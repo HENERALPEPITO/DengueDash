@@ -5,53 +5,91 @@ from rest_framework import permissions
 from datetime import datetime
 from case.models import Case
 from case.serializers.case_statistics_serializers import (
-    CurrentDengueCountSerializer,
+    QuickStatisticsSerializer,
     MapDengueCountSerializer,
     DengueCountDeathsSerializer,
 )
 
 
-class CurrentDengueCountView(APIView):
+class QuickStatisticsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
-        current_year = datetime.now().year
-        current_week = datetime.now().isocalendar()[1]
+        if year := request.query_params.get("year"):
+            total_cases = Case.objects.filter(date_con__year=year).count()
+            total_deaths = Case.objects.filter(
+                outcome="D",
+                date_con__year=year,
+            ).count()
+            total_severe_cases = Case.objects.filter(
+                clncl_class="S",
+                date_con__year=year,
+            ).count()
+            total_lab_confirmed_cases = Case.objects.filter(
+                Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
+                date_con__year=year,
+            )
 
-        total_cases = Case.objects.filter(
-            date_con__year=current_year,
-        ).count()
+            total_lab_confirmed_cases = year
 
-        total_deaths = Case.objects.filter(
-            outcome="D",
-            date_con__year=current_year,
-        ).count()
+            weekly_cases = None
+            weekly_deaths = None
+            weekly_severe_cases = None
+            weekly_lab_confirmed_cases = None
 
-        weekly_cases = Case.objects.filter(
-            date_con__year=current_year,
-            date_con__week=current_week,
-        ).count()
+        else:
+            current_year = datetime.now().year
+            current_week = datetime.now().isocalendar()[1]
 
-        weekly_deaths = Case.objects.filter(
-            outcome="D",
-            date_con__year=current_year,
-            date_con__week=current_week,
-        ).count()
+            total_cases = Case.objects.filter(
+                date_con__year=current_year,
+            ).count()
+            total_deaths = Case.objects.filter(
+                outcome="D",
+                date_con__year=current_year,
+            ).count()
+            total_severe_cases = Case.objects.filter(
+                clncl_class="S",
+                date_con__year=current_year,
+            ).count()
+            total_lab_confirmed_cases = Case.objects.filter(
+                Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
+                date_con__year=current_year,
+            ).count()
+
+            weekly_cases = Case.objects.filter(
+                date_con__year=current_year,
+                date_con__week=current_week,
+            ).count()
+            weekly_deaths = Case.objects.filter(
+                outcome="D",
+                date_con__year=current_year,
+                date_con__week=current_week,
+            ).count()
+            weekly_severe_cases = Case.objects.filter(
+                clncl_class="S",
+                date_con__year=current_year,
+                date_con__week=current_week,
+            ).count()
+            weekly_lab_confirmed_cases = Case.objects.filter(
+                Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
+                date_con__year=current_year,
+                date_con__week=current_week,
+            ).count()
 
         data = {
             "total_cases": total_cases,
             "total_deaths": total_deaths,
+            "total_severe_cases": total_severe_cases,
+            "total_lab_confirmed_cases": total_lab_confirmed_cases,
             "weekly_cases": weekly_cases,
             "weekly_deaths": weekly_deaths,
+            "weekly_severe_cases": weekly_severe_cases,
+            "weekly_lab_confirmed_cases": weekly_lab_confirmed_cases,
         }
 
-        serializer = CurrentDengueCountSerializer(data, many=False)
+        serializer = QuickStatisticsSerializer(data, many=False)
         return Response(serializer.data)
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.db.models import Count, Q
 
 
 class DengueCountDeathsView(APIView):
@@ -109,10 +147,8 @@ class BarangayCountView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
-        year = request.query_params.get("year")
-
         cases = Case.objects.all()
-        if year:
+        if year := request.query_params.get("year"):
             cases = cases.filter(date_con__year=year)
 
         cases_per_barangay = (
