@@ -2,7 +2,6 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -56,12 +55,10 @@ export default function BarChart({
             }}
           />
           <Tooltip contentStyle={{ fontSize: 12 }} />
-          <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
           <Bar
             yAxisId="left"
             dataKey="value"
             fill={barColor}
-            name="Cases"
             radius={[4, 4, 0, 0]}
             barSize={50}
           />
