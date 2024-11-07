@@ -9,6 +9,19 @@ import BarChart from "@components/charts/BarChart";
 import StatCard from "./StatCard";
 import { CurrentCaseCount } from "@/interfaces/dashboard/dashboard.interface";
 import ChoroplethMapWrapper from "../map/ChoroplethMapWrapper";
+import { Separator } from "@/shadcn/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/shadcn/components/ui/dialog";
+import { Button } from "@/shadcn/components/ui/button";
+import { Label } from "@/shadcn/components/ui/label";
+import CustomPopover from "../common/CustomPopover";
 
 const transformData = (data: any, labelKey: string, valueKey: string) => {
   return data.map((item: { [key: string]: any }) => ({
@@ -17,10 +30,32 @@ const transformData = (data: any, labelKey: string, valueKey: string) => {
   }));
 };
 
+const locations = [
+  {
+    value: "Iloilo City",
+    label: "Iloilo City",
+  },
+];
+locations.unshift({ value: "All", label: "All" });
+
+const years = Array.from(
+  { length: new Date().getFullYear() - 2016 + 1 },
+  (_, i) => (2016 + i).toString()
+);
+// Add "All" option in the first index
+years.unshift("All");
+
 export default function StatDashboard() {
   const [caseData, setCaseData] = useState<CurrentCaseCount | null>(null);
   const [barangayData, setBarangayData] = useState<BarangayData[]>([]);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+
+  // Popovers
+  const [locVal, setLocVal] = useState<string>("Iloilo City");
+  const [yearVal, setYearVal] = useState<string>(
+    new Date().getFullYear().toString()
+  );
+
   const topBarangays = useMemo(() => {
     const TOP_BARANGAYS_COUNT = 5;
     const LABEL_KEY = "barangay";
@@ -45,8 +80,7 @@ export default function StatDashboard() {
 
   const fetchCurrentCaseCount = async () => {
     try {
-      const response: CurrentCaseCount =
-        await fetchService.getCurrentCaseCount();
+      const response: CurrentCaseCount = await fetchService.getQuickStat();
       setCaseData(response);
     } catch (error) {
       console.error("Failed to fetch current case count:", error);
@@ -71,6 +105,62 @@ export default function StatDashboard() {
 
   return (
     <div className="flex flex-col gap-3">
+      <div>
+        <div className="flex flex-row justify-between gap-1">
+          <div>
+            <p className="text-2xl lg:text-4xl font-bold">
+              Iloilo City Dengue Dashboard
+            </p>
+            <p className="mt-1 lg:mt-2 text-sm lg:text-md text-gray-500">
+              As of October 19, 2024
+            </p>
+          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Configure Data</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Configure Data</DialogTitle>
+                <DialogDescription>
+                  Make changes to the data here. Click save when you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Location
+                  </Label>
+                  <CustomPopover
+                    label="Location"
+                    options={locations}
+                    value={locVal}
+                    setValue={setLocVal}
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="username" className="text-right">
+                    Year
+                  </Label>
+                  <CustomPopover
+                    label="Year"
+                    options={years.map((year) => ({
+                      value: year,
+                      label: year,
+                    }))}
+                    value={yearVal}
+                    setValue={setYearVal}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <Separator className="mt-2" />
+      </div>
       {dataLoaded && (
         <>
           {/* Overview Statitstics */}
