@@ -247,6 +247,8 @@ class Command(BaseCommand):
 
                 start_con_date = datetime(consult_year, 1, 1)
                 end_con_date = datetime(consult_year, 12, 31)
+                if consult_year == datetime.now().year:
+                    end_con_date = datetime.now()
                 date_con = fake.date_time_between_dates(start_con_date, end_con_date)
                 is_admt = random.choice([True, False])
                 date_onset = date_con - timedelta(days=random.randint(1, 20))
