@@ -73,6 +73,7 @@ export default function StatDashboard() {
     <div className="flex flex-col gap-3">
       {dataLoaded && (
         <>
+          {/* Overview Statitstics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-2">
             <StatCard
               title={"Weekly Case"}
