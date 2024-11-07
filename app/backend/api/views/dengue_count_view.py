@@ -15,6 +15,8 @@ class QuickStatisticsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
+        current_year = datetime.now().year
+        current_week = datetime.now().isocalendar()[1]
         if year := request.query_params.get("year"):
             total_cases = Case.objects.filter(date_con__year=year).count()
             total_deaths = Case.objects.filter(
@@ -28,54 +30,46 @@ class QuickStatisticsView(APIView):
             total_lab_confirmed_cases = Case.objects.filter(
                 Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
                 date_con__year=year,
-            )
+            ).count()
 
-            total_lab_confirmed_cases = year
+            if year == str(current_year):
+                weekly_cases = Case.objects.filter(
+                    date_con__year=current_year,
+                    date_con__week=current_week,
+                ).count()
+                weekly_deaths = Case.objects.filter(
+                    outcome="D",
+                    date_con__year=current_year,
+                    date_con__week=current_week,
+                ).count()
+                weekly_severe_cases = Case.objects.filter(
+                    clncl_class="S",
+                    date_con__year=current_year,
+                    date_con__week=current_week,
+                ).count()
+                weekly_lab_confirmed_cases = Case.objects.filter(
+                    Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
+                    date_con__year=current_year,
+                    date_con__week=current_week,
+                ).count()
+            else:
+                weekly_cases = None
+                weekly_deaths = None
+                weekly_severe_cases = None
+                weekly_lab_confirmed_cases = None
+
+        else:
+            total_cases = Case.objects.all().count()
+            total_deaths = Case.objects.filter(outcome="D").count()
+            total_severe_cases = Case.objects.filter(clncl_class="S").count()
+            total_lab_confirmed_cases = Case.objects.filter(
+                Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P")
+            ).count()
 
             weekly_cases = None
             weekly_deaths = None
             weekly_severe_cases = None
             weekly_lab_confirmed_cases = None
-
-        else:
-            current_year = datetime.now().year
-            current_week = datetime.now().isocalendar()[1]
-
-            total_cases = Case.objects.filter(
-                date_con__year=current_year,
-            ).count()
-            total_deaths = Case.objects.filter(
-                outcome="D",
-                date_con__year=current_year,
-            ).count()
-            total_severe_cases = Case.objects.filter(
-                clncl_class="S",
-                date_con__year=current_year,
-            ).count()
-            total_lab_confirmed_cases = Case.objects.filter(
-                Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
-                date_con__year=current_year,
-            ).count()
-
-            weekly_cases = Case.objects.filter(
-                date_con__year=current_year,
-                date_con__week=current_week,
-            ).count()
-            weekly_deaths = Case.objects.filter(
-                outcome="D",
-                date_con__year=current_year,
-                date_con__week=current_week,
-            ).count()
-            weekly_severe_cases = Case.objects.filter(
-                clncl_class="S",
-                date_con__year=current_year,
-                date_con__week=current_week,
-            ).count()
-            weekly_lab_confirmed_cases = Case.objects.filter(
-                Q(ns1_result="P") | Q(igg_elisa="P") | Q(igm_elisa="P"),
-                date_con__year=current_year,
-                date_con__week=current_week,
-            ).count()
 
         data = {
             "total_cases": total_cases,
