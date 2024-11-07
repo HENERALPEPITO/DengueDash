@@ -118,13 +118,6 @@ export default function StatDashboard() {
                   title={"Top Barangays with most Dengue Cases"}
                   date={"October 19, 2024"}
                 />
-                {/* <SimpleBarChart
-                  height="328px"
-                  data={topBarangays}
-                  yLabel="Cases"
-                  backgroundColor="#3182CE"
-                  displayLegend={false}
-                /> */}
                 <BarChart
                   cardHeight="328px"
                   data={topBarangays}
@@ -137,13 +130,6 @@ export default function StatDashboard() {
                   title={"Top Barangays with most Mortality Cases"}
                   date={"October 19, 2024"}
                 />
-                {/* <SimpleBarChart
-                  height="328px"
-                  data={topBarangaysDeaths}
-                  yLabel="Death Cases"
-                  backgroundColor="#ee2d60"
-                  displayLegend={false}
-                /> */}
                 <BarChart
                   cardHeight="328px"
                   data={topBarangaysDeaths}
