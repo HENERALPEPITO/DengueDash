@@ -78,29 +78,27 @@ export default function StatDashboard() {
     return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
   }, [barangayData]);
 
-  const fetchCurrentCaseCount = async () => {
-    try {
-      const response: CurrentCaseCount = await fetchService.getQuickStat();
-      setCaseData(response);
-    } catch (error) {
-      console.error("Failed to fetch current case count:", error);
-    }
+  const fetchQuickStat = async (year: number | null) => {
+    const response: CurrentCaseCount = await fetchService.getQuickStat(year);
+    setCaseData(response);
   };
 
-  const fetchBarangayData = async () => {
-    try {
-      const response: BarangayData[] =
-        await fetchService.getDengueCountPerBarangay();
-      setBarangayData(response);
-      setDataLoaded(true);
-    } catch (error) {
-      console.error("Failed to fetch barangay data:", error);
-    }
+  const fetchBarangayData = async (year: number | null) => {
+    const response: BarangayData[] =
+      await fetchService.getDengueCountPerBarangay(year);
+    setBarangayData(response);
+    setDataLoaded(true);
   };
 
+  const fetchAllData = (option: string) => {
+    const year = option == "All" ? null : parseInt(option);
+    fetchQuickStat(year);
+    fetchBarangayData(year);
+  };
+
+  // Load initial data
   useEffect(() => {
-    fetchCurrentCaseCount();
-    fetchBarangayData();
+    fetchAllData("2024");
   }, []);
 
   return (
@@ -154,7 +152,9 @@ export default function StatDashboard() {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Save changes</Button>
+                <Button onClick={() => fetchAllData(yearVal)}>
+                  Save changes
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
