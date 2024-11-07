@@ -4,7 +4,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
     BaseUserManager,
 )
-from .dru import DRU
+from dru.models import DRU
 
 
 class UserClassification(models.Model):
@@ -24,9 +24,6 @@ class UserManager(BaseUserManager):
         **extra_fields,
     ):
         classification = extra_fields.pop("classification", None)
-        classification = UserClassification.objects.get(
-            classification=classification,
-        )
 
         user = self.model(
             email=self.normalize_email(email),
@@ -51,9 +48,10 @@ class UserManager(BaseUserManager):
         # Set the classification_id that links to admin
         extra_fields.setdefault(
             "classification_id",
-            UserClassification.objects.filter(classification="Admin")
-            .values_list("id", flat=True)
-            .first(),
+            # UserClassification.objects.filter(classification="Admin")
+            # .values_list("id", flat=True)
+            # .first(),
+            UserClassification.objects.get(classification="Admin").id,
         )
 
         return self.create_user(
@@ -116,7 +114,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         "middle_name",
         "last_name",
         "sex",
-        "classification",
     ]
 
     objects = UserManager()

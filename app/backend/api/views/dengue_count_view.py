@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
 from datetime import datetime
-from api.models.case import Case
-from api.serializers.dengue_count_serializer import (
+from case.models import Case
+from case.serializers.case_statistics_serializers import (
     CurrentDengueCountSerializer,
     MapDengueCountSerializer,
     DengueCountDeathsSerializer,

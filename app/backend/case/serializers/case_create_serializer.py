@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from ..models.patient import Patient
-from ..models.case import Case
-from ..custom_exceptions.custom_validation_exception import CustomValidationException
+from case.models import (
+    Case,
+    Patient,
+)
+from api.custom_exceptions.custom_validation_exception import CustomValidationException
 
 
 class PatientSerializer(serializers.ModelSerializer):

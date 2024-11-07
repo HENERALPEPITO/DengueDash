@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from rest_framework.generics import ListAPIView
-from api.models.case import Case
-from api.serializers.case_report_serializer import CaseReportSerializer
+from case.models import Case
+from case.serializers.case_report_serializers import CaseReportSerializer
 from api.pagination import APIPagination
 
 

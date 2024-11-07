@@ -2,30 +2,18 @@ import random
 from django.core.management.base import BaseCommand
 from faker import Faker
 from datetime import datetime, timedelta
-from api.models.patient import Patient
-from api.models.case import Case
-from api.models.user import User
+from case.models import (
+    Case,
+    Patient,
+)
+from user.models import User
 
 
 class Command(BaseCommand):
     help = "Seed random initial patient case data"
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "consult_year",
-            type=int,
-            help="Indicates the year of consultation",
-        )
-        parser.add_argument(
-            "num_entries",
-            type=int,
-            help="Indicates the number of cases to be created",
-        )
-
     def handle(self, *args, **kwargs):
         fake = Faker()
-        consult_year = kwargs["consult_year"]
-        num_entries = kwargs["num_entries"]
 
         interviewer = User.objects.get(id=1)
 
@@ -212,96 +200,111 @@ class Command(BaseCommand):
             "Rizal (La Paz)",
         ]
 
-        for _ in range(num_entries):
-            first_name = fake.first_name()
-            last_name = fake.last_name()
-            middle_name = fake.first_name()
-            date_of_birth = fake.date_of_birth(minimum_age=1, maximum_age=100)
-            sex = random.choice(["M", "F"])
-            ca_barangay = random.choice(barangays)
-            p_barangay = random.choice(barangays)
+        DENGUE_CASES = [
+            (2016, 1860),
+            (2017, 374),
+            (2018, 880),
+            (2019, 3402),
+            (2020, 267),
+            (2021, 276),
+            (2022, 1105),
+            (2023, 1316),
+            (2024, 1577),
+        ]
 
-            patient = Patient.objects.create(
-                first_name=first_name,
-                last_name=last_name,
-                middle_name=middle_name,
-                date_of_birth=date_of_birth,
-                sex=sex,
-                ca_house_no=fake.building_number(),
-                ca_street=fake.street_name(),
-                ca_barangay=ca_barangay,
-                ca_city="Iloilo City",
-                ca_province="Iloilo",
-                p_house_no=fake.building_number(),
-                p_street=fake.street_name(),
-                p_barangay=p_barangay,
-                p_city="Iloilo City",
-                p_province="Iloilo",
-                civil_status=random.choice(["S", "M", "W", "SEP"]),
-                date_first_vax=fake.date_this_decade(),
-                date_last_vax=fake.date_this_decade(),
-            )
+        for case in DENGUE_CASES:
+            consult_year = case[0]
+            case_count = case[1]
+            for _ in range(case_count):
+                first_name = fake.first_name()
+                last_name = fake.last_name()
+                middle_name = fake.first_name()
+                date_of_birth = fake.date_of_birth(minimum_age=1, maximum_age=100)
+                sex = random.choice(["M", "F"])
+                ca_barangay = random.choice(barangays)
+                p_barangay = random.choice(barangays)
 
-            start_con_date = datetime(consult_year, 1, 1)
-            end_con_date = datetime(consult_year, 12, 31)
-            date_con = fake.date_time_between_dates(start_con_date, end_con_date)
-            is_admt = random.choice([True, False])
-            date_onset = date_con - timedelta(days=random.randint(1, 20))
-            clncl_class = random.choice(["N", "W", "S"])
-            ns1_result = random.choice(["P", "N", "E", "PR"])
-            date_ns1 = (
-                None
-                if ns1_result == "PR"
-                else date_onset + timedelta(days=random.randint(1, 5))
-            )
-            igg_elisa = random.choice(["P", "N", "E", "PR"])
-            date_igg_elisa = (
-                None
-                if igg_elisa == "PR"
-                else date_onset + timedelta(days=random.randint(1, 10))
-            )
-            igm_elisa = random.choice(["P", "N", "E", "PR"])
-            date_igm_elisa = (
-                None
-                if igm_elisa == "PR"
-                else date_onset + timedelta(days=random.randint(1, 10))
-            )
-            pcr = random.choice(["P", "N", "E", "PR"])
-            date_pcr = (
-                None
-                if pcr == "PR"
-                else date_onset + timedelta(days=random.randint(1, 10))
-            )
-            case_class = random.choice(["S", "P", "C"])
-            outcome = random.choice(["A", "D"])
-            date_death = (
-                None
-                if outcome == "A"
-                else date_onset + timedelta(days=random.randint(5, 15))
-            )
+                patient = Patient.objects.create(
+                    first_name=first_name,
+                    last_name=last_name,
+                    middle_name=middle_name,
+                    date_of_birth=date_of_birth,
+                    sex=sex,
+                    ca_house_no=fake.building_number(),
+                    ca_street=fake.street_name(),
+                    ca_barangay=ca_barangay,
+                    ca_city="Iloilo City",
+                    ca_province="Iloilo",
+                    p_house_no=fake.building_number(),
+                    p_street=fake.street_name(),
+                    p_barangay=p_barangay,
+                    p_city="Iloilo City",
+                    p_province="Iloilo",
+                    civil_status=random.choice(["S", "M", "W", "SEP"]),
+                    date_first_vax=fake.date_this_decade(),
+                    date_last_vax=fake.date_this_decade(),
+                )
 
-            Case.objects.create(
-                date_con=date_con,
-                is_admt=is_admt,
-                date_onset=date_onset,
-                clncl_class=clncl_class,
-                ns1_result=ns1_result,
-                date_ns1=date_ns1,
-                igg_elisa=igg_elisa,
-                date_igg_elisa=date_igg_elisa,
-                igm_elisa=igm_elisa,
-                date_igm_elisa=date_igm_elisa,
-                pcr=pcr,
-                date_pcr=date_pcr,
-                case_class=case_class,
-                outcome=outcome,
-                date_death=date_death,
-                interviewer=interviewer,
-                patient=patient,
-            )
+                start_con_date = datetime(consult_year, 1, 1)
+                end_con_date = datetime(consult_year, 12, 31)
+                date_con = fake.date_time_between_dates(start_con_date, end_con_date)
+                is_admt = random.choice([True, False])
+                date_onset = date_con - timedelta(days=random.randint(1, 20))
+                clncl_class = random.choice(["N", "W", "S"])
+                ns1_result = random.choice(["P", "N", "E", "PR"])
+                date_ns1 = (
+                    None
+                    if ns1_result == "PR"
+                    else date_onset + timedelta(days=random.randint(1, 5))
+                )
+                igg_elisa = random.choice(["P", "N", "E", "PR"])
+                date_igg_elisa = (
+                    None
+                    if igg_elisa == "PR"
+                    else date_onset + timedelta(days=random.randint(1, 10))
+                )
+                igm_elisa = random.choice(["P", "N", "E", "PR"])
+                date_igm_elisa = (
+                    None
+                    if igm_elisa == "PR"
+                    else date_onset + timedelta(days=random.randint(1, 10))
+                )
+                pcr = random.choice(["P", "N", "E", "PR"])
+                date_pcr = (
+                    None
+                    if pcr == "PR"
+                    else date_onset + timedelta(days=random.randint(1, 10))
+                )
+                case_class = random.choice(["S", "P", "C"])
+                outcome = random.choice(["A", "D"])
+                date_death = (
+                    None
+                    if outcome == "A"
+                    else date_onset + timedelta(days=random.randint(5, 15))
+                )
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Successfully seeded the database with {num_entries} fake patient cases."
+                Case.objects.create(
+                    date_con=date_con,
+                    is_admt=is_admt,
+                    date_onset=date_onset,
+                    clncl_class=clncl_class,
+                    ns1_result=ns1_result,
+                    date_ns1=date_ns1,
+                    igg_elisa=igg_elisa,
+                    date_igg_elisa=date_igg_elisa,
+                    igm_elisa=igm_elisa,
+                    date_igm_elisa=date_igm_elisa,
+                    pcr=pcr,
+                    date_pcr=date_pcr,
+                    case_class=case_class,
+                    outcome=outcome,
+                    date_death=date_death,
+                    interviewer=interviewer,
+                    patient=patient,
+                )
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Successfully seeded the database with {case_count} fake patient cases."
+                )
             )
-        )

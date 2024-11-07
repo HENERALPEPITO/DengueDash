@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from ..models.user import UserClassification
+from user.models import UserClassification
 
 User = get_user_model()
 

@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api",
+    # "api",
+    # "auth",
+    "seeders",
+    "case",
+    "dru",
+    "user",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -140,7 +145,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
 }
 
-AUTH_USER_MODEL = "api.User"
+AUTH_USER_MODEL = "user.User"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
