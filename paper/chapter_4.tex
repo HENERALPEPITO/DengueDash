@@ -101,7 +101,7 @@ The Guest Interface is intended for all visitors of the web application. It show
 \section{Personnel Interface}
 
 \subsection{User Authentication, and Login}
-To protect the data's integrity in production, it has been decided that the registration process will not be visible. Instead, an admin must register a user using a different interface. As of the moment, registering a user is done using API via Postman. In the login process, the system implements HTTP-only cookies that save the access token to protect against XSS attacks. After proper credentials have been provided, it will redirect to the user's home page.
+To protect the data's integrity in production, it has been decided that the registration process will not be visible. Instead, an admin must register a user using a different interface. As of the moment, registering a user is done using API via Postman. In the login process, the system implements HTTP-only cookies that save the access token to protect against XSS attacks. After proper credentials have been provided, it will redirect to the user's home page, as shown in Figure \ref{fig:user_dashboard}.
 
 \begin{figure}[H]
 	\centering
@@ -109,6 +109,14 @@ To protect the data's integrity in production, it has been decided that the regi
 	\caption{Login Page for Users}
 	\label{fig:login_page}
 \end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{user_dashboard}
+	\caption{Personnel's Home Page}
+	\label{fig:user_dashboard}
+\end{figure}
+
 
 \begin{figure}[H]
 	\centering
