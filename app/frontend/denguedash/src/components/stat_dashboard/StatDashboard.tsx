@@ -121,7 +121,8 @@ export default function StatDashboard() {
               <DialogHeader>
                 <DialogTitle>Configure Data</DialogTitle>
                 <DialogDescription>
-                  Make changes to the data here. Click save when you're done.
+                  Make changes to the data here. Click save when you&apos;re
+                  done.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -187,28 +188,19 @@ export default function StatDashboard() {
             />
           </div>
           <div className="border border-grey rounded-lg ">
-            <ChartHeader
-              title={"Number of Dengue Cases in Iloilo City"}
-              date={"October 19, 2024"}
-            />
+            <ChartHeader title={"Number of Dengue Cases and Deaths"} />
             <ComboChart />
           </div>
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Choropleth Map */}
             <div className="border border-grey rounded-lg flex-1">
-              <ChartHeader
-                title={"Number of Dengue Cases in Iloilo City"}
-                date={"October 19, 2024"}
-              />
+              <ChartHeader title={"Dengue Situation"} />
               <ChoroplethMapWrapper dengueData={barangayData} />
             </div>
             {/* Right Side */}
             <div className="flex flex-col flex-1 gap-3">
               <div className="border border-grey rounded-lg">
-                <ChartHeader
-                  title={"Top Barangays with most Dengue Cases"}
-                  date={"October 19, 2024"}
-                />
+                <ChartHeader title={"Top Barangays with most Dengue Cases"} />
                 <BarChart
                   cardHeight="328px"
                   data={topBarangays}
@@ -219,7 +211,6 @@ export default function StatDashboard() {
               <div className="border border-grey rounded-lg">
                 <ChartHeader
                   title={"Top Barangays with most Mortality Cases"}
-                  date={"October 19, 2024"}
                 />
                 <BarChart
                   cardHeight="328px"
