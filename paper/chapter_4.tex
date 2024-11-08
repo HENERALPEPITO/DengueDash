@@ -53,9 +53,36 @@ The dataset was split into training and test sets to evaluate the model’s perf
 
 Upon testing, the LSTM model produced an MSE of 342.59 and an RMSE of 18.51, showing its capability to generalize to unseen data. The close alignment of actual and predicted values in the test set plot supports this observation, suggesting that the model successfully captured critical temporal trends that correlate with dengue outbreaks.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_LSTM}
 	\caption{LSTM Prediction Results for Test Set}
 	\label{fig:LSTM_result}
+\end{figure}
+
+\subsection{ARIMA Model}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{line_graph_Arima}
+	\caption{ARIMA Prediction Results for Test Set}
+	\label{fig:Arima_result}
+\end{figure}
+
+\subsection{Seasonal ARIMA Model}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{line_graph_Sarima}
+	\caption{Seasonal ARIMA Prediction Results for Test Set}
+	\label{fig:Sarima_result}
+\end{figure}
+
+\subsection{Kalman Filter Model}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{line_graph_Kalman}
+	\caption{Kalman Filter Prediction Results for Test Set}
+	\label{fig:Kalman_result}
 \end{figure}
