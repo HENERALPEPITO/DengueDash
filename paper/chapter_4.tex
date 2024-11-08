@@ -133,10 +133,9 @@ The ARIMA model was developed to capture non-seasonal trends in the data. To det
 	These metrics demonstrate that the ARIMA model effectively captured non-seasonal temporal patterns in the data.
 \end{enumerate}
 
-\section*{Seasonal ARIMA (SARIMA) Model}
+
 This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit.
 
-\subsection*{Steps to Create the SARIMA Model:}
 \begin{enumerate}
 	\item \textbf{Data Preprocessing:}  
 	Ensure data readiness by filling any missing values and scaling as needed.
@@ -178,7 +177,7 @@ This model incorporates seasonal parameters, which were tuned using grid search 
 	\label{fig:Kalman_result}
 \end{figure}
 
-	\section*{Kalman Filter Methodology with Matrix Calculations}
+
 
 \textbf{Measurement Acquisition}: Obtain the measurement \( z_k \) of the system's state with associated confidence. This measurement matrix provides a noisy observation of the true state.
 
