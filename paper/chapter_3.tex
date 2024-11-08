@@ -11,7 +11,12 @@ A total of 452 rows of dengue cases and the associated average weekly weather da
 \subsection{System Development Framework}
 The Agile Model is the birthchild of both iterative and incremental approaches in Software Engineering. It aims to be flexible and effective at the same time by being adaptable to change. It's also important to note that small teams looking to construct and develop projects quickly can benefit from this kind of methodology. As the Agile Method focuses on continuous testing, quality assurance is a guarantee since bugs and errors are quickly identified and patched. 
 
-\subsection{Design, Building, Testing and Integration}
+\subsection{Design, Building, Testing, and Integration}
+\subsubsection{Design and Developlment}
+After brainstorming and researching the most appropriate type of application to accommodate both the prospected users and the proposed solutions, the team has decided to proceed with a web application. Given the time constraints and available resources, we believe this is the most pragmatic and practical move. The next step is to select modern and stable frameworks that align with the fundamental ideas we have learned at the university. The template obtained from WVCHD was meticulously analyzed to create use cases and develop a preliminary well-structured database that adheres to the requirements needed to produce a quality application. The said use cases serve as the basis of general features. Part by part, these are converted into code, and with the help of selected libraries and packages, it resulted in the desired outcome that may still modified and extended since it is continuously being developed. 
+
+\subsubsection{Testing and Integration}
+Each feature is rigorously user-tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Integration between each feature serves as a pillar for a cohesive user experience. Presently, we have not been able to use performance metrics to measure the system's performance, as developing and connecting the core features is the utmost priority. 
 
 \section{Model and Algorithm}
 \textbf{Data Preprocessing and Feature Selection:}
@@ -57,7 +62,7 @@ GitHub is a cloud-based platform that tracks file changes using Git, an open-sou
 Visual Studio Code is a free, lightweight, and cross-platform source code editor developed by Microsoft \cite{vscode-2021}. While it is not a full-fledged traditional Integrated Development Environment (IDE), it still supports features such as syntax highlighting, code completion, and debugging. With the vast array of extensions available through its store, the said code editor can be an IDE-like environment experience. As VS Code supports this project's programming and scripting languages, it was chosen as the primary source code editor.
 
 \subsubsection{Django}
-Django is a free and open-sourced Python-based web framework that offers an abstraction to develop and maintain a secure web application. Because of this, developers can focus on coding a more straightforward solution without minding the more intricate hassles of web development \cite{django-no-date}. In addition, Django offers well-defined documentation and a large community. 
+Django is a free and open-sourced Python-based web framework that offers an abstraction to develop and maintain a secure web application. Because of this, developers can focus on coding a more straightforward solution without minding the more intricate hassles of web development \cite{django-no-date}. In addition, Django offers well-defined documentation and a large community. \\\\
 As this research aims to create a well-developed and maintainable application, it is in the best interest to follow an architectural pattern that developers and contributors in the future can understand. Since Django adheres to Model-View-Template (MVT) that promotes a clean codebase by separating data models, business logic, and presentation layers, it became the primary candidate for the application's backbone. 
 
 
@@ -73,7 +78,7 @@ The web application is continuously being developed on laptop computers with min
 \subsection{Packages}
 
 \subsubsection{Django REST Framework}
-Django Rest Framework (DRF) is a third-party package for Django that provides a comprehensive suite of features to simplify the development of robust and scalable Web APIs. These services include Serialization, Authentication and Permissions, Viewsets and Routers, and a Browsable API \cite{christie-no-date}. 
+Django Rest Framework (DRF) is a third-party package for Django that provides a comprehensive suite of features to simplify the development of robust and scalable Web APIs. These services include Serialization, Authentication and Permissions, Viewsets and Routers, and a Browsable API \cite{christie-no-date}. \\\\
 Since Django utilizes models that bundle data together, DRF serves as a bridge to convert these complex datatypes into primitive Python datatypes, which can be easily rendered into JavaScript Object Notation (JSON), Extensible Markup Language (XML), or other content types. On the other hand, it also includes a variety of authentication policies that control access to API endpoints. These include Basic, Session, and Token Authentication. It is also worth noting that a custom permission class can also be created as needed. DRF also simplifies the process of creating RESTful APIs by combining the logic for a group of related views into a single class, which can be accessed through a URL route. Lastly, the implementation of a web-browsable API is a game-changer since it allows developers to interact with the API through a user-friendly interface that becomes a breeding ground for testing and exploration. 
 
 \subsubsection{Leaflet}
@@ -87,9 +92,6 @@ Using plain CSS in production-quality applications can be counterproductive. The
 
 \subsubsection{Shadcn}
 Shadcn offers a collection of open-source UI boilerplate components that can be directly copied and pasted into one's project. With the flexibility of the provided components, Shadcn allows developers to have full control over customization and styling. Since this is built on top of Tailwind CSS and Radix UI, it is supported by most modern frontend frameworks, including Next.js \cite{shadcn-no-date}.
-
-
-\clearpage
 
 \section{Calendar of Activities}
 
@@ -110,7 +112,7 @@ A Gantt chart showing the schedule of the activities is included below. Each bul
 		Data Cleaning and Feature Selection & & \weektwo & & \weekone & \\ \hline
 		
 		
-		Creating System Dashboard & & \weekone & \weektwo & \weekone & \\ \hline
+		Creating System Dashboard & & \weektwo & \weekfour & \weekone & \\ \hline
 		Analysis and Interpretation of Results & & & \weekone & & \\ \hline
 		Documentation & & \weekone & \weekfour & \weekone & \\ \hline
 	\end{tabular}
