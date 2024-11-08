@@ -13,3 +13,49 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 	\caption{Snippet of the Combined Dataset}
 	\label{fig:data_snippet}
 \end{figure}
+
+\section{Preliminary Model Training}
+The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 452 weeks of historical dengue cases from 2016 to 2024, with meteorological variables such as temperature, humidity, and rainfall.
+
+To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).
+
+The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. 
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} \\ \hline
+		\textbf{LSTM} & \textbf{342.59} & \textbf{18.51} \\ \hline
+		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1198} & \textbf{34.62} \\ \hline
+		\textbf{ARIMA (2, 0, 3)} & \textbf{1983.16} & \textbf{44.53} \\ \hline
+		\textbf{Kalman Filter} & \textbf{2755.77} & \textbf{52.49} \\ \hline
+	\end{tabular}
+	\caption{Comparison of Models}
+	\label{tab:comparison_of_models}
+\end{table}
+
+\subsection{LSTM Model}
+The LSTM model architecture consisted of an input layer, a single LSTM layer with 64 units and ReLU activation, followed by a dense layer with a single output neuron to predict the dengue case count. Key hyperparameters included:
+\begin{itemize}
+	\item Window Size: 10 weeks, representing the time steps used in the sequence data for each prediction.
+	\item Epochs: 50 epochs were used for training, balancing sufficient training time with computational efficiency.
+	\item Batch Size: 1, allowing the model to process one sequence at a time, which is beneficial for small datasets but increases training time.
+	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.0001 was set to ensure gradual convergence and minimize risk of overfitting.
+\end{itemize}
+
+Data Division for Training and Testing
+The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
+\begin{itemize}
+	\item Training Set: 85\% of the data (385 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
+	\item Test Set: The remaining 15\% of the data (67 sequences) was reserved for testing
+\end{itemize}
+
+Upon testing, the LSTM model produced an MSE of 342.59 and an RMSE of 18.51, showing its capability to generalize to unseen data. The close alignment of actual and predicted values in the test set plot supports this observation, suggesting that the model successfully captured critical temporal trends that correlate with dengue outbreaks.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\textwidth]{line_graph_LSTM}
+	\caption{LSTM Prediction Results for Test Set}
+	\label{fig:LSTM_result}
+\end{figure}
