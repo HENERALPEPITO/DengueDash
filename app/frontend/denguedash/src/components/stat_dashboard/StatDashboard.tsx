@@ -184,21 +184,41 @@ export default function StatDashboard() {
             <StatCard
               title={"Total Cases"}
               value={caseData?.total_cases.toString() || "0"}
+              subvalue={
+                caseData?.weekly_cases == null
+                  ? null
+                  : caseData.weekly_cases.toString()
+              }
               icon={"fluent-emoji-high-contrast:mosquito"}
             />
             <StatCard
               title={"Severe Cases"}
               value={caseData?.total_severe_cases.toString() || "0"}
+              subvalue={
+                caseData?.weekly_severe_cases == null
+                  ? null
+                  : caseData.weekly_severe_cases.toString()
+              }
               icon={"fa:heartbeat"}
             />
             <StatCard
               title={"Lab Confirmed Cases"}
               value={caseData?.total_lab_confirmed_cases.toString() || "0"}
+              subvalue={
+                caseData?.weekly_lab_confirmed_cases == null
+                  ? null
+                  : caseData.weekly_lab_confirmed_cases.toString()
+              }
               icon={"icomoon-free:lab"}
             />
             <StatCard
               title={"Total Deaths"}
               value={caseData?.total_deaths.toString() || "0"}
+              subvalue={
+                caseData?.weekly_deaths == null
+                  ? null
+                  : caseData.weekly_deaths.toString()
+              }
               icon={"ion:skull"}
             />
           </div>
