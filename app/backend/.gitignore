@@ -4,6 +4,10 @@
 __pycache__/
 *.pyd
 
+# Django migrations
+*/migrations/*.py
+*/migrations/*.pyc
+
 # Environment variables file (commonly used for secrets)
 .env
 *.env
