@@ -12,24 +12,12 @@ import {
   ComposedChart,
 } from "recharts";
 import { ComboCountDeaths } from "@interfaces/dashboard/dashboard.interface";
-import { useEffect, useState } from "react";
-import fetchService from "@/services/fetch.service";
 
-export default function ComboChart() {
-  const [data, setData] = useState<ComboCountDeaths[]>([]);
-  useEffect(() => {
-    const fetchDengueCountDeaths = async () => {
-      try {
-        const response: ComboCountDeaths[] =
-          await fetchService.getCasesDeaths(2024);
-        setData(response);
-      } catch (error) {
-        console.error("Failed to fetch dengue count deaths:", error);
-      }
-    };
+type ComboChartProps = {
+  data: ComboCountDeaths[];
+};
 
-    fetchDengueCountDeaths();
-  }, []);
+export default function ComboChart({ data }: ComboChartProps) {
   return (
     <div className="w-full h-96 mx-2">
       <ResponsiveContainer width="100%" height="100%">

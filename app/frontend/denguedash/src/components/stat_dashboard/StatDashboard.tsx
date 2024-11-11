@@ -7,7 +7,10 @@ import { useEffect, useMemo, useState } from "react";
 import ComboChart from "@components/charts/ComboChart";
 import BarChart from "@components/charts/BarChart";
 import StatCard from "./StatCard";
-import { CurrentCaseCount } from "@/interfaces/dashboard/dashboard.interface";
+import {
+  ComboCountDeaths,
+  CurrentCaseCount,
+} from "@/interfaces/dashboard/dashboard.interface";
 import ChoroplethMapWrapper from "../map/ChoroplethMapWrapper";
 import { Separator } from "@/shadcn/components/ui/separator";
 import {
@@ -47,6 +50,7 @@ years.unshift("All");
 
 export default function StatDashboard() {
   const [caseData, setCaseData] = useState<CurrentCaseCount | null>(null);
+  const [caseDeathsData, setCaseDeathData] = useState<ComboCountDeaths[]>([]);
   const [barangayData, setBarangayData] = useState<BarangayData[]>([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
@@ -83,6 +87,16 @@ export default function StatDashboard() {
     setCaseData(response);
   };
 
+  const fetchDengueCountDeaths = async (year: number | null) => {
+    try {
+      const response: ComboCountDeaths[] =
+        await fetchService.getCasesDeaths(year);
+      setCaseDeathData(response);
+    } catch (error) {
+      console.error("Failed to fetch dengue count deaths:", error);
+    }
+  };
+
   const fetchBarangayData = async (year: number | null) => {
     const response: BarangayData[] =
       await fetchService.getDengueCountPerBarangay(year);
@@ -93,6 +107,7 @@ export default function StatDashboard() {
   const fetchAllData = (option: string) => {
     const year = option == "All" ? null : parseInt(option);
     fetchQuickStat(year);
+    fetchDengueCountDeaths(year);
     fetchBarangayData(year);
   };
 
@@ -189,7 +204,7 @@ export default function StatDashboard() {
           </div>
           <div className="border border-grey rounded-lg ">
             <ChartHeader title={"Number of Dengue Cases and Deaths"} />
-            <ComboChart />
+            <ComboChart data={caseDeathsData} />
           </div>
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Choropleth Map */}
