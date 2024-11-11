@@ -58,6 +58,7 @@ export default function BarChart({
           <Bar
             yAxisId="left"
             dataKey="value"
+            name={yLabel}
             fill={barColor}
             radius={[4, 4, 0, 0]}
             barSize={50}
