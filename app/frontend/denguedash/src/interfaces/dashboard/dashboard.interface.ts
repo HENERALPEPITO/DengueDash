@@ -1,8 +1,12 @@
 export interface CurrentCaseCount {
   total_cases: number;
   total_deaths: number;
-  weekly_cases: number;
-  weekly_deaths: number;
+  total_severe_cases: number;
+  total_lab_confirmed_cases: number;
+  weekly_cases: number | null;
+  weekly_deaths: number | null;
+  weekly_severe_cases: number | null;
+  weekly_lab_confirmed_cases: number | null;
 }
 
 export interface ComboCountDeaths {
