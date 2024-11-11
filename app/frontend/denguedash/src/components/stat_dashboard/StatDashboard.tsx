@@ -3,7 +3,7 @@
 import ChartHeader from "./ChartHeader";
 import { BarangayData } from "@/interfaces/map/map.interface";
 import fetchService from "@/services/fetch.service";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ComboChart from "@components/charts/ComboChart";
 import BarChart from "@components/charts/BarChart";
 import StatCard from "./StatCard";
@@ -104,17 +104,17 @@ export default function StatDashboard() {
     setDataLoaded(true);
   };
 
-  const fetchAllData = (option: string) => {
+  const fetchAllData = useCallback((option: string) => {
     const year = option == "All" ? null : parseInt(option);
     fetchQuickStat(year);
     fetchDengueCountDeaths(year);
     fetchBarangayData(year);
-  };
+  }, []);
 
   // Load initial data
   useEffect(() => {
     fetchAllData("2024");
-  }, []);
+  }, [fetchAllData]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -182,24 +182,24 @@ export default function StatDashboard() {
           {/* Overview Statitstics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-2">
             <StatCard
-              title={"Weekly Case"}
-              value={caseData?.weekly_cases.toString() || "0"}
+              title={"Total Cases"}
+              value={caseData?.total_cases.toString() || "0"}
               icon={"fluent-emoji-high-contrast:mosquito"}
             />
             <StatCard
-              title={"Weekly Death"}
-              value={caseData?.weekly_deaths.toString() || "0"}
-              icon={"healthicons:death"}
+              title={"Severe Cases"}
+              value={caseData?.total_severe_cases.toString() || "0"}
+              icon={"fa:heartbeat"}
             />
             <StatCard
-              title={"Cumulative Case"}
-              value={caseData?.total_cases.toString() || "0"}
-              icon={"healthicons:malaria-outbreak-outline"}
+              title={"Lab Confirmed Cases"}
+              value={caseData?.total_lab_confirmed_cases.toString() || "0"}
+              icon={"icomoon-free:lab"}
             />
             <StatCard
-              title={"Cumulative Death"}
+              title={"Total Deaths"}
               value={caseData?.total_deaths.toString() || "0"}
-              icon={"healthicons:chart-death-rate-decreasing-outline"}
+              icon={"ion:skull"}
             />
           </div>
           <div className="border border-grey rounded-lg ">
