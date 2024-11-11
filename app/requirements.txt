@@ -2,3 +2,4 @@ django
 djangorestframework
 environs
 django-cors-headers
+rest_framework_simplejwt
