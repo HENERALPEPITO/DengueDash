@@ -4,49 +4,16 @@ This chapter lists and discusses the specific steps and activities that will be 
 The discussion covers the activities from pre-proposal to Final SP Writing.
 
 \section{Research Activities}
-A total of 452 rows of dengue cases and the associated average weekly weather data from January 2016 to September 2024 were used in training and forecasting the proposed models. These meteorological data points include rainfall, temperature, and humidity. The cases were gathered from both the Humanitarian Data Exchange and the Western Visayas Center for Health Development (WVCHD) via Freedom of Information (FOI). On the other hand, the weather variables were scraped from the Weather Underground. However, to produce more accurate and reliable results, the researchers are planning to request the same dataset from the Philippine Atmospheric, Geophysical, and Astronomical Services Administration (PAG-ASA).
-Moreover, the forms and templates that inspire the system came from WVCHD. The said document was meticulously analyzed to create a well-structured database that adheres to the requirements needed to produce a quality application. 
 
-
-\subsection{Development Framework}
+\subsection{System Development Framework}
 The Agile Model is the birthchild of both iterative and incremental approaches in Software Engineering. It aims to be flexible and effective at the same time by being adaptable to change. It's also important to note that small teams looking to construct and develop projects quickly can benefit from this kind of methodology. As the Agile Method focuses on continuous testing, quality assurance is a guarantee since bugs and errors are quickly identified and patched. 
 
-\subsection{Development Tools}
-\subsubsection{Software}
+\subsection{Design, Building, Testing, and Integration}
+\subsubsection{Design and Developlment}
+After brainstorming and researching the most appropriate type of application to accommodate both the prospected users and the proposed solutions, the team has decided to proceed with a web application. Given the time constraints and available resources, we believe this is the most pragmatic and practical move. The next step is to select modern and stable frameworks that align with the fundamental ideas we have learned at the university. The template obtained from WVCHD was meticulously analyzed to create use cases and develop a preliminary well-structured database that adheres to the requirements needed to produce a quality application. The said use cases serve as the basis of general features. Part by part, these are converted into code, and with the help of selected libraries and packages, it resulted in the desired outcome that may still modified and extended since it is continuously being developed. 
 
-\textbf{GitHub} \\
-GitHub is a cloud-based platform that uses Git, an open-source version control system, to track file changes (GitHub Docs, n.d.). According to Sewers (2023), it is the most popular collaboration tool with over 100 million users and 420 million repositories. It stores source code, manages system versions, and serves as a repository for LaTeX files used in this research.
-
-\textbf{Visual Studio Code} \\
-Visual Studio Code (VS Code) is a lightweight, cross-platform source code editor developed by Microsoft (2021). Although not a full IDE, it supports features such as syntax highlighting, code completion, and debugging. Due to its support for various programming languages, it is chosen as the primary code editor.
-
-\textbf{Django} \\
-Django is a free, open-source Python-based web framework that facilitates secure web application development by abstracting complexities (MDN Web Docs, 2024). It adheres to the Model-View-Template (MVT) architecture, providing a clean codebase by separating data models, business logic, and presentation layers.
-
-\textbf{Next.js} \\
-Statista (2024) claims React is the most popular front-end framework, but it has limitations like routing and performance optimizations. Next.js, built on React, addresses these limitations, enhancing the development experience through features such as hot module replacement, TypeScript support, and a rich plugin ecosystem.
-
-\textbf{Postman} \\
-Postman is a freemium API platform that provides a user-friendly interface to create and manage API requests (Postman API Platform, n.d.).
-
-\subsection{Hardware}
-The application development is carried out on laptops with at least an 11th-gen Intel i5 CPU and 16GB RAM.
-
-\subsubsection{Packages}
-\textbf{Django Rest Framework} \\
-Django Rest Framework (DRF) is a third-party package for Django that simplifies the development of robust Web APIs by providing features such as Serialization, Authentication, and a Browsable API (Christie, n.d.).
-
-\textbf{Leaflet} \\
-The application includes a Choropleth Map to display case counts, utilizing Leaflet—an open-source JavaScript package known for its performance and usability.
-
-\textbf{Chart.js} \\
-Chart.js provides data storytelling through various chart types. It is open-source and highly customizable, leveraging HTML5's canvas for compatibility across modern browsers.
-
-\textbf{Tailwind CSS} \\
-Tailwind CSS offers utility classes for creating custom designs directly in HTML (Tailwind CSS Docs, n.d.), making it an efficient choice for this project.
-
-\textbf{Shadcn} \\
-Shadcn offers open-source UI boilerplate components compatible with modern frameworks like Next.js, enhancing flexibility and customizability.
+\subsubsection{Testing and Integration}
+Each feature is rigorously user-tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Moreover, integration between each feature serves as a pillar for a cohesive user experience. Presently, we have not been able to use performance metrics to measure the system's performance, as developing and connecting the core features is the utmost priority. 
 
 \section{Model and Algorithm}
 \textbf{Data Preprocessing and Feature Selection:}
@@ -82,6 +49,47 @@ Shadcn offers open-source UI boilerplate components compatible with modern frame
 	\item Evaluate performance with Mean Absolute Error (MAE), RMSE, and R-squared metrics.
 \end{itemize}
 
+\section{Development Tools}
+\subsection{Software}
+
+\subsubsection{Github}
+GitHub is a cloud-based platform that tracks file changes using Git, an open-source version control system \cite{github-no-date}. In an article by Sawers (2023), it is the most popular collaboration software for software development with 100 million users and hosting over 420 million repositories as of January 2023. Due to its dependability, GitHub is used in the project to store the application's source code, manage the system's source version control, and serve as a repository for the Latex files used in the actual research.
+
+\subsubsection{Visual Studio Code}
+Visual Studio Code is a free, lightweight, and cross-platform source code editor developed by Microsoft \cite{vscode-2021}. While it is not a full-fledged traditional Integrated Development Environment (IDE), it still supports features such as syntax highlighting, code completion, and debugging. With the vast array of extensions available through its store, the said code editor can be an IDE-like environment experience. As VS Code supports this project's programming and scripting languages, it was chosen as the primary source code editor.
+
+\subsubsection{Django}
+Django is a free and open-sourced Python-based web framework that offers an abstraction to develop and maintain a secure web application. Because of this, developers can focus on coding a more straightforward solution without minding the more intricate hassles of web development \cite{django-no-date}. In addition, Django offers well-defined documentation and a large community. \\\\
+As this research aims to create a well-developed and maintainable application, it is in the best interest to follow an architectural pattern that developers and contributors in the future can understand. Since Django adheres to Model-View-Template (MVT) that promotes a clean codebase by separating data models, business logic, and presentation layers, it became the primary candidate for the application's backbone. 
+
+
+\subsubsection{Next.js}
+A report by Statista (2024) claims that React is the most popular front-end framework among web developers. However, React has limitations that can be a nuisance in rapid software development, which includes routing and performance optimizations. This is where Next.js comes in—a framework built on top of React. It offers solutions for React's deficiency, making it a rising star in the framework race. Moreover, it also offers a more enhanced developer experience through hot module replacement, Typescript support, and a rich plugin ecosystem, which facilitates efficient development workflows and reduces configuration overhead.
+
+\subsubsection{Postman}
+As the application heavily relies on the Application Programming Interface (API) being thrown by the backend, it is a must to use a development tool that facilitates the development and testing of the API. Postman is a freemium API platform that offers a user-friendly interface to create and manage API requests \cite{postman-no-date}. 
+
+\subsection{Hardware}
+The web application is continuously being developed on laptop computers with minimum specifications of an 11th-generation Intel i5 CPU and 16 gigabytes of RAM.
+
+\subsection{Packages}
+
+\subsubsection{Django REST Framework}
+Django Rest Framework (DRF) is a third-party package for Django that provides a comprehensive suite of features to simplify the development of robust and scalable Web APIs. These services include Serialization, Authentication and Permissions, Viewsets and Routers, and a Browsable API \cite{christie-no-date}. \\\\
+Since Django utilizes models that bundle data together, DRF serves as a bridge to convert these complex datatypes into primitive Python datatypes, which can be easily rendered into JavaScript Object Notation (JSON), Extensible Markup Language (XML), or other content types. On the other hand, it also includes a variety of authentication policies that control access to API endpoints. These include Basic, Session, and Token Authentication. It is also worth noting that a custom permission class can also be created as needed. DRF also simplifies the process of creating RESTful APIs by combining the logic for a group of related views into a single class, which can be accessed through a URL route. Lastly, the implementation of a web-browsable API is a game-changer since it allows developers to interact with the API through a user-friendly interface that becomes a breeding ground for testing and exploration. 
+
+\subsubsection{Leaflet}
+One of the features of the web application is the ability to map the number of cases using a Choropleth Map. Leaflet is the only free, open-sourced, and most importantly, stable JavaScript package that can do the job. With its ultra-lightweight size, it offers a comprehensive set of features that does not trade off performance and usability \cite{leaflet-no-date}. Open-source contributors have also created extensions of the package itself to support multiple frameworks. React-Leaflet is currently being supported and improved to satisfy the changes with the most up-to-date version of React \cite{react-leaflet-no-date}. 
+
+\subsubsection{Chart.js}
+Another feature of the application is to provide users with informative, approachable data storytelling that is easy for everyone to understand. The transformation of pure data points and statistics into figures such as charts is a big factor. Thus, there is a need for a package that can handle this feature without compromising the performance of the application. Chart.js is a free and open-source JavaScript package that is made to meet this criteria. It supports various types of charts, including bar, line, pie, scatter, and more. Since the package utilizes HTML5's canvas element, it is guaranteed to work across all modern browsers \cite{chartjs-no-date}. It is also worth noting that due to its simplicity and flexibility, the charts generated are highly customizable bringing data visualization to new heights. 
+
+\subsubsection{Tailwind CSS}
+Using plain CSS in production-quality applications can be counterproductive. Therefore, CSS frameworks were developed to promote consistency and accelerate the rapid development of web applications \cite{joel-2021}. One of these is Tailwind, which offers low-level utility classes that can be applied directly to each HTML element to create a custom design \cite{tailwind-no-date}. Given the limited timeline for this project, using this framework is a wise choice due to its stability and popularity among developers.
+
+\subsubsection{Shadcn}
+Shadcn offers a collection of open-source UI boilerplate components that can be directly copied and pasted into one's project. With the flexibility of the provided components, Shadcn allows developers to have full control over customization and styling. Since this is built on top of Tailwind CSS and Radix UI, it is supported by most modern frontend frameworks, including Next.js \cite{shadcn-no-date}.
+
 \section{Calendar of Activities}
 
 A Gantt chart showing the schedule of the activities is included below. Each bullet represents approximately one week of activity.
@@ -101,11 +109,9 @@ A Gantt chart showing the schedule of the activities is included below. Each bul
 		Data Cleaning and Feature Selection & & \weektwo & & \weekone & \\ \hline
 		
 		
-		Creating System Dashboard & & \weekone & \weektwo & \weekone & \\ \hline
+		Creating System Dashboard & & \weektwo & \weekfour & \weekone & \\ \hline
 		Analysis and Interpretation of Results & & & \weekone & & \\ \hline
 		Documentation & & \weekone & \weekfour & \weekone & \\ \hline
 	\end{tabular}
 	\label{tab:timetableactivities}
 \end{table}
-
-\end{document}
