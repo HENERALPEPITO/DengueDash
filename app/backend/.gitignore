@@ -12,6 +12,11 @@ __pycache__/
 *.sqlite3
 *.db
 
+# Ignore all files in migrations folders
+*/migrations/*
+# But include __init__.py
+!*/migrations/__init__.py
+
 # Django static and media files
 /static/
 /media/
