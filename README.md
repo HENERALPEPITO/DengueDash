@@ -119,8 +119,6 @@ Before you begin, ensure you have met the following requirements:
    NEXT_PUBLIC_DJANGO_URL = http://localhost:8000/api/
    ```
 
-   ###### .env
-
 4. **Run and Launch the Web Application:**
 
    ```sh
