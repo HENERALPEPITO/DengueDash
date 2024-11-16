@@ -96,13 +96,13 @@ export default function ChoroplethMap({ dengueData }: ChoroplethMapProps) {
       style={{ height: "80vh" }}
       zoom={ZOOM_LEVEL}
       center={ILOILO_CITY_COORDS}
-      dragging={false}
-      touchZoom={false}
+      dragging={true}
+      touchZoom={true}
       scrollWheelZoom={false}
       doubleClickZoom={false}
-      boxZoom={false}
+      boxZoom={true}
       keyboard={false}
-      zoomControl={false}
+      zoomControl={true}
     >
       <GeoJSON
         key={JSON.stringify(dengueData)}
