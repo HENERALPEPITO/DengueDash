@@ -61,7 +61,6 @@ export default function Component() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Case ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Barangay</TableHead>
             <TableHead>City</TableHead>
@@ -80,7 +79,6 @@ export default function Component() {
           ) : (
             cases.map((dengueCase) => (
               <TableRow key={dengueCase.case_id}>
-                <TableCell>{dengueCase.case_id}</TableCell>
                 <TableCell>{dengueCase.patient.full_name}</TableCell>
                 <TableCell>{dengueCase.patient.ca_barangay}</TableCell>
                 <TableCell>{dengueCase.patient.ca_city}</TableCell>
