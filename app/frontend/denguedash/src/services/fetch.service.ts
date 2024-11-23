@@ -1,16 +1,6 @@
 import { axiosInstance, axiosOpen } from "./auth.service";
 
-const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
-  try {
-    const response = await axiosInstance.get(
-      `dengue-case-reports?page=${page}&page_size=${itemsPerPage}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching dengue reports:", error);
-    throw error;
-  }
-};
+// Requests that does not need authentication
 
 const getQuickStat = async (year: number | null = null) => {
   try {
@@ -47,11 +37,35 @@ const getCasesDeaths = async (year: number | null = null) => {
   }
 };
 
+// Requests that must need authentication
+const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
+  try {
+    const response = await axiosInstance.get(
+      `dengue-case-reports?page=${page}&page_size=${itemsPerPage}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching dengue reports:", error);
+    throw error;
+  }
+};
+
+const getCaseViewDetails = async (caseId: number) => {
+  try {
+    const response = await axiosInstance.get(`dengue-case-reports/${caseId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching case details", error);
+    throw error;
+  }
+};
+
 const fetchService = {
-  getDengueReports,
   getQuickStat,
   getDengueCountPerBarangay,
   getCasesDeaths,
+  getDengueReports,
+  getCaseViewDetails,
 };
 
 export default fetchService;
