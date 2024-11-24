@@ -143,7 +143,7 @@ export const steps = [
         ],
       },
       {
-        name: "Current Address",
+        name: "Address",
         fields: [
           {
             inputType: "number",
