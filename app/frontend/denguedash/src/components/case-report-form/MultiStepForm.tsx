@@ -22,7 +22,6 @@ type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [useCurrentAddress, setUseCurrentAddress] = useState(false);
 
   const formSchema = useMemo(() => {
     return createFormSchema();
@@ -121,7 +120,6 @@ export default function MultiStepForm() {
     await postService.submitForm(transformedData);
 
     reset();
-    setUseCurrentAddress(false);
     setCurrentStep(0);
   };
 
@@ -267,10 +265,7 @@ export default function MultiStepForm() {
                     <label className="block text-sm font-medium leading-6 text-gray-900">
                       {field.fieldLabel}
                     </label>
-                    {renderField(
-                      field,
-                      subunit.name === "Permanent Address" && useCurrentAddress
-                    )}
+                    {renderField(field)}
                     {errors[field.varName as keyof FormValues] && (
                       <p className="text-red-500 text-sm">
                         {errors[field.varName as keyof FormValues]?.message}
