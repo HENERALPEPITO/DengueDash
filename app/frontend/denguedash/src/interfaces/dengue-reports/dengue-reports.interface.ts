@@ -22,9 +22,9 @@ export interface DengueReportPagination {
   results: Case[];
 }
 
-interface PatientView extends Person {
-  curr_full_address: string;
-  perm_full_address: string;
+export interface PatientView extends Person {
+  full_address: string;
+  date_of_birth: string;
   sex_display: string;
   civil_status_display: string;
   date_first_vax: string;
