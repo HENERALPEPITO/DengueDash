@@ -7,11 +7,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         classifications = [
+            "Super Admin",
             "Admin",
-            "Doctor",
-            "Nurse",
-            "Pharmacist",
-            "Cashier",
+            "Encoder",
         ]
 
         for classification in classifications:
