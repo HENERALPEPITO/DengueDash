@@ -22,11 +22,10 @@ type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [useCurrentAddress, setUseCurrentAddress] = useState(false);
 
   const formSchema = useMemo(() => {
-    return createFormSchema(useCurrentAddress);
-  }, [useCurrentAddress]);
+    return createFormSchema();
+  }, []);
 
   const {
     register,
@@ -35,7 +34,6 @@ export default function MultiStepForm() {
     trigger,
     control,
     setValue,
-    getValues,
     watch,
     formState: { errors },
   } = useForm<FormValues>({
@@ -85,16 +83,11 @@ export default function MultiStepForm() {
         suffix: data.suffix ? data.suffix : null,
         date_of_birth: formatDate(data.date_of_birth),
         sex: data.sex,
-        ca_house_no: data.ca_house_no,
-        ca_street: data.ca_street,
-        ca_barangay: data.ca_barangay,
-        ca_city: data.ca_city,
-        ca_province: data.ca_province,
-        p_house_no: data.p_house_no,
-        p_street: data.p_street,
-        p_barangay: data.p_barangay,
-        p_city: data.p_city,
-        p_province: data.p_province,
+        addr_house_no: data.addr_house_no,
+        addr_street: data.addr_street,
+        addr_barangay: data.addr_barangay,
+        addr_city: data.addr_city,
+        addr_province: data.addr_province,
         civil_status: data.civil_status,
         date_first_vax: data.date_first_vax
           ? formatDate(data.date_first_vax)
@@ -127,7 +120,6 @@ export default function MultiStepForm() {
     await postService.submitForm(transformedData);
 
     reset();
-    setUseCurrentAddress(false);
     setCurrentStep(0);
   };
 
@@ -150,19 +142,6 @@ export default function MultiStepForm() {
   const prev = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
-    }
-  };
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUseCurrentAddress(event.target.checked);
-
-    if (event.target.checked) {
-      // Copy current address values to permanent address fields
-      setValue("p_house_no", getValues("ca_house_no"));
-      setValue("p_street", getValues("ca_street"));
-      setValue("p_barangay", getValues("ca_barangay"));
-      setValue("p_city", getValues("ca_city"));
-      setValue("p_province", getValues("ca_province"));
     }
   };
 
@@ -281,28 +260,12 @@ export default function MultiStepForm() {
               </h2>
               <Separator className="mt-3" />
               <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
-                {subunit.name === "Permanent Address" && (
-                  <div className="sm:col-span-6">
-                    <label className="inline-flex items-center text-sm font-medium text-gray-700">
-                      <input
-                        type="checkbox"
-                        onChange={handleCheckboxChange}
-                        checked={useCurrentAddress}
-                        className="mr-2"
-                      />
-                      Same as Current Address
-                    </label>
-                  </div>
-                )}
                 {subunit.fields.map((field) => (
                   <div key={field.varName} className="sm:col-span-3">
                     <label className="block text-sm font-medium leading-6 text-gray-900">
                       {field.fieldLabel}
                     </label>
-                    {renderField(
-                      field,
-                      subunit.name === "Permanent Address" && useCurrentAddress
-                    )}
+                    {renderField(field)}
                     {errors[field.varName as keyof FormValues] && (
                       <p className="text-red-500 text-sm">
                         {errors[field.varName as keyof FormValues]?.message}

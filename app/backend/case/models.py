@@ -38,50 +38,26 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
-    ca_house_no = models.IntegerField(
+    addr_house_no = models.IntegerField(
         blank=False,
         null=False,
     )
-    ca_street = models.CharField(
+    addr_street = models.CharField(
         max_length=100,
         blank=False,
         null=False,
     )
-    ca_barangay = models.CharField(
+    addr_barangay = models.CharField(
         max_length=100,
         blank=False,
         null=False,
     )
-    ca_city = models.CharField(
+    addr_city = models.CharField(
         max_length=100,
         blank=False,
         null=False,
     )
-    ca_province = models.CharField(
-        max_length=100,
-        blank=False,
-        null=False,
-    )
-    p_house_no = models.IntegerField(
-        blank=False,
-        null=False,
-    )
-    p_street = models.CharField(
-        max_length=100,
-        blank=False,
-        null=False,
-    )
-    p_barangay = models.CharField(
-        max_length=100,
-        blank=False,
-        null=False,
-    )
-    p_city = models.CharField(
-        max_length=100,
-        blank=False,
-        null=False,
-    )
-    p_province = models.CharField(
+    addr_province = models.CharField(
         max_length=100,
         blank=False,
         null=False,
