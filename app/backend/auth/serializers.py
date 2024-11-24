@@ -43,10 +43,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             "classification",
         ]
 
+    """
+    Todo: Super Admins should register Admins
+    Admins should register Users
+    """
+
     def validate(self, attrs):
-        # Registering an admin via API is not allowed
         if attrs["classification"] == UserClassification.objects.get(
-            classification="Admin"
+            classification="Super Admin"
         ):
             raise serializers.ValidationError(
                 {"classification": "Invalid Classification."}
