@@ -1,7 +1,10 @@
-interface Patient {
+interface Person {
   full_name: string;
-  ca_barangay: string;
-  ca_city: string;
+}
+
+interface Patient extends Person {
+  addr_barangay: string;
+  addr_city: string;
 }
 
 export interface Case {
@@ -17,4 +20,35 @@ export interface DengueReportPagination {
   next: string | null;
   previous: string | null;
   results: Case[];
+}
+
+export interface PatientView extends Person {
+  full_address: string;
+  date_of_birth: string;
+  sex_display: string;
+  civil_status_display: string;
+  date_first_vax: string;
+  date_last_vax: string;
+}
+
+interface Interviewer extends Person {
+  full_name: string;
+  dru: string;
+}
+
+export interface CaseView extends Omit<Case, "patient"> {
+  is_admt: boolean;
+  date_onset: string;
+  ns1_result_display: string;
+  date_ns1: string | null;
+  igg_elisa_display: string;
+  date_igg_elisa: string | null;
+  igm_elisa_display: string;
+  date_igm_elisa: string | null;
+  pcr_display: string;
+  date_pcr: string | null;
+  outcome_display: string;
+  date_death: string | null;
+  patient: PatientView;
+  interviewer: Interviewer;
 }

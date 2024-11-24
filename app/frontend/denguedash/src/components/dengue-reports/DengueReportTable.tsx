@@ -18,10 +18,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@shadcn/components/ui/pagination";
+import { Button } from "@/shadcn/components/ui/button";
 import {
   Case,
   DengueReportPagination,
 } from "@interfaces/dengue-reports/dengue-reports.interface";
+import Link from "next/link";
 import fetchService from "@/services/fetch.service";
 
 export default function Component() {
@@ -68,6 +70,7 @@ export default function Component() {
             <TableHead>Date Consulted</TableHead>
             <TableHead>Clincal Classification</TableHead>
             <TableHead>Case Classification</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -82,11 +85,18 @@ export default function Component() {
               <TableRow key={dengueCase.case_id}>
                 <TableCell>{dengueCase.case_id}</TableCell>
                 <TableCell>{dengueCase.patient.full_name}</TableCell>
-                <TableCell>{dengueCase.patient.ca_barangay}</TableCell>
-                <TableCell>{dengueCase.patient.ca_city}</TableCell>
+                <TableCell>{dengueCase.patient.addr_barangay}</TableCell>
+                <TableCell>{dengueCase.patient.addr_city}</TableCell>
                 <TableCell>{dengueCase.date_con}</TableCell>
                 <TableCell>{dengueCase.clncl_class_display}</TableCell>
                 <TableCell>{dengueCase.case_class_display}</TableCell>
+                <TableCell>
+                  <Button variant={"outline"} asChild>
+                    <Link href={`dengue-reports/${dengueCase.case_id}`}>
+                      Open
+                    </Link>
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           )}

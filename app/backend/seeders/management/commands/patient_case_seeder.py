@@ -221,7 +221,7 @@ class Command(BaseCommand):
                 middle_name = fake.first_name()
                 date_of_birth = fake.date_of_birth(minimum_age=1, maximum_age=100)
                 sex = random.choice(["M", "F"])
-                ca_barangay = random.choice(barangays)
+                addr_barangay = random.choice(barangays)
                 p_barangay = random.choice(barangays)
 
                 patient = Patient.objects.create(
@@ -230,16 +230,11 @@ class Command(BaseCommand):
                     middle_name=middle_name,
                     date_of_birth=date_of_birth,
                     sex=sex,
-                    ca_house_no=fake.building_number(),
-                    ca_street=fake.street_name(),
-                    ca_barangay=ca_barangay,
-                    ca_city="Iloilo City",
-                    ca_province="Iloilo",
-                    p_house_no=fake.building_number(),
-                    p_street=fake.street_name(),
-                    p_barangay=p_barangay,
-                    p_city="Iloilo City",
-                    p_province="Iloilo",
+                    addr_house_no=fake.building_number(),
+                    addr_street=fake.street_name(),
+                    addr_barangay=addr_barangay,
+                    addr_city="Iloilo City",
+                    addr_province="Iloilo",
                     civil_status=random.choice(["S", "M", "W", "SEP"]),
                     date_first_vax=fake.date_this_decade(),
                     date_last_vax=fake.date_this_decade(),
