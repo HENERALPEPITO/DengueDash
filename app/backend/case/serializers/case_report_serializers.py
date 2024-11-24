@@ -67,7 +67,6 @@ class CaseInterviewerSerializer(serializers.ModelSerializer):
 class PatientViewSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     curr_full_address = serializers.SerializerMethodField()
-    perm_full_address = serializers.SerializerMethodField()
     sex_display = serializers.SerializerMethodField()
     civil_status_display = serializers.SerializerMethodField()
 
@@ -76,7 +75,6 @@ class PatientViewSerializer(serializers.ModelSerializer):
         fields = [
             "full_name",
             "curr_full_address",
-            "perm_full_address",
             "sex_display",
             "civil_status_display",
             "date_first_vax",
