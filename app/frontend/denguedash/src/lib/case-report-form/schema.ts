@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createFormSchema = (useCurrentAddress: boolean) => {
+export const createFormSchema = () => {
   return z
     .object({
       first_name: z.string().min(1, "First Name is required"),
@@ -16,22 +16,11 @@ export const createFormSchema = (useCurrentAddress: boolean) => {
           message: "Civil Status is required",
         }),
       date_of_birth: z.date({ required_error: "Date of Birth is required" }),
-      ca_house_no: z.string().optional(),
-      ca_street: z.string().optional(),
-      ca_barangay: z.string().min(1, "Current Barangay Address is required"),
-      ca_city: z.string().min(1, "Current City Address is required"),
-      ca_province: z.string().min(1, "Current Province Address is required"),
-      p_house_no: z.string().optional(),
-      p_street: z.string().optional(),
-      p_barangay: useCurrentAddress
-        ? z.string().optional()
-        : z.string().min(1, "Permanent Barangay Address is required"),
-      p_city: useCurrentAddress
-        ? z.string().optional()
-        : z.string().min(1, "Permanent City Address is required"),
-      p_province: useCurrentAddress
-        ? z.string().optional()
-        : z.string().min(1, "Permanent Province Address is required"),
+      addr_house_no: z.string().optional(),
+      addr_street: z.string().optional(),
+      addr_barangay: z.string().min(1, "Current Barangay Address is required"),
+      addr_city: z.string().min(1, "Current City Address is required"),
+      addr_province: z.string().min(1, "Current Province Address is required"),
       date_first_vax: z.date().optional(),
       date_last_vax: z.date().optional(),
       date_con: z.date({ required_error: "Date of Consultation is required" }),

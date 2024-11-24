@@ -13,8 +13,8 @@ class CaseReportPatientSerializer(serializers.ModelSerializer):
         model = Patient
         fields = [
             "full_name",
-            "ca_barangay",
-            "ca_city",
+            "addr_barangay",
+            "addr_city",
         ]
 
     def get_full_name(self, obj):
@@ -88,10 +88,7 @@ class PatientViewSerializer(serializers.ModelSerializer):
         return f"{obj.last_name}, {obj.first_name} {obj.middle_name} {suffix}".strip()
 
     def get_curr_full_address(self, obj):
-        return f"{obj.ca_house_no} {obj.ca_street}, {obj.ca_barangay}, {obj.ca_city}, {obj.ca_province}".strip()
-
-    def get_perm_full_address(self, obj):
-        return f"{obj.p_house_no} {obj.p_street}, {obj.p_barangay}, {obj.p_city}, {obj.p_province}".strip()
+        return f"{obj.addr_house_no} {obj.addr_street}, {obj.addr_barangay}, {obj.addr_city}, {obj.addr_province}".strip()
 
     def get_sex_display(self, obj):
         return obj.get_sex_display()

@@ -147,57 +147,27 @@ export const steps = [
         fields: [
           {
             inputType: "number",
-            varName: "ca_house_no",
+            varName: "addr_house_no",
             fieldLabel: "House No.",
           },
           {
             inputType: "text",
-            varName: "ca_street",
+            varName: "addr_street",
             fieldLabel: "Street",
           },
           {
             inputType: "text",
-            varName: "ca_barangay",
+            varName: "addr_barangay",
             fieldLabel: "Barangay",
           },
           {
             inputType: "text",
-            varName: "ca_city",
+            varName: "addr_city",
             fieldLabel: "City",
           },
           {
             inputType: "text",
-            varName: "ca_province",
-            fieldLabel: "Province",
-          },
-        ],
-      },
-      {
-        name: "Permanent Address",
-        fields: [
-          {
-            inputType: "number",
-            varName: "p_house_no",
-            fieldLabel: "House No.",
-          },
-          {
-            inputType: "text",
-            varName: "p_street",
-            fieldLabel: "Street",
-          },
-          {
-            inputType: "text",
-            varName: "p_barangay",
-            fieldLabel: "Barangay",
-          },
-          {
-            inputType: "text",
-            varName: "p_city",
-            fieldLabel: "City",
-          },
-          {
-            inputType: "text",
-            varName: "p_province",
+            varName: "addr_province",
             fieldLabel: "Province",
           },
         ],

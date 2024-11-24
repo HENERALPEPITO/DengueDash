@@ -3,8 +3,8 @@ interface Person {
 }
 
 interface Patient extends Person {
-  ca_barangay: string;
-  ca_city: string;
+  addr_barangay: string;
+  addr_city: string;
 }
 
 export interface Case {

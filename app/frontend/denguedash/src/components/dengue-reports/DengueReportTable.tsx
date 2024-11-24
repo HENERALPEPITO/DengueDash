@@ -85,8 +85,8 @@ export default function Component() {
               <TableRow key={dengueCase.case_id}>
                 <TableCell>{dengueCase.case_id}</TableCell>
                 <TableCell>{dengueCase.patient.full_name}</TableCell>
-                <TableCell>{dengueCase.patient.ca_barangay}</TableCell>
-                <TableCell>{dengueCase.patient.ca_city}</TableCell>
+                <TableCell>{dengueCase.patient.addr_barangay}</TableCell>
+                <TableCell>{dengueCase.patient.addr_city}</TableCell>
                 <TableCell>{dengueCase.date_con}</TableCell>
                 <TableCell>{dengueCase.clncl_class_display}</TableCell>
                 <TableCell>{dengueCase.case_class_display}</TableCell>

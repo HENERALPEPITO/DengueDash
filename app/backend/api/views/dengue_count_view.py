@@ -146,28 +146,28 @@ class BarangayCountView(APIView):
             cases = cases.filter(date_con__year=year)
 
         cases_per_barangay = (
-            cases.values("patient__ca_barangay")
+            cases.values("patient__addr_barangay")
             .annotate(case_count=Count("case_id"))
             .order_by("-case_count")
         )
 
         deaths_per_barangay = (
             cases.filter(outcome="D")
-            .values("patient__ca_barangay")
+            .values("patient__addr_barangay")
             .annotate(death_count=Count("case_id"))
         )
 
         death_counts = {
-            item["patient__ca_barangay"]: item["death_count"]
+            item["patient__addr_barangay"]: item["death_count"]
             for item in deaths_per_barangay
         }
 
         data = [
             {
-                "barangay": item["patient__ca_barangay"],
+                "barangay": item["patient__addr_barangay"],
                 "case_count": item["case_count"],
                 # Default is 0 if no deaths
-                "death_count": death_counts.get(item["patient__ca_barangay"], 0),
+                "death_count": death_counts.get(item["patient__addr_barangay"], 0),
             }
             for item in cases_per_barangay
         ]
