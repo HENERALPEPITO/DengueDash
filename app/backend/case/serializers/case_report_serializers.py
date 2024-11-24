@@ -66,7 +66,7 @@ class CaseInterviewerSerializer(serializers.ModelSerializer):
 
 class PatientViewSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    curr_full_address = serializers.SerializerMethodField()
+    full_address = serializers.SerializerMethodField()
     sex_display = serializers.SerializerMethodField()
     civil_status_display = serializers.SerializerMethodField()
 
@@ -74,7 +74,8 @@ class PatientViewSerializer(serializers.ModelSerializer):
         model = Patient
         fields = [
             "full_name",
-            "curr_full_address",
+            "full_address",
+            "date_of_birth",
             "sex_display",
             "civil_status_display",
             "date_first_vax",
@@ -85,7 +86,7 @@ class PatientViewSerializer(serializers.ModelSerializer):
         suffix = obj.suffix if obj.suffix is not None else ""
         return f"{obj.last_name}, {obj.first_name} {obj.middle_name} {suffix}".strip()
 
-    def get_curr_full_address(self, obj):
+    def get_full_address(self, obj):
         return f"{obj.addr_house_no} {obj.addr_street}, {obj.addr_barangay}, {obj.addr_city}, {obj.addr_province}".strip()
 
     def get_sex_display(self, obj):
