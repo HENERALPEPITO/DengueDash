@@ -19,17 +19,10 @@ class DRU(models.Model):
         null=False,
         default="Western Visayas",
     )
-    province = models.CharField(
-        max_length=100,
+    surveillance_unit = models.CharField(
+        max_length=50,
         blank=False,
-        null=False,
-        default="Iloilo",
-    )
-    municipality = models.CharField(
-        max_length=100,
-        blank=False,
-        null=False,
-        default="Iloilo City",
+        null=True,
     )
     dru = models.CharField(
         unique=True,
