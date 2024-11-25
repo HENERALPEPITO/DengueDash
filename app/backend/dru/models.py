@@ -1,6 +1,16 @@
 from django.db import models
 
 
+class DRUType(models.Model):
+
+    dru_classification = models.CharField(
+        max_length=20,
+    )
+
+    def __str__(self):
+        return self.dru_classification
+
+
 class DRU(models.Model):
 
     region = models.CharField(
@@ -9,19 +19,13 @@ class DRU(models.Model):
         null=False,
         default="Western Visayas",
     )
-    province = models.CharField(
-        max_length=100,
+    surveillance_unit = models.CharField(
+        max_length=50,
         blank=False,
-        null=False,
-        default="Iloilo",
-    )
-    municipality = models.CharField(
-        max_length=100,
-        blank=False,
-        null=False,
-        default="Iloilo City",
+        null=True,
     )
     dru = models.CharField(
+        unique=True,
         max_length=100,
         blank=False,
         null=False,
@@ -30,21 +34,13 @@ class DRU(models.Model):
         blank=False,
         null=False,
     )
-    dru_types = [
-        ("rhu", "RHU"),
-        ("ho", "CHO/MHO/PHO"),
-        ("gov_hsptl", "Government Hospital"),
-        ("priv_hsptl", "Private Hospital"),
-        ("clinic", "Clinic"),
-        ("priv_lab", "Private Laboratory"),
-        ("pub_lab", "Public Laboratory"),
-        ("sea_air", "Seaport/Airport"),
-    ]
-    dru_type = models.CharField(
-        max_length=20,
-        choices=dru_types,
+
+    dru_type = models.ForeignKey(
+        DRUType,
+        on_delete=models.SET_NULL,
         blank=False,
-        null=False,
+        null=True,
+        related_name="dru_type",
     )
 
     def __str__(self):

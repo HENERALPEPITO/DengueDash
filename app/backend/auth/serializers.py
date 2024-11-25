@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from api.custom_exceptions.custom_validation_exception import CustomValidationException
 from user.models import UserClassification
-from dru.models import DRU
+from dru.models import DRU, DRUType
 
 User = get_user_model()
 
@@ -45,16 +45,51 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     """
     Todo: Super Admins should register Admins
-    Admins should register Users
+    Todo: Admins should register Users
+
+    Todo: Admins should register nominated DRUs
     """
 
     def validate(self, attrs):
+        # Todo: Refactor in the future
         if attrs["classification"] == UserClassification.objects.get(
-            classification="Super Admin"
+            classification="super_admin"
         ):
             raise serializers.ValidationError(
                 {"classification": "Invalid Classification."}
             )
+
+        # Appropriate Classification for DRU type
+        if attrs["classification"] == UserClassification.objects.get(
+            classification="admin_region"
+        ) and attrs["dru"].dru_type != DRUType.objects.get(
+            dru_classification="RESU",
+        ):
+            raise serializers.ValidationError(
+                {
+                    "dru": "Invalid DRU type for Regional Admin Account",
+                }
+            )
+
+        if attrs["classification"] == UserClassification.objects.get(
+            classification="admin_local"
+        ) and attrs["dru"].dru_type != DRUType.objects.get(
+            dru_classification="PESU/CESU",
+        ):
+            raise serializers.ValidationError(
+                {"dru": "Invalid DRU type for PESU/CESU Admin Account"},
+            )
+
+        # Todo: Save for future use
+        # if attrs["classification"] == UserClassification.objects.get(
+        #     classification="encoder"
+        # ) and (
+        #     attrs["dru"].dru_type == DRUType.objects.get(dru_classification="PESU/CESU")
+        #     or attrs["dru"].dru_type == DRUType.objects.get(dru_classification="RESU")
+        # ):
+        #     raise serializers.ValidationError(
+        #         {"dru": "Invalid DRU type for Encoder Account"},
+        #     )
 
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password": "Passwords do not match."})

@@ -50,12 +50,18 @@ Before you begin, ensure you have met the following requirements:
    py manage.py migrate
    ```
 
-4. **Seed the Database**
+4. **Seed the Database (must be in order)**
 
    - User Classifications
 
    ```sh
    py manage.py user_classification_seeder
+   ```
+
+   - DRU Types
+
+   ```sh
+   py manage.py dru_type_seeder
    ```
 
    - DRU
