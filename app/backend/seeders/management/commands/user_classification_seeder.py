@@ -9,7 +9,7 @@ class Command(BaseCommand):
         classifications = [
             "super_admin",  # System Admins
             "admin_region",  # RESU
-            "admin_local",  # PESU / CESU
+            "admin_local",  # PESU/CESU
             "admin_dru",  # Hospitals
             "encoder",  # Data Encoders
         ]
