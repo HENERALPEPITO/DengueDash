@@ -80,6 +80,17 @@ class RegisterSerializer(serializers.ModelSerializer):
                 {"dru": "Invalid DRU type for PESU/CESU Admin Account"},
             )
 
+        # Todo: Save for future use
+        # if attrs["classification"] == UserClassification.objects.get(
+        #     classification="encoder"
+        # ) and (
+        #     attrs["dru"].dru_type == DRUType.objects.get(dru_classification="PESU/CESU")
+        #     or attrs["dru"].dru_type == DRUType.objects.get(dru_classification="RESU")
+        # ):
+        #     raise serializers.ValidationError(
+        #         {"dru": "Invalid DRU type for Encoder Account"},
+        #     )
+
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password": "Passwords do not match."})
 
