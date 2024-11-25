@@ -10,9 +10,15 @@ from api.pagination import APIPagination
 
 class CaseReportView(ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    queryset = Case.objects.all().order_by("-date_con")
     serializer_class = CaseReportSerializer
     pagination_class = APIPagination
+
+    def get_queryset(self):
+        # Filter cases based on the authenticated user
+        user_id = self.request.user.id
+        return Case.objects.filter(
+            interviewer_id=user_id,
+        ).order_by("-date_con")
 
 
 class CaseDetailedView(APIView):
