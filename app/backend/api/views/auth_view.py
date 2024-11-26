@@ -38,22 +38,35 @@ class LoginView(TokenObtainPairView):
             res = JsonResponse(
                 {
                     "success": True,
-                    "message": "Logged in sucessfuly",
+                    "message": "Logged in successfully",
                     # todo: remove in the future due to security purposes
                     "access_token": access_token,
                     "refresh_token": refresh_token,
                 }
             )
 
+            # Set the access token cookie
             res.set_cookie(
                 key=settings.SIMPLE_JWT["AUTH_COOKIE"],
                 value=access_token,
-                domain=settings.SIMPLE_JWT["AUTH_COOKIE_DOMAIN"],
+                domain=settings.SIMPLE_JWT["COOKIE_DOMAIN"],
                 path=settings.SIMPLE_JWT["AUTH_COOKIE_PATH"],
                 expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
-                secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
-                httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
-                samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+                secure=settings.SIMPLE_JWT["COOKIE_SECURE"],
+                httponly=settings.SIMPLE_JWT["COOKIE_HTTP_ONLY"],
+                samesite=settings.SIMPLE_JWT["COOKIE_SAMESITE"],
+            )
+
+            # Set the refresh token cookie
+            res.set_cookie(
+                key=settings.SIMPLE_JWT["REFRESH_COOKIE"],
+                value=refresh_token,
+                domain=settings.SIMPLE_JWT["COOKIE_DOMAIN"],
+                path=settings.SIMPLE_JWT["REFRESH_COOKIE_PATH"],
+                expires=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"],
+                secure=settings.SIMPLE_JWT["COOKIE_SECURE"],
+                httponly=settings.SIMPLE_JWT["COOKIE_HTTP_ONLY"],
+                samesite=settings.SIMPLE_JWT["COOKIE_SAMESITE"],
             )
 
             return res
