@@ -148,15 +148,17 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "user.User"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=2),
     "BLACKLIST_AFTER_ROTATION": True,
-    "AUTH_COOKIE": "access_token",  # Cookie name
-    "AUTH_COOKIE_DOMAIN": None,  # Domain where cookies are sent
-    "AUTH_COOKIE_SECURE": False,  # Send over HTTPS only
-    "AUTH_COOKIE_HTTP_ONLY": True,  # Prevent JS access
+    "AUTH_COOKIE": "access_token",
+    "REFRESH_COOKIE": "refresh_token",
+    "COOKIE_DOMAIN": None,  # Domain where cookies are sent
+    "COOKIE_SECURE": False,  # Send over HTTPS only
+    "COOKIE_HTTP_ONLY": True,  # Prevent JS access
     "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
-    "AUTH_COOKIE_SAMESITE": "Lax",  # Should cookie be sent cross site
+    "REFRESH_COOKIE_PATH": "/",  # URL path where cookie will be sent
+    "COOKIE_SAMESITE": "Lax",  # Should cookie be sent cross site
     "ALGORITHM": "HS256",
 }
 
