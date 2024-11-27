@@ -2,10 +2,7 @@
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
-import {
-  BaseLoginReponse,
-  UserLoggedIn,
-} from "@interfaces/auth/user-auth.interface";
+import { UserLoggedIn } from "@interfaces/auth/user-auth.interface";
 import GuestHeader from "@components/guest/GuestHeader";
 import authService from "@services/auth.service";
 
@@ -19,10 +16,7 @@ const Login = () => {
   const loginUser = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response: BaseLoginReponse | UserLoggedIn = await authService.login(
-        email,
-        password
-      );
+      const response: UserLoggedIn = await authService.login(email, password);
       console.log(response);
       if (response.success) {
         router.push("/user/analytics/dashboard");
