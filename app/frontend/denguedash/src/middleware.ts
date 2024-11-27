@@ -67,6 +67,10 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   return NextResponse.next();
 }
 
+// Todo: Add more routes
+// Todo: Implement different views for different user roles
+// Eg. Admin => /admin/dashboard
+// Eg. User => /user/dashboard
 export const config = {
   matcher: ["/user/analytics/dashboard", "/user/forms/case-report-form"],
 };
