@@ -98,37 +98,15 @@ The ARIMA model was developed to capture non-seasonal trends in the data. To det
 	\end{itemize}
 \end{enumerate}
 
+
+\section*{Seasonal ARIMA (SARIMA) Model}
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_Sarima}
 	\caption{Seasonal ARIMA Prediction Results for Test Set}
 	\label{fig:Sarima_result}
 \end{figure}
-
-\subsection{Seasonal ARIMA Model}
-\begin{enumerate}
-	\item \textbf{Data Preprocessing:}  
-	Prepare the dataset by handling any missing values and scaling the data if necessary to improve model convergence and stability.
-	
-	\item \textbf{Hyperparameter Tuning:}  
-	Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(2, 0, 3)}.
-	
-	\item \textbf{Model Training:}
-	\begin{itemize}
-		\item Set the number of iterations to 400 to ensure thorough training and convergence.
-		\item Train the ARIMA model on 80\% of the data and reserve 20\% for testing.
-	\end{itemize}
-	
-	\item \textbf{Evaluation:}  
-	After training, the ARIMA model was evaluated on the test data, yielding the following performance metrics:
-	\begin{itemize}
-		\item \textbf{MSE (Mean Squared Error)}: 1983.16
-		\item \textbf{RMSE (Root Mean Squared Error)}: 44.53
-	\end{itemize}
-	These metrics demonstrate that the ARIMA model effectively captured non-seasonal temporal patterns in the data.
-\end{enumerate}
-
-\section*{Seasonal ARIMA (SARIMA) Model}
 
 This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit.
 
