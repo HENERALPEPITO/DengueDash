@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "api",
+    "api",
     # "auth",
     "seeders",
     "case",
@@ -148,8 +148,8 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "user.User"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=2),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_COOKIE": "access_token",
     "REFRESH_COOKIE": "refresh_token",
