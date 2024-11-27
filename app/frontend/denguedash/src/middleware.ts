@@ -2,12 +2,16 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { validateToken } from "./lib/token";
 import { cookies } from "next/headers";
 
+type refreshTokenResponse = {
+  access: string;
+};
+
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token");
   const refreshToken = cookieStore.get("refresh_token");
 
-  // Check if tokens exists
+  // Check if tokens exist
   if (!accessToken || !refreshToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -21,41 +25,48 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Todo: Implement refresh token
-  // const isAccessTokenExpired = await validateToken(accessToken.value);
-  // if (isAccessTokenExpired) {
-  //   const getAccessToken = fetch(
-  //     process.env.NEXT_PUBLIC_DJANGO_URL + "token/refresh/",
-  //     {
-  //       method: "POST",
-  //       body: JSON.stringify({ refresh: refreshToken.value }),
-  //     }
-  //   );
-  //   event.waitUntil(getAccessToken);
-  //   try {
-  //     const response = await getAccessToken;
-  //     const data = await response.json();
+  const isAccessTokenExpired = await validateToken(accessToken.value);
+  if (isAccessTokenExpired) {
+    const getAccessToken = fetch(
+      process.env.NEXT_PUBLIC_DJANGO_URL + "token/refresh/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh: refreshToken.value }),
+      }
+    );
+    event.waitUntil(getAccessToken);
 
-  //     const newAccessToken = data.access;
-  //     if (newAccessToken) {
-  //       const nextResponse = NextResponse.next();
-  //       nextResponse.cookies.set("access_token", newAccessToken, {
-  //         httpOnly: true,
-  //         secure: process.env.NODE_ENV === "production",
-  //         sameSite: "lax",
-  //         path: "/",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error refreshing access token:", error);
-  //     return NextResponse.redirect(new URL("/login", request.url));
-  //   }
-  // }
+    try {
+      const response = await getAccessToken;
+      const data: refreshTokenResponse = await response.json();
 
+      const newAccessToken = data.access;
+      if (newAccessToken) {
+        // Create a new NextResponse to set the cookie
+        const nextResponse = NextResponse.next();
+        nextResponse.cookies.set("access_token", newAccessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+        });
+
+        // Return the modified NextResponse
+        return nextResponse;
+      }
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
+  // Return the default NextResponse if no refresh is required
   return NextResponse.next();
 }
 
 export const config = {
-  // todo: add more paths to match
   matcher: ["/user/analytics/dashboard", "/user/forms/case-report-form"],
 };
