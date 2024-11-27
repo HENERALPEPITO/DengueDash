@@ -5,6 +5,79 @@ The discussion covers the activities from pre-proposal to Final SP Writing.
 
 \section{Research Activities}
 
+\subsection{Gather Dengue Data and Climate Data to Create a Complete Dataset for Forecasting}
+
+\subsubsection{Acquisition of Dengue Case Data}
+\begin{itemize}
+	\item Request and secure historical dengue case data for the Western Visayas region from:
+	\begin{itemize}
+		\item Humanitarian Data Exchange.
+		\item Western Visayas Center for Health Development (WVCHD) via Freedom of Information (FOI) requests.
+	\end{itemize}
+	\item Validate data accuracy and completeness to ensure reliability.
+\end{itemize}
+
+\subsubsection{Collection of Weather Data}
+\begin{itemize}
+	\item Use web scraping techniques to extract weekly weather data (e.g., rainfall, temperature, and humidity) from Weather Underground.
+\end{itemize}
+
+\subsubsection{Data Integration and Preprocessing}
+\begin{itemize}
+	\item Combine dengue case data with weather data into a complete dataset that aligns data based on timeframes.
+	\item Clean data to address missing values, outliers, and inconsistencies.
+\end{itemize}
+
+\subsubsection{Exploratory Data Analysis (EDA)}
+\begin{itemize}
+	\item Analyze trends, seasonality, and correlations between dengue cases and weather factors.
+	\item Create visualizations like time series plots and scatterplots to highlight relationships and patterns in the data.
+\end{itemize}
+
+\subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
+
+\subsubsection{Algorithm Selection for Time Series Modeling}
+\begin{itemize}
+	\item Evaluate the suitability of algorithms for time series forecasting, focusing on:
+	\begin{itemize}
+		\item Deep learning models like LSTM (Long Short-Term Memory).
+		\item Traditional statistical models ARIMA and Seasonal ARIMA.
+		\item State-space models Kalman Filter.
+	\end{itemize}
+	\item Assess each algorithm's strengths in handling temporal patterns and external factors.
+\end{itemize}
+
+\subsubsection{Model Training and Testing}
+\begin{itemize}
+	\item Split the dataset into training and testing sets while maintaining temporal continuity.
+	\item Train each model using historical data and tune hyperparameters to enhance accuracy.
+	\item Evaluate models using performance metrics such as MSE and RMSE.
+\end{itemize}
+
+\subsubsection{Model Evaluation and Optimization}
+\begin{itemize}
+	\item Compare the performance of all models to identify the most accurate forecasting approach.
+	\item Iteratively optimize the selected model.
+\end{itemize}
+
+\subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
+
+\subsubsection{Dashboard Design and Development}
+\begin{itemize}
+	\item Design an intuitive, user-friendly web-based dashboard incorporating:
+	\begin{itemize}
+		\item Interactive visualizations of yearly dengue case trends.
+		\item Data input and update forms for dengue and weather data.
+		\item Map display of dengue cases in each district in Iloilo City
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Model Integration and Deployment}
+\begin{itemize}
+	\item Deploy the best-performing model within the dashboard as a backend service to enable real-time or periodic forecasting.
+\end{itemize}
+
+
 \subsection{System Development Framework}
 The Agile Model is the birthchild of both iterative and incremental approaches in Software Engineering. It aims to be flexible and effective at the same time by being adaptable to change. It's also important to note that small teams looking to construct and develop projects quickly can benefit from this kind of methodology. As the Agile Method focuses on continuous testing, quality assurance is a guarantee since bugs and errors are quickly identified and patched. 
 
