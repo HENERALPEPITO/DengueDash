@@ -1,5 +1,5 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { validateToken } from "./lib/token";
+import { validateToken, verifyTokenSignature } from "./lib/token";
 import { cookies } from "next/headers";
 
 type refreshTokenResponse = {
@@ -11,8 +11,26 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const accessToken = cookieStore.get("access_token");
   const refreshToken = cookieStore.get("refresh_token");
 
+  const deleteCookies = () => {
+    cookieStore.delete("access_token");
+    cookieStore.delete("refresh_token");
+  };
+
   // Check if tokens exist
   if (!accessToken || !refreshToken) {
+    deleteCookies();
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Verify the signatures for both tokens
+  const isAccessTokenSignatureValid = await verifyTokenSignature(
+    accessToken.value
+  );
+  const isRefreshTokenSignatureValid = await verifyTokenSignature(
+    refreshToken.value
+  );
+  if (!isAccessTokenSignatureValid || !isRefreshTokenSignatureValid) {
+    deleteCookies();
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -20,8 +38,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   // Verify if refresh token is expired
   if (isRefreshTokenExpired) {
-    cookieStore.delete("access_token");
-    cookieStore.delete("refresh_token");
+    deleteCookies();
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -59,6 +76,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       }
     } catch (error) {
       console.error("Error refreshing access token:", error);
+      deleteCookies();
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
