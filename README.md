@@ -116,13 +116,23 @@ Before you begin, ensure you have met the following requirements:
 
 3. **Create environment variables:**
 
-   - Create a .env file in the frontend directory
-   - Input the following line:
+   - Create a .env file in both backend and frontend directories
+
+   - Input the following line (Backend):
+
+   ###### .env
+
+   ```
+   SECRET_KEY=<YOUR_SECRET_KEY>
+   ```
+
+   - Input the following line (Frontend):
 
    ###### .env
 
    ```
    NEXT_PUBLIC_DJANGO_URL = http://localhost:8000/api/
+   SECRET_KEY=<YOUR_SECRET_KEY>
    ```
 
 4. **Run and Launch the Web Application:**
