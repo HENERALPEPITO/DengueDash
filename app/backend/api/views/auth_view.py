@@ -14,6 +14,12 @@ from user.serializers import (
     UserSerializer,
 )
 from user.models import UserClassification
+import environs
+
+env = environs.Env()
+env.read_env()
+
+SECRET_KEY = env("SECRET_KEY")
 
 User = get_user_model()
 
@@ -47,10 +53,10 @@ class LoginView(TokenObtainPairView):
 
             # Set the access token cookie
             res.set_cookie(
-                key=settings.SIMPLE_JWT["AUTH_COOKIE"],
+                key=settings.SIMPLE_JWT["ACCESS_COOKIE"],
                 value=access_token,
                 domain=settings.SIMPLE_JWT["COOKIE_DOMAIN"],
-                path=settings.SIMPLE_JWT["AUTH_COOKIE_PATH"],
+                path=settings.SIMPLE_JWT["ACCESS_COOKIE_PATH"],
                 expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
                 secure=settings.SIMPLE_JWT["COOKIE_SECURE"],
                 httponly=settings.SIMPLE_JWT["COOKIE_HTTP_ONLY"],
