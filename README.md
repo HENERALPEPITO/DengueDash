@@ -126,7 +126,7 @@ Before you begin, ensure you have met the following requirements:
    SECRET_KEY=<YOUR_SECRET_KEY>
    ```
 
-   - Input the following line (Frontend):
+   - Input the following lines (Frontend):
 
    ###### .env
 
