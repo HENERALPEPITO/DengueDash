@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import environs
+
+env = environs.Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-^eb04_fs6d99uj_eb&v_loa=)dz32xr*)9t6ucr)h=&=1^ut8e"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -151,12 +155,12 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "BLACKLIST_AFTER_ROTATION": True,
-    "AUTH_COOKIE": "access_token",
+    "ACCESS_COOKIE": "access_token",
     "REFRESH_COOKIE": "refresh_token",
     "COOKIE_DOMAIN": None,  # Domain where cookies are sent
     "COOKIE_SECURE": False,  # Send over HTTPS only
     "COOKIE_HTTP_ONLY": True,  # Prevent JS access
-    "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
+    "ACCESS_COOKIE_PATH": "/",  # URL path where cookie will be sent
     "REFRESH_COOKIE_PATH": "/",  # URL path where cookie will be sent
     "COOKIE_SAMESITE": "Lax",  # Should cookie be sent cross site
     "ALGORITHM": "HS256",
