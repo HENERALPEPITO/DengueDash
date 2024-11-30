@@ -1,11 +1,13 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from api.custom_exceptions.custom_validation_exception import CustomValidationException
 from user.models import UserClassification
 from dru.models import DRU, DRUType
+
 
 User = get_user_model()
 
@@ -124,4 +126,10 @@ class LoginSerializer(TokenObtainPairSerializer):
         user = self.user
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
+
+        # Modify the default access token by including the user_type
+        access_token = AccessToken.for_user(user)
+        user_type = user.classification.classification
+        access_token["user_type"] = user_type
+        data["access"] = str(access_token)
         return data
