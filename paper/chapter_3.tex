@@ -3,6 +3,13 @@
 This chapter lists and discusses the specific steps and activities that will be performed to accomplish the project. 
 The discussion covers the activities from pre-proposal to Final SP Writing.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{Model Diagram}
+	\caption{Workflow for forecasting the number of weekly dengue cases}
+	\label{fig:data_snippet}
+\end{figure}
+This summarizes the workflow for forecasting the number of weekly dengue cases. This workflow focuses on using statistical, deep learning, and probabilistic models to forecast the number of reported dengue cases. The approach involves deploying several models for prediction, including ARIMA and Seasonal ARIMA as statistical approaches, LSTM as a deep learning approach, and the Kalman Filter as a probabilistic approach. These methods are compared with each other to determine the most accurate model.
 \section{Research Activities}
 
 \subsection{Gather Dengue Data and Climate Data to Create a Complete Dataset for Forecasting}
@@ -184,16 +191,17 @@ A Gantt chart showing the schedule of the activities is included below. Each bul
 \begin{table}[ht]
 	\centering
 	\caption{Timetable of Activities} \vspace{0.25em}
-	\begin{tabular}{|p{2in}|c|c|c|c|c|c|c|c|} \hline
-		Activities (2024) & Aug & Sept & Oct & Nov & Dec \\ \hline
-		Project Initiation and Team Formation & \weektwo & & & & \\ \hline
-		Literature Review and Data Gathering & \weektwo & \weekfour & & & \\ \hline
-		Data Cleaning and Feature Selection & & \weektwo & & \weekone & \\ \hline
-		
-		
-		Creating System Dashboard & & \weektwo & \weekfour & \weekone & \\ \hline
-		Analysis and Interpretation of Results & & & \weekone & & \\ \hline
-		Documentation & & \weekone & \weekfour & \weekone & \\ \hline
+	\begin{tabular}{|p{2in}|c|c|c|c|c|c|c|c|c|c|c|} \hline
+		Activities (2024) & Aug & Sept & Oct & Nov & Dec & Jan & Feb & Mar & Apr & May \\ \hline
+		Project Initiation and Team Formation & \weektwo & & & & & & & & & \\ \hline
+		Literature Review and Data Gathering & \weektwo & \weekfour & & & & & & & & \\ \hline
+		Data Cleaning and Feature Selection & & \weektwo & & \weekone & \weekone & & & & & \\ \hline
+		Creating System Dashboard & & \weektwo & \weekfour & \weekone & & & & & & \\ \hline
+		Analysis and Interpretation of Results & & & \weekone & & \weekone & & & & & \\ \hline
+		Documentation & & \weekone & \weekfour & \weekfour & \weektwo & & & & & \\ \hline
 	\end{tabular}
 	\label{tab:timetableactivities}
 \end{table}
+
+
+
