@@ -44,11 +44,10 @@ The LSTM model architecture consisted of an input layer, a single LSTM layer wit
 	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.0001 was set to ensure gradual convergence and minimize risk of overfitting.
 \end{itemize}
 
-Data Division for Training and Testing
 The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
 \begin{itemize}
-	\item Training Set: 85\% of the data (385 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
-	\item Test Set: The remaining 15\% of the data (67 sequences) was reserved for testing
+	\item \textbf{Training Set:} 85\% of the data (385 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
+	\item \textbf{Test Set:} The remaining 15\% of the data (67 sequences) was reserved for testing
 \end{itemize}
 
 Upon testing, the LSTM model produced an MSE of 342.59 and an RMSE of 18.51, showing its capability to generalize to unseen data. The close alignment of actual and predicted values in the test set plot supports this observation, suggesting that the model successfully captured critical temporal trends that correlate with dengue outbreaks.

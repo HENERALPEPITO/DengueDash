@@ -8,25 +8,26 @@ The discussion covers the activities from pre-proposal to Final SP Writing.
 \subsection{Gather Dengue Data and Climate Data to Create a Complete Dataset for Forecasting}
 
 \subsubsection{Acquisition of Dengue Case Data}
+The historical dengue case dataset used in this study was obtained from the Humanitarian Data Exchange and the Western Visayas Center for Health Development (WVCHD) via Freedom of Information (FOI) requests. Also, the collection of weather data was done by utilizing web scraping techniques to extract weekly weather data (e.g., rainfall, temperature, and humidity) from Weather Underground (wunderground.com).
+\\
+\\
+\textbf{Data Fields}
 \begin{itemize}
-	\item Request and secure historical dengue case data for the Western Visayas region from:
-	\begin{itemize}
-		\item Humanitarian Data Exchange.
-		\item Western Visayas Center for Health Development (WVCHD) via Freedom of Information (FOI) requests.
-	\end{itemize}
-	\item Validate data accuracy and completeness to ensure reliability.
-\end{itemize}
-
-\subsubsection{Collection of Weather Data}
-\begin{itemize}
-	\item Use web scraping techniques to extract weekly weather data (e.g., rainfall, temperature, and humidity) from Weather Underground.
-\end{itemize}
+	\item \textbf{Time.} Represents the specific year and week corresponding to each entry in the dataset.
+	\item \textbf{Rainfall.} Denotes the observed average rainfall, measured in millimeters, for a specific week.
+	\item \textbf{Humidity.} Refers to the observed average relative humidity, expressed as a percentage, for a specific week.    
+	\item \textbf{Temperature.} Represents the observed average temperature, measured in degrees Celsius, for a specific week.
+	\item \textbf{Cases.} Refers to the number of reported dengue cases during a specific week.
+\end{itemize} 
 
 \subsubsection{Data Integration and Preprocessing}
-\begin{itemize}
-	\item Combine dengue case data with weather data into a complete dataset that aligns data based on timeframes.
-	\item Clean data to address missing values, outliers, and inconsistencies.
-\end{itemize}
+The dengue case data was integrated with the weather data to create a com
+prehensive dataset, aligning the data based on corresponding timeframes. The
+dataset undergoed a cleaning process to address any missing values, outliers,
+and inconsistencies to ensure its accuracy and reliability. To ensure that all
+features and the target variable were on the same scale, a MinMaxScaler was
+applied to normalize both the input features (rainfall, temperature, humidity)
+and the target variable (dengue cases).
 
 \subsubsection{Exploratory Data Analysis (EDA)}
 \begin{itemize}
@@ -35,24 +36,68 @@ The discussion covers the activities from pre-proposal to Final SP Writing.
 \end{itemize}
 
 \subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
+The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
+\subsubsection{Data Preprocessing}
+The raw dataset included weekly aggregated weather variables (rainfall, temperature, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
 
-\subsubsection{Algorithm Selection for Time Series Modeling}
+\subsubsection{LSTM Model}
+To prepare the data for LSTM, a sliding window approach was utilized. Sequences of 10 weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting.
+
+The LSTM model was designed using the TensorFlow and Keras libraries. The architecture comprised the following layers:
 \begin{itemize}
-	\item Evaluate the suitability of algorithms for time series forecasting, focusing on:
-	\begin{itemize}
-		\item Deep learning models like LSTM (Long Short-Term Memory).
-		\item Traditional statistical models ARIMA and Seasonal ARIMA.
-		\item State-space models Kalman Filter.
-	\end{itemize}
-	\item Assess each algorithm's strengths in handling temporal patterns and external factors.
+	\item Input Layer: Accepting sequences of 10 weeks with three features (rainfall, temperature, and humidity).
+	\item LSTM Layer: A single LSTM layer with 64 units and ReLU activation, capturing temporal dependencies and feature interactions.
+	\item Dense Output Layer: A fully connected layer with a single neuron to predict the dengue cases for the next week.
+\end{itemize}
+The model was trained for 50 epochs with a batch size of 1, enabling fine-grained weight updates. The training dataset consisted of 85\% of the sequences, while the remaining 15\% was used as the test set to evaluate model performance. Validation loss was monitored during training to assess model generalization.
+
+After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE) and root mean squared error (RMSE).
+
+\subsubsection{Seasonal ARIMA (SARIMA):}
+The SARIMA (Seasonal ARIMA) model was utilized to forecast weekly dengue cases, incorporating seasonal patterns and exogenous weather variables (rainfall, temperature, and humidity). The dataset was divided into training (80\%) and testing (20\%) sets while maintaining temporal continuity for validation. The input data consisted of weekly dengue case counts as the target variable and weather-related features as exogenous regressors.
+
+The SARIMA model's parameters were set as follows:
+\begin{itemize}
+	\item Order: (2, 0, 2)
+	\item Seasonal Order: (0, 1, 1, 52)
 \end{itemize}
 
-\subsubsection{Model Training and Testing}
+The SARIMA model was trained using the training dataset, including exogenous variables. The maximum number of iterations was set to 400 to ensure convergence during fitting.
+
+The model's performance was assessed using regression metrics to evaluate its forecasting capability and ability to detect outbreaks:
 \begin{itemize}
-	\item Split the dataset into training and testing sets while maintaining temporal continuity.
-	\item Train each model using historical data and tune hyperparameters to enhance accuracy.
-	\item Evaluate models using performance metrics such as MSE and RMSE.
+	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
+	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
 \end{itemize}
+
+\subsubsection{ARIMA}
+The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
+The dataset was split into training (80\%) and testing (20\%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
+\begin{itemize}
+	\item p (autoregressive order): 0 to 3
+	\item d (differencing order): 0 to 2
+	\item q (moving average order): 0 to 3
+\end{itemize}
+The combinations of these parameters were evaluated by fitting an ARIMA model for each set of (p, d, q) values. The model's performance was assessed using the mean squared error (MSE) between the predicted and actual dengue cases in the test set. The combination yielding the lowest MSE was selected as the optimal parameter configuration.
+
+The fitted ARIMA model was used to forecast weekly dengue cases for the test dataset. Predictions were directly assigned to the PredictedCases column in the test dataset. Model performance was evaluated using the following metrics:
+\begin{itemize}
+	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
+	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
+\end{itemize}
+
+
+
+\subsubsection{Kalman Filter:}
+\begin{itemize}
+	\item Input Variables: The target variable (Cases) was modeled using three regressors: rainfall, temperature, and humidity.
+	\item Training and Testing Split: The dataset was split into 80\% training and 20\% testing to evaluate model performance.
+	\item Observation Matrix: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
+\end{itemize}
+
+The Kalman Filter's em method was employed for training, iteratively estimating model parameters over 10 iterations.
+The smooth method was used to compute the smoothed state estimates for the training data.
+Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
 
 \subsubsection{Model Evaluation and Optimization}
 \begin{itemize}
@@ -87,40 +132,6 @@ After brainstorming and researching the most appropriate type of application to 
 
 \subsubsection{Testing and Integration}
 Each feature is rigorously user-tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Moreover, integration between each feature serves as a pillar for a cohesive user experience. Presently, we have not been able to use performance metrics to measure the system's performance, as developing and connecting the core features is the utmost priority. 
-
-\section{Model and Algorithm}
-\textbf{Data Preprocessing and Feature Selection:}
-\begin{itemize}
-	\item Clean and preprocess the dataset, handling missing values and outliers.
-	\item Select important features such as temperature, rainfall, and humidity.
-\end{itemize}
-
-\textbf{Model Selection and Justification:}
-\begin{itemize}
-	\item Train an LSTM model due to its efficiency in handling long-term data relationships.
-	\item Compare performance with ARIMA, SARIMA, and Kalman Filter.
-\end{itemize}
-
-\textbf{Seasonal ARIMA (SARIMA):}
-\begin{itemize}
-	\item Set seasonal parameters based on observed seasonality in cases.
-	\item Apply SARIMA to capture short-term and seasonal trends.
-\end{itemize}
-
-\textbf{Kalman Filter:}
-\begin{itemize}
-	\item Use Kalman Filter for real-time updates and handle missing values dynamically.
-\end{itemize}
-
-\textbf{LSTM (Long Short-Term Memory) Neural Network:}
-\begin{itemize}
-	\item Build a sequential LSTM model with tuned hyperparameters.
-\end{itemize}
-
-\textbf{Model Evaluation:}
-\begin{itemize}
-	\item Evaluate performance with Mean Absolute Error (MAE), RMSE, and R-squared metrics.
-\end{itemize}
 
 \section{Development Tools}
 \subsection{Software}
