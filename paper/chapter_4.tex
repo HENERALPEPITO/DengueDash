@@ -214,6 +214,27 @@ where \( H \) is the observation matrix. This residual represents the new inform
 Upon testing, the Kalman Filter produced a Mean Squared Error (MSE) of 2755.77 and a Root Mean Squared Error (RMSE) of 52.49.
 
 \clearpage
+\section{Preliminary System Requirements}
+\subsection{Backend Requirements}
+\subsubsection{Database Structure Design}
+Determining how data flows and how it would be structured is crucial in creating the system as it defines how extendible and flexible it would be for future features and updates. Thus, creating a comprehensive map of data ensures proper normalization that eliminates data redundancy and improves data integrity. Figure \ref{fig:er_diagram} depicts the designed database schema that showcases the relationship between the application's entities. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{er_diagram}
+	\caption{Entity-Relationship Database Schema Hybrid Diagram for DengueDash Database Structure}
+	\label{fig:er_diagram}
+\end{figure}
+
+\subsection{Security and Validation Requirements}
+\subsubsection{Password Encryption}
+Storing passwords as plain text in the database is a disgrace and a mortal sin in production. It is important to implement precautionary methods such as hashing and salting, followed by encryption with a strong algorithm, to prevent bad actors from using the accounts for malicious transactions. By default, Django generates a unique random salt for each password and encrypts it with Password-Based Key Derivation Function 2 (PBKDF2) with a SHA256 hash function. Utilizing these techniques ensures that in the event of a data breach, cracking these passwords would be time-consuming and useless for the attackers. 
+
+\subsubsection{Authentication}
+DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the mechanism operates in a stateless manner, tokens are served only after a successful login, eliminating the need for the server to keep a record of the token, which is vulnerable to session hijacking. In addition, these tokens are signed with a secret key, ensuring they have not been tampered with. 
+
+\subsubsection{Data Validation}
+Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
+
 \section{System Prototype}
 \subsection{Guest Interface}
 The Guest Interface is intended for all visitors of the web application. It shows the related statistics for dengue cases in a particular area and time. As the system is still in its testing phase, the data converted into charts shown in Figure \ref{fig:guest_dashboard} are generated from Python's Faker library. 
