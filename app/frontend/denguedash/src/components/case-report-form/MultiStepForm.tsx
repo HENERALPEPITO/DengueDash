@@ -9,6 +9,16 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@radix-ui/react-popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@shadcn/components/ui/alert-dialog";
 import { Calendar } from "@/shadcn/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -17,11 +27,21 @@ import { Separator } from "@/shadcn/components/ui/separator";
 import { createFormSchema } from "@/lib/case-report-form/schema";
 import { steps } from "@/lib/case-report-form/objects";
 import postService from "@/services/post.service";
+import {
+  regions,
+  getProvincesByRegion,
+  getCityMunByProvince,
+  getBarangayByMun,
+} from "phil-reg-prov-mun-brgy";
 
 type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
+type MultiStepFormProps = {
+  userId: number;
+};
 
-export default function MultiStepForm() {
+export default function MultiStepForm({ userId }: MultiStepFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [showAlertDialog, setShowAlertDialog] = useState(false);
 
   const formSchema = useMemo(() => {
     return createFormSchema();
@@ -46,6 +66,55 @@ export default function MultiStepForm() {
   const pcrResult = watch("pcr");
   const outcome = watch("outcome");
 
+  // Address
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedCityMunicipality, setSelectedCityMunicipality] = useState("");
+  const [, setSelectedBarangay] = useState("");
+
+  const filteredProvince = () => {
+    if (!selectedRegion) {
+      return [];
+    }
+    return getProvincesByRegion(selectedRegion);
+  };
+  const filteredCityMunicipalities = () => {
+    if (!selectedProvince) {
+      return [];
+    }
+    return getCityMunByProvince(selectedProvince);
+  };
+  const filteredBarangays = () => {
+    if (!selectedCityMunicipality) {
+      return [];
+    }
+    return getBarangayByMun(selectedCityMunicipality);
+  };
+
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const [, regCode] = e.target.value.split("|");
+    setSelectedRegion(regCode);
+    setSelectedProvince("");
+    setSelectedCityMunicipality("");
+    setSelectedBarangay("");
+  };
+
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const [, provCode] = e.target.value.split("|");
+    setSelectedProvince(provCode);
+    setSelectedCityMunicipality("");
+    setSelectedBarangay("");
+  };
+
+  const handleCityMunicipalityChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const [, munCode] = e.target.value.split("|");
+    setSelectedCityMunicipality(munCode);
+    setSelectedBarangay("");
+  };
+
+  // Date
   const [isDateNs1Disabled, setDateNs1Disabled] = useState(true);
   const [isDateIggElisaDisabled, setDateIggElisaDisabled] = useState(false);
   const [isDateIgmElisaDisabled, setDateIgmElisaDisabled] = useState(false);
@@ -75,6 +144,9 @@ export default function MultiStepForm() {
       const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     };
+    const formatAddress = (address: string) => {
+      return address.split("|")[0];
+    };
     const transformedData = {
       patient: {
         first_name: data.first_name,
@@ -86,8 +158,9 @@ export default function MultiStepForm() {
         addr_house_no: data.addr_house_no,
         addr_street: data.addr_street,
         addr_barangay: data.addr_barangay,
-        addr_city: data.addr_city,
-        addr_province: data.addr_province,
+        addr_city: formatAddress(data.addr_city),
+        addr_province: formatAddress(data.addr_province),
+        addr_region: formatAddress(data.addr_region),
         civil_status: data.civil_status,
         date_first_vax: data.date_first_vax
           ? formatDate(data.date_first_vax)
@@ -114,7 +187,7 @@ export default function MultiStepForm() {
       case_class: data.case_class,
       outcome: data.outcome,
       date_death: data.date_death ? formatDate(data.date_death) : null,
-      interviewer: 1, // todo: get the current user id
+      interviewer: userId,
     };
 
     await postService.submitForm(transformedData);
@@ -135,7 +208,7 @@ export default function MultiStepForm() {
     if (valid && currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      handleSubmit(processForm)();
+      setShowAlertDialog(true);
     }
   };
 
@@ -145,9 +218,15 @@ export default function MultiStepForm() {
     }
   };
 
+  const handleConfirmSubmit = () => {
+    handleSubmit(processForm)();
+    setShowAlertDialog(false);
+  };
+
   const renderField = (field: any, disabled = false) => {
     const isDate = field.inputType === "date";
     const isSelect = field.inputType === "select";
+    const isSelectAddr = field.inputType === "select_addr";
 
     const isDisabled =
       field.varName === "date_ns1"
@@ -210,6 +289,81 @@ export default function MultiStepForm() {
           )}
         </select>
       );
+    }
+
+    if (isSelectAddr) {
+      if (field.varName === "addr_region") {
+        return (
+          <select
+            {...register(field.varName as keyof FormValues)}
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            onChange={handleRegionChange}
+          >
+            <option value="">Select Region</option>
+            {regions.map((region) => (
+              <option
+                key={region.name}
+                value={`${region.name}|${region.reg_code}`}
+              >
+                {region.name}
+              </option>
+            ))}
+          </select>
+        );
+      }
+      if (field.varName === "addr_province") {
+        return (
+          <select
+            {...register(field.varName as keyof FormValues)}
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            onChange={handleProvinceChange}
+          >
+            <option value="">Select Province</option>
+            {filteredProvince().map((province) => (
+              <option
+                key={province.name}
+                value={`${province.name}|${province.prov_code}`}
+              >
+                {province.name}
+              </option>
+            ))}
+          </select>
+        );
+      }
+      if (field.varName === "addr_city") {
+        return (
+          <select
+            {...register(field.varName as keyof FormValues)}
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            onChange={handleCityMunicipalityChange}
+          >
+            <option value="">Select City/Municipality</option>
+            {filteredCityMunicipalities().map((cityMun) => (
+              <option
+                key={cityMun.name}
+                value={`${cityMun.name}|${cityMun.mun_code}`}
+              >
+                {cityMun.name}
+              </option>
+            ))}
+          </select>
+        );
+      }
+      if (field.varName === "addr_barangay") {
+        return (
+          <select
+            {...register(field.varName as keyof FormValues)}
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+          >
+            <option value="">Select Barangay</option>
+            {filteredBarangays().map((brgy) => (
+              <option key={brgy.name} value={brgy.name}>
+                {brgy.name}
+              </option>
+            ))}
+          </select>
+        );
+      }
     }
 
     return (
@@ -296,6 +450,25 @@ export default function MultiStepForm() {
           {currentStep === steps.length - 1 ? "Submit" : "Next"}
         </button>
       </div>
+      {/* Added Alert Dialog */}
+      <AlertDialog open={showAlertDialog} onOpenChange={setShowAlertDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are all the information correct?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Please review your information before submitting.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSubmit}>
+              Submit
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }
