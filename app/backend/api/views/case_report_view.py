@@ -21,6 +21,7 @@ def get_filter_criteria(user):
     elif classification == "admin_local":
         # Filter by surveillance unit
         return {"interviewer__dru__surveillance_unit": user.dru.surveillance_unit}
+    # todo: refactor this: user can see the record if belongs to the same dru but cannot delete the record
     elif classification == "admin_dru":
         # Filter by DRU
         return {"interviewer__dru": user.dru}
