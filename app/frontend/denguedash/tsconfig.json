@@ -28,9 +28,17 @@
       "@services/*": ["./src/services/*"],
       "@utils/*": ["./src/utils/*"],
       // Third Party
-      "@shadcn/*": ["./src/shadcn/*"]
+      "@shadcn/*": ["./src/shadcn/*"],
+      // Developer Defined
+      "@types/*": ["./src/types/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/types/phil-reg-prov-mun-brgy.ts"
+  ],
   "exclude": ["node_modules"]
 }

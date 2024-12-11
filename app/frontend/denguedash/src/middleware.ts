@@ -22,18 +22,6 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Verify the signatures for both tokens
-  const isAccessTokenSignatureValid = await verifyTokenSignature(
-    accessToken.value
-  );
-  const isRefreshTokenSignatureValid = await verifyTokenSignature(
-    refreshToken.value
-  );
-  if (!isAccessTokenSignatureValid || !isRefreshTokenSignatureValid) {
-    deleteCookies();
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
   const isRefreshTokenExpired = await validateToken(refreshToken.value);
 
   // Verify if refresh token is expired
@@ -81,6 +69,18 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     }
   }
 
+  // Verify the signatures for both tokens
+  const isAccessTokenSignatureValid = await verifyTokenSignature(
+    accessToken.value
+  );
+  const isRefreshTokenSignatureValid = await verifyTokenSignature(
+    refreshToken.value
+  );
+  if (!isAccessTokenSignatureValid || !isRefreshTokenSignatureValid) {
+    deleteCookies();
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   // Return the default NextResponse if no refresh is required
   return NextResponse.next();
 }
@@ -90,5 +90,11 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 // Eg. Admin => /admin/dashboard
 // Eg. User => /user/dashboard
 export const config = {
-  matcher: ["/user/analytics/dashboard", "/user/forms/case-report-form"],
+  matcher: [
+    "/user/analytics/dashboard",
+    "/user/forms/case-report-form",
+    "/user/data-tables/dengue-reports",
+    // todo: this link does not work
+    "/user/data-tables/dengue-reports/[id]",
+  ],
 };

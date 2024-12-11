@@ -62,6 +62,11 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
+    addr_region = models.CharField(
+        max_length=50,
+        blank=False,
+        null=False,
+    )
     civil_status_choices = [
         ("S", "Single"),
         ("M", "Married"),

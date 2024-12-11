@@ -146,9 +146,24 @@ export const steps = [
         name: "Address",
         fields: [
           {
-            inputType: "number",
-            varName: "addr_house_no",
-            fieldLabel: "House No.",
+            inputType: "select_addr",
+            varName: "addr_region",
+            fieldLabel: "Region",
+          },
+          {
+            inputType: "select_addr",
+            varName: "addr_province",
+            fieldLabel: "Province",
+          },
+          {
+            inputType: "select_addr",
+            varName: "addr_city",
+            fieldLabel: "City",
+          },
+          {
+            inputType: "select_addr",
+            varName: "addr_barangay",
+            fieldLabel: "Barangay",
           },
           {
             inputType: "text",
@@ -156,19 +171,9 @@ export const steps = [
             fieldLabel: "Street",
           },
           {
-            inputType: "text",
-            varName: "addr_barangay",
-            fieldLabel: "Barangay",
-          },
-          {
-            inputType: "text",
-            varName: "addr_city",
-            fieldLabel: "City",
-          },
-          {
-            inputType: "text",
-            varName: "addr_province",
-            fieldLabel: "Province",
+            inputType: "number",
+            varName: "addr_house_no",
+            fieldLabel: "House No.",
           },
         ],
       },
