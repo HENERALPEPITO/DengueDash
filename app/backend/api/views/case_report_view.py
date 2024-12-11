@@ -10,23 +10,22 @@ from api.pagination import APIPagination
 from django.db.models import Case as DBCase, Value, When
 
 
-def get_filter_criteria(user):
+def get_filter_criteria(user, action="view"):
     """
-    Helper function to generate filter criteria based on user classification.
+    Generate filter criteria based on user classification and action type.
+    - action: "view" or "delete"
     """
-    classification = user.classification.classification
-    if classification == "admin_region":
-        # Filter by region
-        return {"interviewer__dru__region": user.dru.region}
-    elif classification == "admin_local":
-        # Filter by surveillance unit
-        return {"interviewer__dru__surveillance_unit": user.dru.surveillance_unit}
-    elif classification == "admin_dru":
-        # Filter by DRU
-        return {"interviewer__dru": user.dru}
-    else:
-        # Default: Filter by the authenticated user as interviewer
+    if action == "delete":
+        # For deleting, users can only delete their own created records
         return {"interviewer": user}
+    classification = user.classification.classification
+
+    if classification == "admin_local":
+        return {"interviewer__dru__surveillance_unit": user.dru.surveillance_unit}
+    elif classification == "admin_region":
+        return {"interviewer__dru__region": user.dru.region}
+    else:
+        return {"interviewer__dru": user.dru}
 
 
 class CaseReportView(ListAPIView):
@@ -105,5 +104,27 @@ class CaseDetailedView(APIView):
             )
 
         # Serialize and return the case data
-        serializer = CaseViewSerializer(case)
+        serializer = CaseViewSerializer(case, context={"request": request})
         return Response(serializer.data)
+
+
+class CaseDeleteView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def delete(self, request, case_id):
+        user = request.user
+        filter_kwargs = get_filter_criteria(user, action="delete")
+
+        # Attempt to retrieve the case based on user credentials
+        case = Case.objects.filter(
+            case_id=case_id,
+            **filter_kwargs,
+        ).first()
+
+        if case is None:
+            # Raise a PermissionDenied exception if no case is found
+            raise PermissionDenied(
+                detail="You do not have the necessary permissions to access this case or the case does not exist."
+            )
+        case.delete()
+        return Response({"message": "Case deleted successfully."})

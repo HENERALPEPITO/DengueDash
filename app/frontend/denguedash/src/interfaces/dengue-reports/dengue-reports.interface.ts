@@ -51,4 +51,5 @@ export interface CaseView extends Omit<Case, "patient"> {
   date_death: string | null;
   patient: PatientView;
   interviewer: Interviewer;
+  can_delete: boolean;
 }

@@ -11,11 +11,31 @@ import {
   CardTitle,
   CardContent,
 } from "@/shadcn/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@shadcn/components/ui/alert-dialog";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEffect, useState } from "react";
+import { Button } from "@/shadcn/components/ui/button";
+import deleteService from "@/services/delete.service";
+// import { useRouter } from "next/router";
+import { redirect } from "next/navigation";
 
 export default function ReportView({ params }: any) {
+  // const router = useRouter();
+  // const router = useRouter();
+  // const push = router ? router.push : () => {};
   const [caseDetails, setCaseDetails] = useState<CaseView>();
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       const { id } = await params;
@@ -32,6 +52,17 @@ export default function ReportView({ params }: any) {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    if (caseDetails?.case_id !== undefined) {
+      const isDeleted = await deleteService.deleteCase(caseDetails.case_id);
+      if (isDeleted) {
+        redirect("/user/data-tables/dengue-reports");
+      }
+    }
+    setIsDeleting(false);
   };
 
   const InfoRow = ({
@@ -137,10 +168,41 @@ export default function ReportView({ params }: any) {
   const CaseInfoCard = ({ caseDetails }: { caseDetails: CaseView }) => (
     <Card className="w-full">
       {/* Personal Information Section */}
-      <SectionHeader
-        icon="solar:file-bold-duotone"
-        title={`Case Record #${caseDetails.case_id}`}
-      />
+      <div className="flex flex-row justify-between">
+        <SectionHeader
+          icon="solar:file-bold-duotone"
+          title={`Case Record #${caseDetails.case_id}`}
+        />
+        {caseDetails.can_delete && (
+          <div className="py-5 px-8">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="text-red-600">
+                  Delete Case
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the case record and remove all related data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
+      </div>
       <CardContent className="flex-col">
         {caseDetails && (
           <div className="mx-auto grid grid-cols-2 gap-6">

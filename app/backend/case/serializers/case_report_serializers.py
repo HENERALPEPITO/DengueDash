@@ -106,6 +106,7 @@ class CaseViewSerializer(serializers.ModelSerializer):
     outcome_display = serializers.SerializerMethodField()
     patient = PatientViewSerializer()
     interviewer = CaseInterviewerSerializer()
+    can_delete = serializers.SerializerMethodField()
 
     class Meta:
         model = Case
@@ -128,6 +129,7 @@ class CaseViewSerializer(serializers.ModelSerializer):
             "date_death",
             "patient",
             "interviewer",
+            "can_delete",
         ]
 
     def get_clncl_class_display(self, obj):
@@ -150,3 +152,8 @@ class CaseViewSerializer(serializers.ModelSerializer):
 
     def get_outcome_display(self, obj):
         return obj.get_outcome_display()
+
+    def get_can_delete(self, obj):
+        if request := self.context.get("request", None):
+            return obj.interviewer == request.user
+        return False

@@ -11,6 +11,7 @@ from .views.patient_case_view import PatientCaseView
 from .views.case_report_view import (
     CaseReportView,
     CaseDetailedView,
+    CaseDeleteView,
 )
 from .views.dengue_count_view import (
     QuickStatisticsView,
@@ -79,5 +80,11 @@ urlpatterns = [
         "cases-deaths",
         DengueCountDeathsView.as_view(),
         name="cases-deaths",
+    ),
+    # Delete
+    path(
+        "case/delete/<int:case_id>",
+        CaseDeleteView.as_view(),
+        name="case-delete",
     ),
 ]
