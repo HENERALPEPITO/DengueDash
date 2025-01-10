@@ -23,7 +23,10 @@ The historical dengue case dataset used in this study was obtained from the Huma
 	\item \textbf{Time.} Represents the specific year and week corresponding to each entry in the dataset.
 	\item \textbf{Rainfall.} Denotes the observed average rainfall, measured in millimeters, for a specific week.
 	\item \textbf{Humidity.} Refers to the observed average relative humidity, expressed as a percentage, for a specific week.    
-	\item \textbf{Temperature.} Represents the observed average temperature, measured in degrees Celsius, for a specific week.
+	\item \textbf{Max Temperature.} Represents the observed maximum temperature, measured in degrees Celsius, for a specific week.
+	\item \textbf{Average Temperature.} Represents the observed average temperature, measured in degrees Celsius, for a specific week.
+	\item \textbf{Min Temperature.} Represents the observed minimum temperature, measured in degrees Celsius, for a specific week.
+	\item \textbf{Wind.} Represents the observed wind speed, measured in miles per hour (mph), for a specific week.
 	\item \textbf{Cases.} Refers to the number of reported dengue cases during a specific week.
 \end{itemize} 
 
@@ -52,11 +55,13 @@ To prepare the data for LSTM, a sliding window approach was utilized. Sequences 
 
 The LSTM model was designed using the TensorFlow and Keras libraries. The architecture comprised the following layers:
 \begin{itemize}
-	\item Input Layer: Accepting sequences of 10 weeks with three features (rainfall, temperature, and humidity).
+	\item Input Layer: Accepting sequences of weeks with three features (rainfall, max temperature, and humidity).
 	\item LSTM Layer: A single LSTM layer with 64 units and ReLU activation, capturing temporal dependencies and feature interactions.
 	\item Dense Output Layer: A fully connected layer with a single neuron to predict the dengue cases for the next week.
 \end{itemize}
-The model was trained for 50 epochs with a batch size of 1, enabling fine-grained weight updates. The training dataset consisted of 85\% of the sequences, while the remaining 15\% was used as the test set to evaluate model performance. Validation loss was monitored during training to assess model generalization.
+The model was trained for 100 epochs implementing early stopping with a batch size of 1, enabling fine-grained weight updates. The training dataset consisted of 80\% of the sequences, while the remaining 20\% was used as the test set to evaluate model performance. Validation loss was monitored during training to assess model generalization.
+
+The training process was conducted using three distinct window sizes (5 weeks, 10 weeks, and 20 weeks) to determine the optimal sequence length of weeks to input into the LSTM model for improved forecasting performance.
 
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE) and root mean squared error (RMSE).
 

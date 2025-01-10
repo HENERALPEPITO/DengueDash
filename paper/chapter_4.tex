@@ -1,7 +1,7 @@
 %   Filename    : chapter_4.tex 
 \chapter{Preliminary Results/System Prototype}
 \section{Data Gathering}
-The data for dengue case prediction was gathered from a variety of reliable sources, enabling a comprehensive dataset spanning from January 2016 to September 2024. This dataset includes 452 rows of data, each containing weekly records of dengue cases along with corresponding meteorological variables, such as rainfall, temperature, and humidity.
+The data for dengue case prediction was gathered from a variety of reliable sources, enabling a comprehensive dataset spanning from January 2010 to October 2024. This dataset includes 720 rows of data, each containing weekly records of dengue cases along with corresponding meteorological variables, such as rainfall, temperature, and humidity.
 \begin{enumerate}
 	\item Dengue Case Data: The primary source of historical dengue cases came from the Humanitarian Data Exchange and the Western Visayas Center for Health Development (WVCHD). The dataset, accessed through Freedom of Information (FOI) requests, provided robust case numbers for the Western Visayas region. The systematic collection of these data points was essential for establishing a reliable baseline for model training and evaluation.
 	\item Weather Data: Weekly weather data was obtained by web scraping from Weather Underground, allowing access to rainfall, temperature, and humidity levels that correlate with dengue prevalence.
@@ -14,8 +14,37 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 	\label{fig:data_snippet}
 \end{figure}
 
+\section{Exploratory Data Analysis}
+
+Figure 4.2 illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{dengue_trend}
+	\caption{Trend of Dengue Cases}
+	\label{fig:data_trend}
+\end{figure}
+
+Figure 4.3 presents a detailed heatmap showing the correlations among all variables. The heatmap highlights the interdependencies between climatic variables and their respective relationships with dengue cases. Such relationships provide a deeper understanding of how these variables interact and affect dengue case trends, which can guide feature selection for the predictive model.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textwidth]{correlation_heatmap}
+	\caption{Correlation Heatmap}
+	\label{fig:correlation_heatmap}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{correlation_bar}
+	\caption{Ranking of Correlations}
+	\label{fig:correlation_bar}
+\end{figure}
+
+Figure 4.4 shows the ranking of correlation coefficients between dengue cases and selected features, including rainfall, humidity, maximum temperature, average temperature, minimum temperature, and wind speed. Among these, rainfall exhibits the highest positive correlation with dengue cases (correlation coefficient ~0.13), followed by humidity (~0.10) and maximum temperature (0.09). Overall, the exploratory data analysis highlights the significance of rainfall, humidity, and max temperature variables in dengue case forecasting.
+
 \section{Preliminary Model Training}
-The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 452 weeks of historical dengue cases from 2016 to 2024, with meteorological variables such as temperature, humidity, and rainfall.
+The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2010 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
 
 To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).
 
@@ -26,7 +55,7 @@ The table below provides a summary and comparative analysis of each model’s re
 	\begin{tabular}{|l|c|c|}
 		\hline
 		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} \\ \hline
-		\textbf{LSTM} & \textbf{342.59} & \textbf{18.51} \\ \hline
+		\textbf{LSTM} & \textbf{277.71} & \textbf{16.66} \\ \hline
 		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1198} & \textbf{34.62} \\ \hline
 		\textbf{ARIMA (2, 0, 3)} & \textbf{1983.16} & \textbf{44.53} \\ \hline
 		\textbf{Kalman Filter} & \textbf{2755.77} & \textbf{52.49} \\ \hline
@@ -38,26 +67,44 @@ The table below provides a summary and comparative analysis of each model’s re
 \subsection{LSTM Model}
 The LSTM model architecture consisted of an input layer, a single LSTM layer with 64 units and ReLU activation, followed by a dense layer with a single output neuron to predict the dengue case count. Key hyperparameters included:
 \begin{itemize}
-	\item Window Size: 10 weeks, representing the time steps used in the sequence data for each prediction.
-	\item Epochs: 50 epochs were used for training, balancing sufficient training time with computational efficiency.
+	\item Window Size: 5, 10, and 20 weeks, representing the time steps used in the sequence data for each prediction.
+	\item Epochs: 100 epochs were used for training, balancing sufficient training time with computational efficiency also implementing early stopping to avoid overfitting.
 	\item Batch Size: 1, allowing the model to process one sequence at a time, which is beneficial for small datasets but increases training time.
 	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.0001 was set to ensure gradual convergence and minimize risk of overfitting.
 \end{itemize}
 
 The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
 \begin{itemize}
-	\item \textbf{Training Set:} 85\% of the data (385 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
-	\item \textbf{Test Set:} The remaining 15\% of the data (67 sequences) was reserved for testing
+	\item \textbf{Training Set:} 80\% of the data (572 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
+	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
 \end{itemize}
 
-Upon testing, the LSTM model produced an MSE of 342.59 and an RMSE of 18.51, showing its capability to generalize to unseen data. The close alignment of actual and predicted values in the test set plot supports this observation, suggesting that the model successfully captured critical temporal trends that correlate with dengue outbreaks.
+The training process was conducted using three distinct window sizes—5 weeks, 10 weeks, and 20 weeks—to identify the optimal sequence length of weeks for input into the LSTM model, thereby enhancing forecasting performance. The following plots illustrate the performance of the model in predicting dengue cases for each of the specified window sizes.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{line_graph_LSTM}
-	\caption{LSTM Prediction Results for Test Set}
-	\label{fig:LSTM_result}
+	\includegraphics[width=1\textwidth]{lstm_comparison}
+	\caption{Comparison of Window Sizes}
+	\label{fig:lstm_comparison}
 \end{figure}
+
+The evaluation metrics included Mean Squared Error (MSE) and Root Mean Squared Error (RMSE), which assess the accuracy of the model's predictions.
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} \\ \hline
+		\textbf{5} & \textbf{282.69} & \textbf{16.81} \\ \hline
+		\textbf{10} & \textbf{277.71} & \textbf{16.66} \\ \hline
+		\textbf{15} & \textbf{289.63} & \textbf{17.02} \\ \hline
+	\end{tabular}
+	\caption{Comparison of Models}
+	\label{tab:comparison_of_lstm}
+\end{table}
+
+The results indicate that a window size of 10 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. This suggests that using a 10-week sequence length effectively balances the temporal dependencies captured by the model and the computational complexity of training.
+
+
 
 \section*{Training and Testing Data Division for ARIMA and Seasonal Arima}
 Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
