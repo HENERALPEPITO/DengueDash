@@ -36,7 +36,7 @@ prehensive dataset, aligning the data based on corresponding timeframes. The
 dataset undergoed a cleaning process to address any missing values, outliers,
 and inconsistencies to ensure its accuracy and reliability. To ensure that all
 features and the target variable were on the same scale, a MinMaxScaler was
-applied to normalize both the input features (rainfall, temperature, humidity)
+applied to normalize both the input features (climate data)
 and the target variable (dengue cases).
 
 \subsubsection{Exploratory Data Analysis (EDA)}
@@ -46,12 +46,12 @@ and the target variable (dengue cases).
 \end{itemize}
 
 \subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
-The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
+The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, wind, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
 \subsubsection{Data Preprocessing}
-The raw dataset included weekly aggregated weather variables (rainfall, temperature, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
+The raw dataset included weekly aggregated weather variables (rainfall, temperature, wind, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
 
 \subsubsection{LSTM Model}
-To prepare the data for LSTM, a sliding window approach was utilized. Sequences of 10 weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting.
+To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting.
 
 The LSTM model was designed using the TensorFlow and Keras libraries. The architecture comprised the following layers:
 \begin{itemize}
@@ -66,7 +66,7 @@ The training process was conducted using three distinct window sizes (5 weeks, 1
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE) and root mean squared error (RMSE).
 
 \subsubsection{Seasonal ARIMA (SARIMA):}
-The SARIMA (Seasonal ARIMA) model was utilized to forecast weekly dengue cases, incorporating seasonal patterns and exogenous weather variables (rainfall, temperature, and humidity). The dataset was divided into training (80\%) and testing (20\%) sets while maintaining temporal continuity for validation. The input data consisted of weekly dengue case counts as the target variable and weather-related features as exogenous regressors.
+The SARIMA (Seasonal ARIMA) model was utilized to forecast weekly dengue cases, incorporating seasonal patterns and exogenous weather variables (rainfall, max temperature, and humidity). The dataset was divided into training (80\%) and testing (20\%) sets while maintaining temporal continuity for validation. The input data consisted of weekly dengue case counts as the target variable and weather-related features as exogenous regressors.
 
 The SARIMA model's parameters were set as follows:
 \begin{itemize}
@@ -76,14 +76,14 @@ The SARIMA model's parameters were set as follows:
 
 The SARIMA model was trained using the training dataset, including exogenous variables. The maximum number of iterations was set to 400 to ensure convergence during fitting.
 
-The model's performance was assessed using regression metrics to evaluate its forecasting capability and ability to detect outbreaks:
+The model's performance was assessed using regression metrics to evaluate its forecasting capability:
 \begin{itemize}
 	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
 	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
 \end{itemize}
 
 \subsubsection{ARIMA}
-The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
+The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
 The dataset was split into training (80\%) and testing (20\%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
 \begin{itemize}
 	\item p (autoregressive order): 0 to 3
@@ -102,7 +102,7 @@ The fitted ARIMA model was used to forecast weekly dengue cases for the test dat
 
 \subsubsection{Kalman Filter:}
 \begin{itemize}
-	\item Input Variables: The target variable (Cases) was modeled using three regressors: rainfall, temperature, and humidity.
+	\item Input Variables: The target variable (Cases) was modeled using three regressors: rainfall, max temperature, and humidity.
 	\item Training and Testing Split: The dataset was split into 80\% training and 20\% testing to evaluate model performance.
 	\item Observation Matrix: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
 \end{itemize}
