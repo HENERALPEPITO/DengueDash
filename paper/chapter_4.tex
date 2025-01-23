@@ -67,9 +67,9 @@ The table below provides a summary and comparative analysis of each model’s re
 		\hline
 		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} \\ \hline
 		\textbf{LSTM} & \textbf{277.71} & \textbf{16.66} \\ \hline
-		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1198} & \textbf{34.62} \\ \hline
-		\textbf{ARIMA (2, 0, 3)} & \textbf{1983.16} & \textbf{44.53} \\ \hline
-		\textbf{Kalman Filter} & \textbf{2755.77} & \textbf{52.49} \\ \hline
+		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} \\ \hline
+		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} \\ \hline
+		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} \\ \hline
 	\end{tabular}
 	\caption{Comparison of Models}
 	\label{tab:comparison_of_models}
@@ -132,14 +132,14 @@ Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
 	\label{fig:Arima_result}
 \end{figure}
 
-The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(2, 0, 3)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Key details are as follows:
+The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Key details are as follows:
 
 \begin{enumerate}
 	\item \textbf{Data Preprocessing:}  
 	Prepare the dataset by handling any missing values and scaling the data if necessary to improve model convergence and stability.
 	
 	\item \textbf{Hyperparameter Tuning:}  
-	Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(2, 0, 3)}.
+	Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(1, 2, 2)}.
 	
 	\item \textbf{Model Training:}
 	\begin{itemize}
@@ -150,8 +150,8 @@ The ARIMA model was developed to capture non-seasonal trends in the data. To det
 	\item \textbf{Evaluation:}  
 	After training, the ARIMA model was evaluated on the test data, yielding the following performance metrics:
 	\begin{itemize}
-		\item \textbf{MSE (Mean Squared Error)}: 1983.16
-		\item \textbf{RMSE (Root Mean Squared Error)}: 44.53
+		\item \textbf{MSE (Mean Squared Error)}: 1521.48
+		\item \textbf{RMSE (Root Mean Squared Error)}: 39.01
 	\end{itemize}
 \end{enumerate}
 
@@ -193,8 +193,8 @@ This model incorporates seasonal parameters, which were tuned using grid search 
 	\item \textbf{Evaluation:}  
 	The SARIMA model yielded the following error metrics:
 	\begin{itemize}
-		\item \textbf{MSE}: 1198
-		\item \textbf{RMSE}: 34.62
+		\item \textbf{MSE}: 1109.69
+		\item \textbf{RMSE}: 33.31
 	\end{itemize}
 	The SARIMA model outperformed the ARIMA model in terms of lower MSE and RMSE values, indicating its effectiveness in capturing the seasonal patterns in the data.
 \end{enumerate}
@@ -269,7 +269,7 @@ where \( H \) is the observation matrix. This residual represents the new inform
 \end{itemize}
 
 \textbf{Model Evaluation}:
-Upon testing, the Kalman Filter produced a Mean Squared Error (MSE) of 2755.77 and a Root Mean Squared Error (RMSE) of 52.49.
+Upon testing, the Kalman Filter produced a Mean Squared Error (MSE) of 1474.82 and a Root Mean Squared Error (RMSE) of 38.40.
 
 \clearpage
 \section{Preliminary System Requirements}
