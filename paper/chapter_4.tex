@@ -283,6 +283,25 @@ Determining how data flows and how it would be structured is crucial in creating
 	\label{fig:er_diagram}
 \end{figure}
 
+\subsection{User Interface Requirements}
+\subsubsection{Admin Interface}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{admin}
+	\caption{Use Case Diagram for Admin}
+	\label{fig:admin-use-case}
+\end{figure}
+Figure \ref{fig:admin-use-case} shows the possible tasks that the admin can do in the application. To protect the integrity of data, only the admins can register and delete accounts. Both account creation and deletion will be done within the application.
+
+\subsubsection{Encoder Interface}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{encoder}
+	\caption{Use Case Diagram for Encoder}
+	\label{fig:encoder-use-case}
+\end{figure}
+
+
 \subsection{Security and Validation Requirements}
 \subsubsection{Password Encryption}
 Storing passwords as plain text in the database is a disgrace and a mortal sin in production. It is important to implement precautionary methods such as hashing and salting, followed by encryption with a strong algorithm, to prevent bad actors from using the accounts for malicious transactions. By default, Django generates a unique random salt for each password and encrypts it with Password-Based Key Derivation Function 2 (PBKDF2) with a SHA256 hash function. Utilizing these techniques ensures that in the event of a data breach, cracking these passwords would be time-consuming and useless for the attackers. 
