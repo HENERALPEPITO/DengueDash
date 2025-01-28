@@ -16,7 +16,7 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 
 \section{Exploratory Data Analysis}
 
-Figure \ref{fig:data_snippet} illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods approximately 3 years, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
+Figure \ref{fig:data_trend} illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods approximately 3 years, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
 
 \begin{figure}[ht]
 	\centering
@@ -25,33 +25,23 @@ Figure \ref{fig:data_snippet} illustrates the trend of weekly dengue cases over 
 	\label{fig:data_trend}
 \end{figure}
 
-Figure 4.3 presents a detailed heatmap showing the correlations among all variables. The heatmap highlights the interdependencies between climatic variables and their respective relationships with dengue cases. Such relationships provide a deeper understanding of how these variables interact and affect dengue case trends, which can guide feature selection for the predictive model.
+Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, including rainfall, humidity, maximum temperature, average temperature, minimum temperature, and wind speed. Among these, rainfall exhibits the highest positive correlation with dengue cases (correlation coefficient ~0.13), followed by humidity (~0.10) and maximum temperature (0.09). 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.75\textwidth]{correlation_heatmap}
-	\caption{Correlation Heatmap}
-	\label{fig:correlation_heatmap}
-\end{figure}
-
-\begin{figure}[ht]
+\begin{figure}[hbt!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{correlation_bar}
 	\caption{Ranking of Correlations}
 	\label{fig:correlation_bar}
 \end{figure}
 
-Figure 4.4 shows the ranking of correlation coefficients between dengue cases and selected features, including rainfall, humidity, maximum temperature, average temperature, minimum temperature, and wind speed. Among these, rainfall exhibits the highest positive correlation with dengue cases (correlation coefficient ~0.13), followed by humidity (~0.10) and maximum temperature (0.09). 
+Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, with the addition of lagged effects. The analysis reveals no improvement in correlation when lagged variables are compared to direct observations. This suggests that the observed values of rainfall, humidity, and maximum temperature remain the most significant predictors for dengue case forecasting. Overall, the exploratory data analysis highlights the significance of rainfall, humidity, and max temperature variables in dengue case forecasting.
 
-\begin{figure}[ht]
+\begin{figure}[hbt!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{lagged_correlation_bar}
 	\caption{Ranking of Correlations (with lagged effects)}
 	\label{fig:lagged_correlation_bar}
 \end{figure}
-
-Figure 4.5 shows the ranking of correlation coefficients between dengue cases and selected features, with the addition of lagged effects. The analysis reveals no improvement in correlation when lagged variables are compared to direct observations. This suggests that the observed values of rainfall, humidity, and maximum temperature remain the most significant predictors for dengue case forecasting. Overall, the exploratory data analysis highlights the significance of rainfall, humidity, and max temperature variables in dengue case forecasting.
-
 
 
 \section{Model Training}
