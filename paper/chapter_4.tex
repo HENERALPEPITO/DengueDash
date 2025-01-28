@@ -16,7 +16,7 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 
 \section{Exploratory Data Analysis}
 
-Figure 4.2 illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
+Figure \ref{fig:data_snippet} illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
 
 \begin{figure}[ht]
 	\centering
@@ -301,6 +301,9 @@ Figure \ref{fig:admin-use-case} shows the possible tasks that the admin can do i
 	\label{fig:encoder-use-case}
 \end{figure}
 
+Figure \ref{fig:encoder-use-case}, on the other hand, illustrates the use cases for the system's primary users. Since only the admin accounts can register a user, the registration process is not part of it. Instead, the main features, which include reporting and viewing records, are the only permitted actions for this type of user. The said processes can be done in the application by filling out a form with details required for each dengue case. 
+As data is entered, it will be consolidated for model training and used for further forecasting of dengue cases.
+
 
 \subsection{Security and Validation Requirements}
 \subsubsection{Password Encryption}
@@ -311,6 +314,8 @@ DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the m
 
 \subsubsection{Data Validation}
 Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
+
+\subsection{Testing Process}
 
 \section{System Prototype}
 \subsection{Guest Interface}
