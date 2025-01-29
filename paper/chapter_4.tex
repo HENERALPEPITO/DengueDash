@@ -47,6 +47,8 @@ Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coeffic
 \section{Model Training}
 The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2010 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
 
+Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due to seasonal changes and long-term trends. Dengue case data is updated every month, and weather data can be extracted manually every week. By continuously monitoring performance, incorporating external factors, and updating the model regularly (preferably monthly or semi-annually), forecasting accuracy can be maintained. If drastic environmental or epidemiological changes occur, more frequent retraining is necessary. This ensures that public health interventions remain proactive, effectively mitigating dengue outbreaks.
+
 To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).
 
 The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. 
