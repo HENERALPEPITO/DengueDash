@@ -9,23 +9,65 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.75\textwidth]{data_snippet}
+	\includegraphics[width=0.95\textwidth]{data_snippet}
 	\caption{Snippet of the Combined Dataset}
 	\label{fig:data_snippet}
 \end{figure}
 
 \section{Exploratory Data Analysis}
 
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.75\textwidth]{data_summary}
+	\caption{Data Contents}
+	\label{fig:data_summary}
+\end{figure}
+
+From the summary above, the dataset consists of 720 weekly records with 8 columns:
+\begin{itemize}
+	\item \textbf{Time.} Weekly timestamps (e.g. "2011-w1")
+	\item \textbf{Rainfall.} Weekly average rainfall (mm)
+	\item \textbf{MaxTemperature, AverageTemperature, MinTemperature.} Weekly temperature data (C)
+	\item \textbf{Wind.} Wind speed (m/s)
+	\item \textbf{Humidity.} Weekly average humidity (\%)
+	\item \textbf{Cases.} Reported dengue cases
+\end{itemize}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=1\textwidth]{data_stats2}
+	\caption{Dataset Statistics}
+	\label{fig:data_stats2}
+\end{figure}
+
+From the statistics in figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{data_stats}
+	\caption{Distribution of Dengue Cases}
+	\label{fig:data_stats}
+\end{figure}
+
+In figure \ref{fig:data_stats}, a histogram of dengue cases shows a right-skewed distribution, indicating that most weeks experience low case counts, while a few weeks record outbreaks. 
+\\To further analyze the distribution, dengue cases were categorized into different intervals (Figure \ref{fig:dengue_intervals}): 0-5 cases, 6-15 cases, 16-30 cases, 31-100 cases and 101+ cases. The majority of weeks falls within the 0-5 cases and 6-15 cases categories, indicating that most weeks have low dengue cases. Meanwhile, weeks with 101+ cases are rare, suggesting that extreme outbreaks are not frequent.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.75\textwidth]{dengue_intervals}
+	\caption{Frequency of Dengue Cases in Different Intervals}
+	\label{fig:dengue_intervals}
+\end{figure}
+
 Figure \ref{fig:data_trend} illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods approximately 3 years, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.75\textwidth]{dengue_trend}
+	\includegraphics[width=0.90\textwidth]{dengue_trend}
 	\caption{Trend of Dengue Cases}
 	\label{fig:data_trend}
 \end{figure}
 
-Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, including rainfall, humidity, maximum temperature, average temperature, minimum temperature, and wind speed. Among these, rainfall exhibits the highest positive correlation with dengue cases (correlation coefficient ~0.13), followed by humidity (~0.10) and maximum temperature (0.09). 
+Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, including rainfall, humidity, maximum temperature, average temperature, minimum temperature, and wind speed. Among these, rainfall exhibits the highest positive correlation with dengue cases (correlation coefficient ~0.13), indicating that increased rainfall may contribute to higher cases counts. This aligns with existing studies suggesting that stagnant water from heavy rainfall creates breeding grounds for mosquitos. It is followed by humidity (~0.10), suggesting that higher humidity levels may enhance mosquito reproduction, leading to more dengue cases. Temperature has a weak to moderate positive correlation with dengue cases, with maximum temperature (0.09) showing a stronger relationship than average and minimum temperature. 
 
 \begin{figure}[hbt!]
 	\centering
@@ -36,7 +78,7 @@ Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients b
 
 Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, with the addition of lagged effects. The analysis reveals no improvement in correlation when lagged variables are compared to direct observations. This suggests that the observed values of rainfall, humidity, and maximum temperature remain the most significant predictors for dengue case forecasting. Overall, the exploratory data analysis highlights the significance of rainfall, humidity, and max temperature variables in dengue case forecasting.
 
-\begin{figure}[hbt!]
+\begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{lagged_correlation_bar}
 	\caption{Ranking of Correlations (with lagged effects)}
@@ -45,7 +87,7 @@ Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coeffic
 
 
 \section{Model Training}
-The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2010 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
+The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2011 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
 
 Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due to seasonal changes and long-term trends. Dengue case data is updated every month, and weather data can be extracted manually every week. By continuously monitoring performance, incorporating external factors, and updating the model regularly (preferably monthly or semi-annually), forecasting accuracy can be maintained. If drastic environmental or epidemiological changes occur, more frequent retraining is necessary. This ensures that public health interventions remain proactive, effectively mitigating dengue outbreaks.
 
