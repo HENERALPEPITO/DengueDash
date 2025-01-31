@@ -40,7 +40,7 @@ From the summary above, the dataset consists of 720 weekly records with 8 column
 	\label{fig:data_stats2}
 \end{figure}
 
-From the statistics in figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
+From the statistics in figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
 
 \begin{figure}[ht]
 	\centering
@@ -85,7 +85,19 @@ Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coeffic
 	\label{fig:lagged_correlation_bar}
 \end{figure}
 
+\section{Outbreak Detection}  
+To identify outbreaks, we calculated the outbreak threshold value using statistical analysis of the dataset. The threshold is determined using the formula:  
 
+\begin{align}  
+	\text{Outbreak Threshold Value} &= \mu + 2\sigma \\  
+	&= 23.744444 + 2(37.144813) \\  
+	&= 23.744444 + 74.289626 \\  
+	&= 98.03407  
+\end{align}  
+
+This result indicates that when dengue cases exceed 98, an outbreak can be considered in Iloilo City.  
+
+	
 \section{Model Training}
 The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2011 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
 
@@ -93,17 +105,17 @@ Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due t
 
 To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE).
 
-The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. 
+The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The acceptable threshold for Mean Absolute Error (MAE) in forecasting dengue cases can vary depending on the context. However, related studies often serve as benchmarks, with commonly cited acceptable values ranging from 20 to 30. For this study, we have established a threshold of 15 to emphasize the significance of accurate dengue prediction.
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|l|c|c|}
+	\begin{tabular}{|l|c|c|c|}
 		\hline
-		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} \\ \hline
-		\textbf{LSTM} & \textbf{277.71} & \textbf{16.66} \\ \hline
-		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} \\ \hline
-		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} \\ \hline
-		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} \\ \hline
+		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\ \hline
+		\textbf{LSTM} & \textbf{277.71} & \textbf{16.18} & \textbf{9.44} \\ \hline
+		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} & \textbf{0} \\ \hline
+		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} & \textbf{0} \\ \hline
+		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} & \textbf{0} \\ \hline
 	\end{tabular}
 	\caption{Comparison of Models}
 	\label{tab:comparison_of_models}
@@ -136,18 +148,18 @@ The training process was conducted using three distinct window sizes—5 weeks, 
 The evaluation metrics included Mean Squared Error (MSE), Root Mean Squared Error (RMSE) and Mean Absolute Error (MAE), which assess the accuracy of the model's predictions.
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|l|c|c|}
+	\begin{tabular}{|l|c|c|c|}
 		\hline
-		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} \\ \hline
-		\textbf{5} & \textbf{282.69} & \textbf{16.81} \\ \hline
-		\textbf{10} & \textbf{277.71} & \textbf{16.66} \\ \hline
-		\textbf{15} & \textbf{289.63} & \textbf{17.02} \\ \hline
+		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\ \hline
+		\textbf{5} & \textbf{282.69} & \textbf{16.81} & \textbf{9.29} \\ \hline
+		\textbf{10} & \textbf{277.71} & \textbf{16.18} & \textbf{9.44} \\ \hline
+		\textbf{15} & \textbf{289.63} & \textbf{17.02} & \textbf{9.30} \\ \hline
 	\end{tabular}
 	\caption{Comparison of Window Sizes}
 	\label{tab:comparison_of_lstm}
 \end{table}
 
-The results indicate that a window size of 10 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. This suggests that using a 10-week sequence length effectively balances the temporal dependencies captured by the model and the computational complexity of training.
+The results indicate that a window size of 10 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Although the other two window sizes exhibit higher MAE values, the difference is not that noticeable, with only approximately 0.1 differences. This suggests that using a 10-week sequence length effectively balances the temporal dependencies captured by the model and the computational complexity of training.
 
 
 

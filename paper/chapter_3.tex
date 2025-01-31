@@ -47,6 +47,15 @@ and the target variable (dengue cases).
 	\item Create visualizations like time series plots and scatterplots to highlight relationships and patterns in the data.
 \end{itemize}
 
+\subsubsection{Outbreak Detection}
+To detect outbreaks, we will be computing the outbreak threshold value of dengue cases using the formula, 
+
+\begin{equation}
+	\text{Outbreak Threshold Value} = \mu + 2\sigma
+\end{equation}
+
+where \(\mu\) is the historical weekly mean and \(\sigma \) is the standard deviation.
+
 \subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
 The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, wind, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
 \subsubsection{Data Preprocessing}
