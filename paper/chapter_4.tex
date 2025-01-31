@@ -186,6 +186,7 @@ The ARIMA model was developed to capture non-seasonal trends in the data. To det
 	\begin{itemize}
 		\item \textbf{MSE (Mean Squared Error)}: 1521.48
 		\item \textbf{RMSE (Root Mean Squared Error)}: 39.01
+		\item \textbf{MAE (Mean Absolute Error)}: 25.80		
 	\end{itemize}
 \end{enumerate}
 
@@ -229,6 +230,7 @@ This model incorporates seasonal parameters, which were tuned using grid search 
 	\begin{itemize}
 		\item \textbf{MSE}: 1109.69
 		\item \textbf{RMSE}: 33.31
+		\item \textbf{MAE}: 18.09		
 	\end{itemize}
 	The SARIMA model outperformed the ARIMA model in terms of lower MSE and RMSE values, indicating its effectiveness in capturing the seasonal patterns in the data.
 \end{enumerate}
@@ -303,7 +305,7 @@ where \( H \) is the observation matrix. This residual represents the new inform
 \end{itemize}
 
 \textbf{Model Evaluation}:
-Upon testing, the Kalman Filter produced a Mean Squared Error (MSE) of 1474.82 and a Root Mean Squared Error (RMSE) of 38.40.
+Upon testing, the Kalman Filter produced a Mean Squared Error (MSE) of 1474.82, Root Mean Squared Error (RMSE) of 38.40 and Mean Absolute Error(MAE) of 22.34.
 
 \clearpage
 \section{Preliminary System Requirements}
