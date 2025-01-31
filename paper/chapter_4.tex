@@ -91,7 +91,7 @@ The proposed Dengue Watch system utilized four distinct models to forecast weekl
 
 Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due to seasonal changes and long-term trends. Dengue case data is updated every month, and weather data can be extracted manually every week. By continuously monitoring performance, incorporating external factors, and updating the model regularly (preferably monthly or semi-annually), forecasting accuracy can be maintained. If drastic environmental or epidemiological changes occur, more frequent retraining is necessary. This ensures that public health interventions remain proactive, effectively mitigating dengue outbreaks.
 
-To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).
+To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE).
 
 The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. 
 
@@ -133,7 +133,7 @@ The training process was conducted using three distinct window sizes—5 weeks, 
 	\label{fig:lstm_comparison}
 \end{figure}
 
-The evaluation metrics included Mean Squared Error (MSE) and Root Mean Squared Error (RMSE), which assess the accuracy of the model's predictions.
+The evaluation metrics included Mean Squared Error (MSE), Root Mean Squared Error (RMSE) and Mean Absolute Error (MAE), which assess the accuracy of the model's predictions.
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|l|c|c|}
