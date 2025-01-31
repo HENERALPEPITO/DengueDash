@@ -86,7 +86,7 @@ Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coeffic
 \end{figure}
 
 \section{Outbreak Detection}  
-To identify outbreaks, we calculated the outbreak threshold value using statistical analysis of the dataset. The threshold is determined using the formula:  
+To identify outbreaks, we calculated the outbreak threshold value using the historical mean as the endemic channel. The threshold is determined using the formula:  
 
 \begin{align}  
 	\text{Outbreak Threshold Value} &= \mu + 2\sigma \\  
@@ -95,7 +95,9 @@ To identify outbreaks, we calculated the outbreak threshold value using statisti
 	&= 98.03407  
 \end{align}  
 
-This result indicates that when dengue cases exceed 98, an outbreak can be considered in Iloilo City.  
+where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
+
+This result indicates that dengue cases exceeding 98 in Iloilo City can be considered an outbreak. However, it is important to note that this threshold serves only as a baseline. Additional parameters, such as the number of hospital beds available in the city, must be considered to compute a more effective threshold and develop an appropriate response strategy.
 
 	
 \section{Model Training}
@@ -105,7 +107,7 @@ Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due t
 
 To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE).
 
-The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The acceptable threshold for Mean Absolute Error (MAE) in forecasting dengue cases can vary depending on the context. However, related studies often serve as benchmarks, with commonly cited acceptable values ranging from 20 to 30. For this study, we have established a threshold of 15 to emphasize the significance of accurate dengue prediction.
+The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The acceptable threshold for Mean Absolute Error (MAE) in forecasting dengue cases for it to be considered accurate can vary depending on the context. However, related studies often serve as benchmarks, with commonly cited acceptable values ranging from 20 to 30. For this study, we have established a threshold of 15 to emphasize the significance of accurate dengue prediction.
 
 \begin{table}[h!]
 	\centering
@@ -113,9 +115,9 @@ The table below provides a summary and comparative analysis of each model’s re
 		\hline
 		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\ \hline
 		\textbf{LSTM} & \textbf{277.71} & \textbf{16.18} & \textbf{9.44} \\ \hline
-		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} & \textbf{0} \\ \hline
-		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} & \textbf{0} \\ \hline
-		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} & \textbf{0} \\ \hline
+		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} & \textbf{18.09} \\ \hline
+		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} & \textbf{25.80} \\ \hline
+		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} & \textbf{22.34} \\ \hline
 	\end{tabular}
 	\caption{Comparison of Models}
 	\label{tab:comparison_of_models}
