@@ -76,27 +76,10 @@ The training process was conducted using three distinct window sizes (5 weeks, 1
 
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
-\subsubsection{Seasonal ARIMA (SARIMA):}
-The SARIMA (Seasonal ARIMA) model was utilized to forecast weekly dengue cases, incorporating seasonal patterns and exogenous weather variables (rainfall, max temperature, and humidity). The dataset was divided into training (80\%) and testing (20\%) sets while maintaining temporal continuity for validation. The input data consisted of weekly dengue case counts as the target variable and weather-related features as exogenous regressors.
-
-The SARIMA model's parameters were set as follows:
-\begin{itemize}
-	\item Order: (2, 0, 2)
-	\item Seasonal Order: (0, 1, 1, 52)
-\end{itemize}
-
-The SARIMA model was trained using the training dataset, including exogenous variables. The maximum number of iterations was set to 400 to ensure convergence during fitting.
-
-The model's performance was assessed using regression metrics to evaluate its forecasting capability:
-\begin{itemize}
-	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
-	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
-	\item Mean Absolute Error (MAE): Measures the average  magnitude of the absolute errors between the predicted and actual values
-	\end{itemize}
 
 \subsubsection{ARIMA}
 The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
-The dataset was split into training (80\%) and testing (20\%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
+The dataset was split into training (80%) and testing (20%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
 \begin{itemize}
 	\item p (autoregressive order): 0 to 3
 	\item d (differencing order): 0 to 2
@@ -104,12 +87,22 @@ The dataset was split into training (80\%) and testing (20\%) sets. To determine
 \end{itemize}
 The combinations of these parameters were evaluated by fitting an ARIMA model for each set of (p, d, q) values. The model's performance was assessed using the mean squared error (MSE) between the predicted and actual dengue cases in the test set. The combination yielding the lowest MSE was selected as the optimal parameter configuration.
 
-The fitted ARIMA model was used to forecast weekly dengue cases for the test dataset. Predictions were directly assigned to the PredictedCases column in the test dataset. Model performance was evaluated using the following metrics:
+The fitted ARIMA model was used to forecast weekly dengue cases for the test dataset. Predictions were directly assigned to the PredictedCases column in the test dataset.
+
+\subsubsection{Steps to Create the ARIMA Model:}
+\begin{enumerate}
+	\item \textbf{Data Preprocessing:}Prepare the dataset by handling any missing values and scaling the data if necessary to improve model convergence and stability.
+
+\item \textbf{Hyperparameter Tuning:}  
+Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(1, 2, 2)}.
+
+\item \textbf{Model Training:}
 \begin{itemize}
-	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
-	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
-	\item Mean Absolute Error (MAE): Measures the average  magnitude of the absolute errors between the predicted and actual values
+	\item Set the number of iterations to 400 to ensure thorough training and convergence.
+	\item Train the ARIMA model on 80\% of the data and reserve 20\% for testing.
 \end{itemize}
+\end{enumerate}
+
 
 
 
@@ -120,15 +113,78 @@ The fitted ARIMA model was used to forecast weekly dengue cases for the test dat
 	\item Observation Matrix: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
 \end{itemize}
 
-The Kalman Filter's em method was employed for training, iteratively estimating model parameters over 10 iterations.
-The smooth method was used to compute the smoothed state estimates for the training data.
-Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
+The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
 
-\subsubsection{Model Evaluation and Optimization}
+\section{Kalman Filter}
+
 \begin{itemize}
-	\item Compare the performance of all models to identify the most accurate forecasting approach.
-	\item Iteratively optimize the selected model.
+	\item \textbf{Input Variables}: The target variable (Cases) was modeled using three regressors: rainfall, max temperature, and humidity.
+	\item \textbf{Training and Testing Split}: The dataset was split into 80\% training and 20\% testing to evaluate model performance.
+	\item \textbf{Observation Matrix}: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
 \end{itemize}
+
+The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
+
+\section{Kalman Filter Methodology with Matrix Calculations}
+
+\textbf{Measurement Acquisition}: Obtain the measurement:
+$(z_k)$ of the system's state with associated confidence. This measurement matrix provides a noisy observation of the true state.
+
+The dataset was split into training and test sets to evaluate the Kalman Filter's performance and generalizability:
+\begin{itemize}
+	\item \textbf{Training Set}: 80\% of the data was used for training, enabling the Kalman Filter model to capture key patterns.
+	\item \textbf{Test Set}: The remaining 20\% of the data was reserved for testing.
+\end{itemize}
+
+\textbf{Prediction Step}:
+\begin{itemize}
+	\item Predict the next state:
+	\[
+	\hat{x}_{k|k-1} = A \hat{x}_{k-1|k-1} + B u_k
+	\]
+	
+	\item Update the state covariance:
+	\[
+	P_{k|k-1} = A P_{k-1|k-1} A^T + Q
+	\]
+	where \( Q \) is the process noise covariance matrix.
+\end{itemize}
+
+\textbf{Compute Residual}: Calculate the residual:
+\[
+y_k = z_k - H \hat{x}_{k|k-1}
+\]
+where \( H \) is the observation matrix. This residual represents the new information from the measurement.
+
+\textbf{Scaling Factor (Kalman Gain)}:
+\begin{itemize}
+	\item Compute the Kalman Gain:
+	\[
+	K_k = P_{k|k-1} H^T \left( H P_{k|k-1} H^T + R \right)^{-1}
+	\]
+	where \( R \) is the measurement noise covariance matrix.
+	
+	\item The Kalman Gain determines the weight of the measurement relative to the prediction.
+\end{itemize}
+
+\textbf{State Update}:
+\begin{itemize}
+	\item Update the state estimate:
+	\[
+	\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k y_k
+	\]
+	blending the prediction and measurement.
+\end{itemize}
+
+\textbf{Uncertainty Update}:
+\begin{itemize}
+	\item Update the state covariance:
+	\[
+	P_{k|k} = (I - K_k H) P_{k|k-1}
+	\]
+	where \( I \) is the identity matrix.
+\end{itemize}
+
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 

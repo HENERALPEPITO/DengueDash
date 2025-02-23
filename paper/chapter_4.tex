@@ -180,32 +180,23 @@ Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
 	\label{fig:Arima_result}
 \end{figure}
 
-The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Key details are as follows:
+The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution.
 
-\begin{enumerate}
-	\item \textbf{Data Preprocessing:}  
-	Prepare the dataset by handling any missing values and scaling the data if necessary to improve model convergence and stability.
-	
-	\item \textbf{Hyperparameter Tuning:}  
-	Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(1, 2, 2)}.
-	
-	\item \textbf{Model Training:}
-	\begin{itemize}
-		\item Set the number of iterations to 400 to ensure thorough training and convergence.
-		\item Train the ARIMA model on 80\% of the data and reserve 20\% for testing.
-	\end{itemize}
-	
-	\item \textbf{Evaluation:}  
-	After training, the ARIMA model was evaluated on the test data, yielding the following performance metrics:
-	\begin{itemize}
-		\item \textbf{MSE (Mean Squared Error)}: 1521.48
-		\item \textbf{RMSE (Root Mean Squared Error)}: 39.01
-		\item \textbf{MAE (Mean Absolute Error)}: 25.80		
-	\end{itemize}
-\end{enumerate}
+The model's performance was assessed using regression metrics to evaluate its forecasting capability:
+\begin{itemize}
+	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
+	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
+	\item Mean Absolute Error (MAE): Measures the average magnitude of the absolute errors between the predicted and actual values.
+\end{itemize}
 
+The ARIMA model yielded the following error metrics:
+\begin{itemize}
+	\item \textbf{MSE (Mean Squared Error)}: 1521.48
+	\item \textbf{RMSE (Root Mean Squared Error)}: 39.01
+	\item \textbf{MAE (Mean Absolute Error)}: 25.80
+\end{itemize}
 
-\section*{Seasonal ARIMA (SARIMA) Model}
+\subsection{Seasonal ARIMA (SARIMA) Model}
 
 \begin{figure}[H]
 	\centering
@@ -216,38 +207,9 @@ The ARIMA model was developed to capture non-seasonal trends in the data. To det
 
 This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit.
 
-\subsection*{Steps to Create the SARIMA Model:}
-\begin{enumerate}
-	\item \textbf{Data Preprocessing:}  
-	Ensure data readiness by filling any missing values and scaling as needed.
-	
-	\item \textbf{Seasonality Analysis:}  
-	Examine the dataset for seasonal patterns. A periodicity of \textbf{52 weeks} was identified, making SARIMA a suitable choice for capturing yearly seasonality.
-	
-	\item \textbf{Hyperparameter Tuning:}  
-	Conduct grid search to identify the best set of parameters $(p, d, q)(P, D, Q)[S]$, where:
-	\begin{itemize}
-		\item \textbf{(p, d, q)} are the non-seasonal parameters,
-		\item \textbf{(P, D, Q)} are the seasonal parameters, and
-		\item \textbf{S} is the season length.
-	\end{itemize}
-	The optimal configuration found was \textbf{(2, 0, 2)(0, 1, 1)[52]}.
-	
-	\item \textbf{Model Training:}
-	\begin{itemize}
-		\item Set the iteration count to 400 for enhanced model robustness.
-		\item Train the model on the 80\% training dataset and reserve the remaining 20\% for testing.
-	\end{itemize}
-	
-	\item \textbf{Evaluation:}  
-	The SARIMA model yielded the following error metrics:
-	\begin{itemize}
-		\item \textbf{MSE}: 1109.69
-		\item \textbf{RMSE}: 33.31
-		\item \textbf{MAE}: 18.09		
-	\end{itemize}
-	The SARIMA model outperformed the ARIMA model in terms of lower MSE and RMSE values, indicating its effectiveness in capturing the seasonal patterns in the data.
-\end{enumerate}
+The model's performance was assessed using regression metrics to evaluate its forecasting capability: \begin{itemize} \item Mean Squared Error (MSE): Quantifies average squared prediction error. \item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale. \item Mean Absolute Error (MAE): Measures the average magnitude of the absolute errors between the predicted and actual values. \end{itemize}
+
+The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The SARIMA model outperformed the ARIMA model in terms of lower MSE and RMSE values, indicating its effectiveness in capturing the seasonal patterns in the data.
 
 \subsection{Kalman Filter Model}
 
@@ -258,68 +220,17 @@ This model incorporates seasonal parameters, which were tuned using grid search 
 	\label{fig:Kalman_result}
 \end{figure}
 
-\section*{Kalman Filter Methodology with Matrix Calculations}
-
-\textbf{Measurement Acquisition}: Obtain the measurement \( z_k \) of the system's state with associated confidence. This measurement matrix provides a noisy observation of the true state.
-
-The dataset was split into training and test sets to evaluate the Kalman Filter's performance and generalizability:
-\begin{itemize}
-	\item \textbf{Training Set}: 80\% of the data was used for training, enabling the Kalman Filter model to capture key patterns.
-	\item \textbf{Test Set}: The remaining 20\% of the data was reserved for testing.
-\end{itemize}
-
-\textbf{Prediction Step}:
-\begin{itemize}
-	\item Predict the next state:
-	\[
-	\hat{x}_{k|k-1} = A \hat{x}_{k-1|k-1} + B u_k
-	\]
-	where \( A \) is the state transition matrix and \( B \) is the control matrix.
-	
-	\item Update the state covariance:
-	\[
-	P_{k|k-1} = A P_{k-1|k-1} A^T + Q
-	\]
-	where \( Q \) is the process noise covariance matrix.
-\end{itemize}
-
-\textbf{Compute Residual}: Calculate the residual
-\[
-y_k = z_k - H \hat{x}_{k|k-1}
-\]
-where \( H \) is the observation matrix. This residual represents the new information from the measurement.
-
-\textbf{Scaling Factor (Kalman Gain)}:
-\begin{itemize}
-	\item Compute the Kalman Gain:
-	\[
-	K_k = P_{k|k-1} H^T (H P_{k|k-1} H^T + R)^{-1}
-	\]
-	where \( R \) is the measurement noise covariance matrix.
-	
-	\item The Kalman Gain determines the weight of the measurement relative to the prediction.
-\end{itemize}
-
-\textbf{State Update}:
-\begin{itemize}
-	\item Update the state estimate:
-	\[
-	\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k y_k
-	\]
-	blending the prediction and measurement.
-\end{itemize}
-
-\textbf{Uncertainty Update}:
-\begin{itemize}
-	\item Update the state covariance:
-	\[
-	P_{k|k} = (I - K_k H) P_{k|k-1}
-	\]
-	where \( I \) is the identity matrix.
-\end{itemize}
 
 \textbf{Model Evaluation}:
-Upon testing, the Kalman Filter produced a Mean Squared Error (MSE) of 1474.82, Root Mean Squared Error (RMSE) of 38.40 and Mean Absolute Error(MAE) of 22.34.
+Upon testing, the Kalman Filter produced the following error metrics:
+\[
+\text{MSE} = 1474.82, \quad
+\text{RMSE} = 38.40, \quad
+\text{MAE} = 22.34
+\]
+
+These results indicate the model's performance in predicting dengue cases, where lower errors suggest a better fit to the observed data.
+
 
 \clearpage
 \section{Preliminary System Requirements}
