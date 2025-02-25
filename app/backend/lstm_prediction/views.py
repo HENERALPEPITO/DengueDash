@@ -148,7 +148,6 @@ class LstmPredictionView(APIView):
                     )
 
                 future_weather = serializer.validated_data["future_weather"]
-                last_date = serializer.validated_data["last_date"]
 
                 initial_sequence = np.array(
                     [
@@ -171,9 +170,9 @@ class LstmPredictionView(APIView):
 
                 # Calculate prediction dates
                 for i, pred in enumerate(predictions):
-                    pred["date"] = (last_date + timedelta(weeks=i + 1)).strftime(
-                        "%Y-%m-%d"
-                    )
+                    pred["date"] = (
+                        weather_last_five_weeks[-1].start_day + timedelta(weeks=i + 1)
+                    ).strftime("%Y-%m-%d")
 
                 # Return the predictions and metadata in the response
                 return Response(
