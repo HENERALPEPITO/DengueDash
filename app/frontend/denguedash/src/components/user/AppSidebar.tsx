@@ -94,7 +94,7 @@ export default function AppSidebar({ sectionSegment }: AppSidebarProps) {
           },
           {
             title: "Forecasting",
-            url: "forecasting",
+            url: "/user/analytics/forecasting",
           },
         ],
       },
