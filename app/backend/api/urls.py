@@ -90,15 +90,12 @@ urlpatterns = [
         WeatherView.as_view(),
         name="weather",
     ),
-
-
     # Delete
     path(
         "case/delete/<int:case_id>",
         CaseDeleteView.as_view(),
         name="case-delete",
     ),
-
     # LSTM Prediction
     path(
         "predict",
