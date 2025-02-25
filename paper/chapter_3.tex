@@ -104,6 +104,50 @@ Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the conf
 \end{enumerate}
 
 
+\subsubsection{Seasonal ARIMA (SARIMA)}
+
+\begin{enumerate}
+	\item \textbf{Data Preprocessing}  
+	\begin{itemize}
+		\item Handle missing values through interpolation or imputation.
+		\item Normalize or standardize features to ensure stable training.
+		\item Split data into training (80\%) and testing (20\%) sets while maintaining temporal continuity.
+	\end{itemize}
+	
+	\item \textbf{Seasonality Analysis}  
+	\begin{itemize}
+		\item Perform time series decomposition to examine trend, seasonality, and residual components.
+		\item Identify seasonality using autocorrelation plots and spectral analysis.
+		\item A periodicity of \textbf{52 weeks} was detected, justifying the use of a seasonal model.
+	\end{itemize}
+	
+	\item \textbf{Hyperparameter Tuning}  
+	\begin{itemize}
+		\item Conduct a grid search to optimize SARIMA parameters $(p, d, q)(P, D, Q)[S]$.
+		\item Determine optimal configuration for seasonal and non-seasonal components.
+		\item Verify stationarity through Augmented Dickey-Fuller (ADF) test.
+	\end{itemize}
+	
+	\item \textbf{Model Training}  
+	\begin{itemize}
+		\item Fit the SARIMA model on the training dataset, incorporating exogenous variables such as rainfall, temperature, and humidity.
+		\item Set a maximum number of iterations to ensure convergence.
+		\item Monitor model diagnostics (residual analysis) to confirm the absence of autocorrelation in residuals.
+	\end{itemize}
+	
+	\item \textbf{Forecasting and Validation}  
+	\begin{itemize}
+		\item Generate out-of-sample forecasts for future dengue cases.
+		\item Compare predicted values against actual data to assess real-world applicability.
+		\item Visualize results with line plots and confidence intervals.
+	\end{itemize}
+	
+\end{enumerate}
+
+
+
+
+
 
 
 \subsubsection{Kalman Filter:}
