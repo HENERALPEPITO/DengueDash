@@ -170,6 +170,7 @@ class LstmPredictionView(APIView):
 
                 # Calculate prediction dates
                 for i, pred in enumerate(predictions):
+                    # Todo: Do not solely rely on the last weather data
                     pred["date"] = (
                         weather_last_five_weeks[-1].start_day + timedelta(weeks=i + 1)
                     ).strftime("%Y-%m-%d")
