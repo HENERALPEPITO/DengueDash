@@ -165,7 +165,7 @@ class LstmPredictionView(APIView):
 
                 # Get predictions for the next 8 weeks
                 predictions = self.predict_next_n_weeks(
-                    initial_sequence, future_weather, n_weeks=8
+                    initial_sequence, future_weather, n_weeks=self.window_size
                 )
 
                 # Calculate prediction dates
