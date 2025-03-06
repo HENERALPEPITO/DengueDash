@@ -94,30 +94,6 @@ const login = async (email: string, password: string) => {
   }
 };
 
-// const getUserData = async () => {
-//   try {
-//     const response = await axiosProtected.get(`user/`);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching user data:", error);
-//     throw error;
-//   }
-// };
-
-// const authenticateUser = async () => {
-//   try {
-//     await axiosInstance.get("auth/check");
-//     // return response.data;
-//     return true;
-//   } catch (error) {
-//     if (axios.isAxiosError(error) && error.response) {
-//       // return { is_authenticated: false, message: error.response };
-//       return false;
-//     }
-//     return { is_authenticated: false, message: "Unknown error" };
-//   }
-// };
-
 const authService = { login };
 
 export default authService;
