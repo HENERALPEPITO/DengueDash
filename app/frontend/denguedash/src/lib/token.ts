@@ -1,13 +1,16 @@
 import { decodeJwt, jwtVerify } from "jose";
 
-export const verifyTokenSignature = async (token: string): Promise<boolean> => {
+export const verifyTokenSignature = async (
+  token: string,
+  tokenKind: string
+): Promise<boolean> => {
   const SECRET_KEY = process.env.SECRET_KEY;
   try {
     await jwtVerify(token, new TextEncoder().encode(SECRET_KEY));
-    console.log("Token signature verified");
+    console.log(`${tokenKind} token signature verified`);
     return true;
   } catch (error) {
-    console.log("Cannot verify token signature:", error);
+    console.log(`Cannot verify ${tokenKind} token signature`, error);
     return false;
   }
 };
