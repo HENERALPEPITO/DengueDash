@@ -25,13 +25,7 @@ import {
 import { Button } from "@/shadcn/components/ui/button";
 import { Label } from "@/shadcn/components/ui/label";
 import CustomPopover from "../common/CustomPopover";
-
-const transformData = (data: any, labelKey: string, valueKey: string) => {
-  return data.map((item: { [key: string]: any }) => ({
-    label: item[labelKey] as string,
-    value: item[valueKey] as number,
-  }));
-};
+import { transformData } from "@/lib/utils/data-transormation.util";
 
 const locations = [
   {

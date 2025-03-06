@@ -52,12 +52,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       if (newAccessToken) {
         // Create a new NextResponse to set the cookie
         const nextResponse = NextResponse.next();
-        nextResponse.cookies.set("access_token", newAccessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-        });
+        nextResponse.cookies.set("access_token", newAccessToken, {});
 
         // Return the modified NextResponse
         return nextResponse;
@@ -91,11 +86,11 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 // Eg. User => /user/dashboard
 export const config = {
   matcher: [
-    "/user/analytics/dashboard",
-    "/user/analytics/forecasting",
-    "/user/forms/case-report-form",
-    "/user/data-tables/dengue-reports",
-    // todo: this link does not work
-    "/user/data-tables/dengue-reports/[id]",
+    // "/user/analytics/dashboard",
+    // "/user/analytics/forecasting",
+    // "/user/forms/case-report-form",
+    // "/user/data-tables/dengue-reports",
+    // // todo: this link does not work
+    // "/user/data-tables/dengue-reports/[id]",
   ],
 };
