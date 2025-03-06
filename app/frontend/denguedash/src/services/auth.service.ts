@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const axiosInstance = axios.create({
+export const axiosProtected = axios.create({
   baseURL: process.env.NEXT_PUBLIC_DJANGO_URL,
   withCredentials: true,
   headers: {
@@ -15,9 +15,74 @@ export const axiosOpen = axios.create({
   },
 });
 
+axiosProtected.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      try {
+        // Call the Next.js API route to refresh the token
+        const refreshResponse = await fetch("/api/auth/refresh", {
+          method: "POST",
+          credentials: "include", // Send cookies with request
+        });
+
+        if (!refreshResponse.ok) {
+          throw new Error("Failed to refresh token");
+        }
+
+        const data = await refreshResponse.json();
+        const newAccessToken = data.accessToken;
+
+        if (newAccessToken) {
+          // Retry original request with new token
+          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          return axiosProtected(error.config);
+        }
+      } catch (refreshError) {
+        console.error("Error refreshing access token:", refreshError);
+        // Redirect to login if refresh fails
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const axiosClient = async (
+  endpoint: string,
+  method: "GET" | "POST" | "DELETE",
+  data: any = null,
+  params: Record<string, any> = {},
+  useAuth = true
+) => {
+  try {
+    const client = useAuth ? axiosProtected : axiosOpen;
+    const config = { params };
+
+    let response;
+    switch (method) {
+      case "GET":
+        response = await client.get(endpoint, config);
+        break;
+      case "POST":
+        response = await client.post(endpoint, data, config);
+        break;
+      case "DELETE":
+        response = await client.delete(endpoint, config);
+        break;
+      default:
+        throw new Error("Invalid method");
+    }
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching ${endpoint}`, error);
+    throw error;
+  }
+};
+
 const login = async (email: string, password: string) => {
   try {
-    const response = await axiosInstance.post("login/", {
+    const response = await axiosProtected.post("login/", {
       email: email,
       password: password,
     });
@@ -29,15 +94,15 @@ const login = async (email: string, password: string) => {
   }
 };
 
-const getUserData = async () => {
-  try {
-    const response = await axiosInstance.get(`user/`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    throw error;
-  }
-};
+// const getUserData = async () => {
+//   try {
+//     const response = await axiosProtected.get(`user/`);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching user data:", error);
+//     throw error;
+//   }
+// };
 
 // const authenticateUser = async () => {
 //   try {
@@ -53,6 +118,6 @@ const getUserData = async () => {
 //   }
 // };
 
-const authService = { login, getUserData };
+const authService = { login };
 
 export default authService;
