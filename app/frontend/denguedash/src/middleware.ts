@@ -1,4 +1,4 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { validateToken, verifyTokenSignature } from "./lib/token";
 import { cookies } from "next/headers";
 
@@ -6,7 +6,7 @@ type refreshTokenResponse = {
   access: string;
 };
 
-export async function middleware(request: NextRequest, event: NextFetchEvent) {
+export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token");
   const refreshToken = cookieStore.get("refresh_token");
@@ -22,27 +22,23 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const isRefreshTokenExpired = await validateToken(refreshToken.value);
+  // Verify the signature of refresh token
+  const isRefreshTokenSignatureValid = await verifyTokenSignature(
+    refreshToken.value,
+    "REFRESH" // FOR DEBUGGING PURPOSES
+  );
+  if (!isRefreshTokenSignatureValid) {
+    deleteCookies();
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   // Verify if refresh token is expired
+  const isRefreshTokenExpired = await validateToken(refreshToken.value);
   if (isRefreshTokenExpired) {
     deleteCookies();
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Verify the signatures for both tokens
-  const isAccessTokenSignatureValid = await verifyTokenSignature(
-    accessToken.value
-  );
-  const isRefreshTokenSignatureValid = await verifyTokenSignature(
-    refreshToken.value
-  );
-  if (!isAccessTokenSignatureValid || !isRefreshTokenSignatureValid) {
-    deleteCookies();
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // Return the default NextResponse if no refresh is required
   return NextResponse.next();
 }
 
