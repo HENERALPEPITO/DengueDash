@@ -1,13 +1,16 @@
-import { axiosInstance } from "./auth.service";
+import { axiosClient } from "./auth.service";
+
+const OPERATION = "DELETE";
+const DEFAULT_DATA = null;
+const DEFAULT_PARAMS = {};
 
 const deleteCase = async (caseId: number) => {
-  try {
-    await axiosInstance.delete(`case/delete/${caseId}`);
-    return true;
-  } catch (error) {
-    console.error("Error deleting case", error);
-    return false;
-  }
+  return axiosClient(
+    `case/delete/${caseId}`,
+    OPERATION,
+    DEFAULT_DATA,
+    DEFAULT_PARAMS
+  );
 };
 
 const deleteService = {
