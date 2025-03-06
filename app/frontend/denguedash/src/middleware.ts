@@ -92,6 +92,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 export const config = {
   matcher: [
     "/user/analytics/dashboard",
+    "/user/analytics/forecasting",
     "/user/forms/case-report-form",
     "/user/data-tables/dengue-reports",
     // todo: this link does not work

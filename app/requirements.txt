@@ -4,3 +4,4 @@ environs
 django-cors-headers
 djangorestframework-simplejwt
 Faker
+scikit-learn

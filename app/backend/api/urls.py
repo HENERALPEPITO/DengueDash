@@ -19,6 +19,10 @@ from .views.dengue_count_view import (
     DengueCountDeathsView,
 )
 
+from weather.views import WeatherView
+
+from lstm_prediction.views import LstmPredictionView
+
 
 urlpatterns = [
     path(
@@ -81,10 +85,21 @@ urlpatterns = [
         DengueCountDeathsView.as_view(),
         name="cases-deaths",
     ),
+    path(
+        "weather",
+        WeatherView.as_view(),
+        name="weather",
+    ),
     # Delete
     path(
         "case/delete/<int:case_id>",
         CaseDeleteView.as_view(),
         name="case-delete",
+    ),
+    # LSTM Prediction
+    path(
+        "predict",
+        LstmPredictionView.as_view(),
+        name="lstm-predict",
     ),
 ]
