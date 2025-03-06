@@ -1,19 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.conf import settings
-from rest_framework import generics, permissions
 from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from auth.serializers import (
     RegisterSerializer,
     LoginSerializer,
 )
-from user.serializers import (
-    UserClassificationSerializer,
-    UserSerializer,
-)
-from user.models import UserClassification
+
 import environs
 
 env = environs.Env()
@@ -78,21 +73,6 @@ class LoginView(TokenObtainPairView):
             return res
 
         return response
-
-
-class UserClassificationView(generics.ListAPIView):
-    permission_classes = (permissions.AllowAny,)
-
-    queryset = UserClassification.objects.exclude(classification="Admin")
-    serializer_class = UserClassificationSerializer
-
-
-class UserDetailView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data)
 
 
 class AuthCheckView(APIView):

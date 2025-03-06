@@ -1,3 +1,4 @@
+from datetime import timedelta
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView
@@ -8,6 +9,16 @@ from case.serializers.case_report_serializers import CaseReportSerializer
 from case.serializers.case_report_serializers import CaseViewSerializer
 from api.pagination import APIPagination
 from django.db.models import Case as DBCase, Value, When
+
+
+def fetch_cases_for_week(start_date):
+    end_date = start_date + timedelta(days=6)
+    cases = Case.objects.filter(
+        clncl_class="W" or "S",
+        date_con__gte=start_date,
+        date_con__lte=end_date,
+    ).count()
+    return cases
 
 
 def get_filter_criteria(user, action="view"):

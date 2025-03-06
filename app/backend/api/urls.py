@@ -1,19 +1,21 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views.auth_view import (
+from auth.views import (
     RegisterView,
     LoginView,
-    UserClassificationView,
-    UserDetailView,
     AuthCheckView,
 )
-from .views.patient_case_view import PatientCaseView
-from .views.case_report_view import (
+from user.views import (
+    UserClassificationView,
+    UserDetailView,
+)
+from case.views.patient_case_view import PatientCaseView
+from case.views.case_report_view import (
     CaseReportView,
     CaseDetailedView,
     CaseDeleteView,
 )
-from .views.dengue_count_view import (
+from case.views.case_count_view import (
     QuickStatisticsView,
     BarangayCountView,
     DengueCountDeathsView,

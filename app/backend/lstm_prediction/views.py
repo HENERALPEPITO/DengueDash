@@ -9,7 +9,7 @@ import os
 import math
 from datetime import datetime, timedelta
 from .serializers import PredictionRequestSerializer
-from case.views import fetch_cases_for_week
+from case.views.case_report_view import fetch_cases_for_week
 from weather.models import Weather
 
 
