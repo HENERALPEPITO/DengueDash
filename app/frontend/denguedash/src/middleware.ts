@@ -30,40 +30,6 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const isAccessTokenExpired = await validateToken(accessToken.value);
-  if (isAccessTokenExpired) {
-    const getAccessToken = fetch(
-      process.env.NEXT_PUBLIC_DJANGO_URL + "token/refresh/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refresh: refreshToken.value }),
-      }
-    );
-    event.waitUntil(getAccessToken);
-
-    try {
-      const response = await getAccessToken;
-      const data: refreshTokenResponse = await response.json();
-
-      const newAccessToken = data.access;
-      if (newAccessToken) {
-        // Create a new NextResponse to set the cookie
-        const nextResponse = NextResponse.next();
-        nextResponse.cookies.set("access_token", newAccessToken, {});
-
-        // Return the modified NextResponse
-        return nextResponse;
-      }
-    } catch (error) {
-      console.error("Error refreshing access token:", error);
-      deleteCookies();
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-  }
-
   // Verify the signatures for both tokens
   const isAccessTokenSignatureValid = await verifyTokenSignature(
     accessToken.value
@@ -86,11 +52,11 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 // Eg. User => /user/dashboard
 export const config = {
   matcher: [
-    // "/user/analytics/dashboard",
-    // "/user/analytics/forecasting",
-    // "/user/forms/case-report-form",
-    // "/user/data-tables/dengue-reports",
-    // // todo: this link does not work
-    // "/user/data-tables/dengue-reports/[id]",
+    "/user/analytics/dashboard",
+    "/user/analytics/forecasting",
+    "/user/forms/case-report-form",
+    "/user/data-tables/dengue-reports",
+    // todo: this link does not work
+    "/user/data-tables/dengue-reports/[id]",
   ],
 };
