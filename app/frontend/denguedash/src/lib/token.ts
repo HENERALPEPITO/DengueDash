@@ -34,3 +34,25 @@ export const getUserIdFromToken = async (
     return null;
   }
 };
+
+export const generateNewAccessToken = async (
+  refreshToken: string
+): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_DJANGO_URL + "token/refresh/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+      }
+    );
+    const data = await response.json();
+    return data.access;
+  } catch (error) {
+    console.error("Error generating new access token:", error);
+    return null;
+  }
+};
