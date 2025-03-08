@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateToken, verifyTokenSignature } from "./lib/token";
 import { cookies } from "next/headers";
 
-type refreshTokenResponse = {
-  access: string;
-};
-
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token");
