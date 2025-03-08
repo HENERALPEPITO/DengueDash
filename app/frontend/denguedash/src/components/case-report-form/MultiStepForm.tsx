@@ -251,7 +251,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="flex items-center justify-between w-full rounded-md border-0 py-1.5 px-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                  className="flex items-center justify-between w-full rounded-md border-0 py-1.5 px-2 text-left text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                   disabled={isDisabled}
                 >
                   <span className={isDisabled ? "text-gray-500" : ""}>
@@ -277,7 +277,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
       return (
         <select
           {...register(field.varName as keyof FormValues)}
-          className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+          className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
           disabled={disabled}
         >
           {field.selectOptions.map(
@@ -296,7 +296,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
         return (
           <select
             {...register(field.varName as keyof FormValues)}
-            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
             onChange={handleRegionChange}
           >
             <option value="">Select Region</option>
@@ -315,7 +315,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
         return (
           <select
             {...register(field.varName as keyof FormValues)}
-            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
             onChange={handleProvinceChange}
           >
             <option value="">Select Province</option>
@@ -334,7 +334,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
         return (
           <select
             {...register(field.varName as keyof FormValues)}
-            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
             onChange={handleCityMunicipalityChange}
           >
             <option value="">Select City/Municipality</option>
@@ -353,7 +353,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
         return (
           <select
             {...register(field.varName as keyof FormValues)}
-            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
           >
             <option value="">Select Barangay</option>
             {filteredBarangays().map((brgy) => (
@@ -371,7 +371,7 @@ export default function MultiStepForm({ userId }: MultiStepFormProps) {
         type={field.inputType == "number" ? "number" : "text"}
         id={field.varName}
         {...register(field.varName)}
-        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
         disabled={disabled}
       />
     );
