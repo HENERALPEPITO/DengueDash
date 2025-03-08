@@ -96,7 +96,7 @@ export default function ReportView({ params }: any) {
   }) => (
     <Card className="w-full">
       {/* Background */}
-      <div className="h-20 bg-gradient-to-r from-blue-200 via-blue-400 to-orange-300 rounded-t-lg"></div>
+      <div className="h-20 bg-linear-to-r from-blue-200 via-blue-400 to-orange-300 rounded-t-lg"></div>
 
       {/* Personal Information Section */}
       <SectionHeader

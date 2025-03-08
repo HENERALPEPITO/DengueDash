@@ -46,7 +46,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full px-4 py-2 border border-gray rounded-md text-black placeholder-gray-400 focus:outline-hidden focus:ring-2 focus:ring-green-400"
                 placeholder="Enter your email"
               />
             </div>
@@ -58,7 +58,7 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full px-4 py-2 border border-gray rounded-md text-black placeholder-gray-400 focus:outline-hidden focus:ring-2 focus:ring-green-400"
                   placeholder="Enter your password"
                 />
                 <button
