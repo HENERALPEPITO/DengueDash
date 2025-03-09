@@ -22,6 +22,9 @@ class UserManager(BaseUserManager):
         )
 
         user.set_password(password)
+        extra_fields.setdefault("is_admin", False)
+        extra_fields.setdefault("is_superuser", False)
+        extra_fields.setdefault("is_verified", False)
         user.save(using=self._db)
 
         return user
