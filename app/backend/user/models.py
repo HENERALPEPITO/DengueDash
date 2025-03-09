@@ -37,6 +37,7 @@ class UserManager(BaseUserManager):
 
         extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_verified", True)
         # Set the classification_id that links to admin
         # extra_fields.setdefault(
         #     "classification_id",
@@ -98,6 +99,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     #     related_name="user",
     # )
     is_admin = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [

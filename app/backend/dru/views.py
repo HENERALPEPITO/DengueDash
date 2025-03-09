@@ -48,6 +48,7 @@ class RegisterDRUView(APIView):
                         last_name="",
                         sex="N/A",
                         is_admin=True,
+                        is_verified=True,
                         dru=new_dru,
                     )
             except Exception as e:
