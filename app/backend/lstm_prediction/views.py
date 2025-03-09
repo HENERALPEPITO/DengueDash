@@ -21,7 +21,7 @@ class LstmPredictionView(APIView):
 
         # Load the model from the disk
         model_path = os.path.join(
-            os.path.dirname(__file__), "models", "dengue_lstm_model.h5"
+            os.path.dirname(__file__), "ml-dl-models", "dengue_lstm_model.h5"
         )
         self.model = tf.keras.models.load_model(model_path)
 
