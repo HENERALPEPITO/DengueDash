@@ -69,6 +69,9 @@ class Command(BaseCommand):
                 address=dru["address"],
                 dru_type=dru["type"],
                 surveillance_unit=dru["unit"],
+                region=dru["region"],
+                email=dru["email"],
+                contact_number=dru["contact_number"],
             )
 
         self.stdout.write(
