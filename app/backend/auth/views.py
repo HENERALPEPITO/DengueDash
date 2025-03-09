@@ -8,6 +8,7 @@ from auth.serializers import (
     RegisterSerializer,
     LoginSerializer,
 )
+from dru.models import DRU
 
 import environs
 
@@ -19,10 +20,64 @@ SECRET_KEY = env("SECRET_KEY")
 User = get_user_model()
 
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = RegisterSerializer
+# class RegisterView(generics.CreateAPIView):
+#     queryset = User.objects.all()
+#     permission_classes = (permissions.IsAuthenticated,)
+#     serializer_class = RegisterSerializer
+
+#     def get_serializer_context(self):
+#         context = super().get_serializer_context()
+#         context.update({"request": self.request})
+#         return context
+
+
+class RegisterUserView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        current_user = request.user
+        if not current_user.is_admin:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not authorized to perform this action",
+                },
+            )
+
+        user = request.user
+
+        if "dru" not in request.data:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "DRU is required",
+                },
+            )
+
+        dru_id = request.data.get("dru")
+        try:
+            dru_to_register = DRU.objects.filter(id=dru_id).first()
+            current_user_dru = user.dru
+        except DRU.DoesNotExist:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "DRU not found",
+                },
+            )
+
+        # return JsonResponse(
+        #     {
+        #         "success": True,
+        #         "message": "User registered successfully",
+        #         "data": {
+        #             "email": user.email,
+        #             "first_name": user.first_name,
+        #             "middle_name": user.middle_name,
+        #             "last_name": user.last_name,
+        #         },
+        #     }
+        # )
 
 
 class LoginView(TokenObtainPairView):

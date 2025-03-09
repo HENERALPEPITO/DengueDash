@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from user.models import User
+from core.models import BaseModel
 
 
 class Patient(models.Model):
@@ -92,7 +93,7 @@ class Patient(models.Model):
         return f"{self.first_name} {self.middle_name} {self.last_name}".strip()
 
 
-class Case(models.Model):
+class Case(BaseModel):
     case_id = models.BigIntegerField(
         primary_key=True,
         editable=False,
