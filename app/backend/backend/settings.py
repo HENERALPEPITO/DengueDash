@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "api",
     # "auth",
+    "core",
     "seeders",
     "case",
     "dru",
