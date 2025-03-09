@@ -7,6 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         dru_types = [
+            "National",
             "RESU",
             "PESU/CESU",
             "RHU",
