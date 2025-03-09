@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
     def get_sex_display(self, obj):
         return obj.get_sex_display()
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
