@@ -2,17 +2,18 @@ from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.serializers import (
-    UserClassificationSerializer,
+    # UserClassificationSerializer,
     UserSerializer,
 )
-from user.models import UserClassification
+
+# from user.models import UserClassification
 
 
-class UserClassificationView(generics.ListAPIView):
-    permission_classes = (permissions.AllowAny,)
+# class UserClassificationView(generics.ListAPIView):
+#     permission_classes = (permissions.AllowAny,)
 
-    queryset = UserClassification.objects.exclude(classification="Admin")
-    serializer_class = UserClassificationSerializer
+#     queryset = UserClassification.objects.exclude(classification="Admin")
+#     serializer_class = UserClassificationSerializer
 
 
 class UserDetailView(APIView):

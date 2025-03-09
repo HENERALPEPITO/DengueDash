@@ -1,15 +1,14 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from user.models import UserClassification
+
+# from user.models import UserClassification
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # Convert the primary key to string
-    classification = serializers.StringRelatedField()
+    # classification = serializers.StringRelatedField()
     dru = serializers.StringRelatedField()
-    # Show the proper name instead of abbreviated value in tuple
     sex_display = serializers.SerializerMethodField()
 
     class Meta:
@@ -20,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             "middle_name",
             "last_name",
             "sex_display",
-            "classification",
+            # "classification",
             "dru",
         ]
 
@@ -28,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_sex_display()
 
 
-class UserClassificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserClassification
-        fields = "__all__"
+# class UserClassificationSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = UserClassification
+#         fields = "__all__"

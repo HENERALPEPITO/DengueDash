@@ -4,16 +4,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
     BaseUserManager,
 )
+from core.models import BaseModel
 from dru.models import DRU
-
-
-class UserClassification(models.Model):
-    classification = models.CharField(
-        max_length=50,
-    )
-
-    def __str__(self):
-        return self.classification
 
 
 class UserManager(BaseUserManager):
@@ -23,11 +15,11 @@ class UserManager(BaseUserManager):
         password=None,
         **extra_fields,
     ):
-        classification = extra_fields.pop("classification", None)
+        # classification = extra_fields.pop("classification", None)
 
         user = self.model(
             email=self.normalize_email(email),
-            classification=classification,
+            # classification=classification,
             **extra_fields,
         )
 
@@ -43,16 +35,13 @@ class UserManager(BaseUserManager):
         **extra_fields,
     ):
 
-        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
         # Set the classification_id that links to admin
-        extra_fields.setdefault(
-            "classification_id",
-            # UserClassification.objects.filter(classification="Admin")
-            # .values_list("id", flat=True)
-            # .first(),
-            UserClassification.objects.get(classification="Admin").id,
-        )
+        # extra_fields.setdefault(
+        #     "classification_id",
+        #     UserClassification.objects.get(classification="Admin").id,
+        # )
 
         return self.create_user(
             email,
@@ -61,7 +50,7 @@ class UserManager(BaseUserManager):
         )
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(
         max_length=255,
         unique=True,
@@ -85,9 +74,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     sex_choices = [
         ("M", "Male"),
         ("F", "Female"),
+        ("N/A", "Not Applicable"),
     ]
     sex = models.CharField(
-        max_length=6,
+        max_length=3,
         choices=sex_choices,
         blank=False,
         null=False,
@@ -99,14 +89,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         related_name="user",
     )
-    classification = models.ForeignKey(
-        UserClassification,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name="user",
-    )
-    is_staff = models.BooleanField(default=False)
+    # classification = models.ForeignKey(
+    #     UserClassification,
+    #     on_delete=models.CASCADE,
+    #     blank=False,
+    #     null=False,
+    #     related_name="user",
+    # )
+    is_admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
