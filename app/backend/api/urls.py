@@ -1,12 +1,12 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from auth.views import (
-    RegisterView,
+    RegisterUserView,
     LoginView,
     AuthCheckView,
 )
 from user.views import (
-    UserClassificationView,
+    # UserClassificationView,
     UserDetailView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -28,9 +28,9 @@ from lstm_prediction.views import LstmPredictionView
 
 urlpatterns = [
     path(
-        "register/",
-        RegisterView.as_view(),
-        name="register",
+        "register/user/",
+        RegisterUserView.as_view(),
+        name="register-user",
     ),
     path(
         "login/",
@@ -42,11 +42,11 @@ urlpatterns = [
         TokenRefreshView.as_view(),
         name="token_refresh",
     ),
-    path(
-        "classifications/",
-        UserClassificationView.as_view(),
-        name="classifications",
-    ),
+    # path(
+    #     "classifications/",
+    #     UserClassificationView.as_view(),
+    #     name="classifications",
+    # ),
     path(
         "auth/check",
         AuthCheckView.as_view(),

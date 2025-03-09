@@ -1,3 +1,4 @@
+from environs import ValidationError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
@@ -5,7 +6,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from api.custom_exceptions.custom_validation_exception import CustomValidationException
-from user.models import UserClassification
+
+# from user.models import UserClassification
 from dru.models import DRU, DRUType
 
 
@@ -21,15 +23,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
     )
-    classification = serializers.PrimaryKeyRelatedField(
-        queryset=UserClassification.objects.all(),
-        required=True,
-    )
+    # classification = serializers.PrimaryKeyRelatedField(
+    #     queryset=UserClassification.objects.all(),
+    #     required=True,
+    # )
 
-    dru = serializers.PrimaryKeyRelatedField(
-        queryset=DRU.objects.all(),
-        required=False,
-    )
+    # dru = serializers.PrimaryKeyRelatedField(
+    #     queryset=DRU.objects.all(),
+    #     required=False,
+    # )
 
     class Meta:
         model = User
@@ -42,7 +44,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             "last_name",
             "sex",
             "dru",
-            "classification",
         ]
 
     """
@@ -53,34 +54,40 @@ class RegisterSerializer(serializers.ModelSerializer):
     """
 
     def validate(self, attrs):
+
+        if attrs["password"] != attrs["password_confirm"]:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+
+        return attrs
+
         # Todo: Refactor in the future
-        if attrs["classification"] == UserClassification.objects.get(
-            classification="super_admin"
-        ):
-            raise serializers.ValidationError(
-                {"classification": "Invalid Classification."}
-            )
+        # if attrs["classification"] == UserClassification.objects.get(
+        #     classification="super_admin"
+        # ):
+        #     raise serializers.ValidationError(
+        #         {"classification": "Invalid Classification."}
+        #     )
 
         # Appropriate Classification for DRU type
-        if attrs["classification"] == UserClassification.objects.get(
-            classification="admin_region"
-        ) and attrs["dru"].dru_type != DRUType.objects.get(
-            dru_classification="RESU",
-        ):
-            raise serializers.ValidationError(
-                {
-                    "dru": "Invalid DRU type for Regional Admin Account",
-                }
-            )
+        # if attrs["classification"] == UserClassification.objects.get(
+        #     classification="admin_region"
+        # ) and attrs["dru"].dru_type != DRUType.objects.get(
+        #     dru_classification="RESU",
+        # ):
+        #     raise serializers.ValidationError(
+        #         {
+        #             "dru": "Invalid DRU type for Regional Admin Account",
+        #         }
+        #     )
 
-        if attrs["classification"] == UserClassification.objects.get(
-            classification="admin_local"
-        ) and attrs["dru"].dru_type != DRUType.objects.get(
-            dru_classification="PESU/CESU",
-        ):
-            raise serializers.ValidationError(
-                {"dru": "Invalid DRU type for PESU/CESU Admin Account"},
-            )
+        # if attrs["classification"] == UserClassification.objects.get(
+        #     classification="admin_local"
+        # ) and attrs["dru"].dru_type != DRUType.objects.get(
+        #     dru_classification="PESU/CESU",
+        # ):
+        #     raise serializers.ValidationError(
+        #         {"dru": "Invalid DRU type for PESU/CESU Admin Account"},
+        #     )
 
         # Todo: Save for future use
         # if attrs["classification"] == UserClassification.objects.get(
@@ -92,11 +99,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         #     raise serializers.ValidationError(
         #         {"dru": "Invalid DRU type for Encoder Account"},
         #     )
-
-        if attrs["password"] != attrs["password_confirm"]:
-            raise serializers.ValidationError({"password": "Passwords do not match."})
-
-        return attrs
 
     def create(self, validated_data):
         validated_data.pop("password_confirm")
@@ -127,9 +129,9 @@ class LoginSerializer(TokenObtainPairSerializer):
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
 
-        # Modify the default access token by including the user_type
         access_token = AccessToken.for_user(user)
-        user_type = user.classification.classification
-        access_token["user_type"] = user_type
+        is_user_admin = user.is_admin
+        # Additional data appended to the token
+        access_token["is_admin"] = is_user_admin
         data["access"] = str(access_token)
         return data
