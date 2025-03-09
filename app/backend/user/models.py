@@ -55,20 +55,21 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         max_length=255,
         unique=True,
         blank=False,
+        null=False,
     )
     last_name = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=False,
     )
     first_name = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=False,
     )
     middle_name = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=False,
     )
     sex_choices = [

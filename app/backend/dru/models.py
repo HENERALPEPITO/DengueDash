@@ -2,7 +2,7 @@ from django.db import models
 from core.models import BaseModel
 
 
-class DRUType(BaseModel):
+class DRUType(models.Model):
 
     dru_classification = models.CharField(
         max_length=20,
@@ -25,7 +25,6 @@ class DRU(BaseModel):
         null=True,
     )
     dru_name = models.CharField(
-        unique=True,
         max_length=100,
         blank=False,
         null=False,
@@ -48,9 +47,9 @@ class DRU(BaseModel):
 
     dru_type = models.ForeignKey(
         DRUType,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         blank=False,
-        null=True,
+        null=False,
         related_name="dru_type",
     )
 
