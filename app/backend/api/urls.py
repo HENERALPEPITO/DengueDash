@@ -1,12 +1,12 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from auth.views import (
-    RegisterUserView,
     LoginView,
     AuthCheckView,
 )
 from user.views import (
     UserDetailView,
+    RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
 from case.views.case_report_view import (
