@@ -41,7 +41,7 @@ class RegisterDRUView(APIView):
                     new_dru = serializer.save()
                     User.objects.create_user(
                         email=new_dru.email,
-                        # Todo: change password to a random password
+                        # Todo: change password to a random password and email the user about the account details
                         password="testpassword",
                         first_name=new_dru.dru_name,
                         middle_name="",

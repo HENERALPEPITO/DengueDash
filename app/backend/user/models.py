@@ -15,11 +15,9 @@ class UserManager(BaseUserManager):
         password=None,
         **extra_fields,
     ):
-        # classification = extra_fields.pop("classification", None)
 
         user = self.model(
             email=self.normalize_email(email),
-            # classification=classification,
             **extra_fields,
         )
 
@@ -38,11 +36,6 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_verified", True)
-        # Set the classification_id that links to admin
-        # extra_fields.setdefault(
-        #     "classification_id",
-        #     UserClassification.objects.get(classification="Admin").id,
-        # )
 
         return self.create_user(
             email,
@@ -91,13 +84,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         null=True,
         related_name="user",
     )
-    # classification = models.ForeignKey(
-    #     UserClassification,
-    #     on_delete=models.CASCADE,
-    #     blank=False,
-    #     null=False,
-    #     related_name="user",
-    # )
     is_admin = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
 

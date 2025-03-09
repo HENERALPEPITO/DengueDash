@@ -23,15 +23,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
     )
-    # classification = serializers.PrimaryKeyRelatedField(
-    #     queryset=UserClassification.objects.all(),
-    #     required=True,
-    # )
-
-    # dru = serializers.PrimaryKeyRelatedField(
-    #     queryset=DRU.objects.all(),
-    #     required=False,
-    # )
 
     class Meta:
         model = User

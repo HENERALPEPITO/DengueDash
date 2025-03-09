@@ -6,7 +6,6 @@ from auth.views import (
     AuthCheckView,
 )
 from user.views import (
-    # UserClassificationView,
     UserDetailView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -48,11 +47,6 @@ urlpatterns = [
         RegisterDRUView.as_view(),
         name="register-dru",
     ),
-    # path(
-    #     "classifications/",
-    #     UserClassificationView.as_view(),
-    #     name="classifications",
-    # ),
     path(
         "auth/check",
         AuthCheckView.as_view(),
