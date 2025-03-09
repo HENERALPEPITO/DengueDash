@@ -5,8 +5,11 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework import status
 from dru.serializer import RegisterDRUSerializer
+from dru.models import DRUType
 
 User = get_user_model()
+
+
 class RegisterDRUView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -19,7 +22,7 @@ class RegisterDRUView(APIView):
                     "message": "You are not authorized to perform this action",
                 }
             )
-        
+
         is_superuser = current_user.is_superuser
         if not is_superuser:
             current_user_dru_type = current_user.dru.dru_type
@@ -30,7 +33,31 @@ class RegisterDRUView(APIView):
                         "success": False,
                         "message": "You are not authorized to perform this action",
                     },
-                    status = status.HTTP_403_FORBIDDEN,
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            request_user_dru_type = DRUType.objects.get(
+                dru_type=request.data.get("dru_type")
+            )
+
+            if current_user_dru_type == "RESU" and request_user_dru_type != "PESU/CESU":
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Invalid Action",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            elif (
+                current_user_dru_type == "PESU/CESU"
+                and request_user_dru_type in ALLOWED_DRU_TYPES
+            ):
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Invalid Action",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
         # Create DRU
@@ -53,12 +80,8 @@ class RegisterDRUView(APIView):
                     )
             except Exception as e:
                 return JsonResponse(
-                    {
-                        "success" : False,
-                        "message" : f"User creation failed: {str(e)}"
-
-                    },
-                    status = status.HTTP_400_BAD_REQUEST
+                    {"success": False, "message": f"User creation failed: {str(e)}"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             return JsonResponse(
@@ -74,5 +97,5 @@ class RegisterDRUView(APIView):
                 "success": False,
                 "message": serializer.errors,
             },
-            status = status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_400_BAD_REQUEST,
         )
