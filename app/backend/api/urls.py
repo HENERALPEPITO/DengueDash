@@ -20,6 +20,7 @@ from case.views.case_count_view import (
     BarangayCountView,
     DengueCountDeathsView,
 )
+from dru.views import RegisterDRUView
 
 from weather.views import WeatherView
 
@@ -41,6 +42,11 @@ urlpatterns = [
         "token/refresh/",
         TokenRefreshView.as_view(),
         name="token_refresh",
+    ),
+    path(
+        "register/dru/",
+        RegisterDRUView.as_view(),
+        name="register-dru",
     ),
     # path(
     #     "classifications/",
