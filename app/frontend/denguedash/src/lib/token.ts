@@ -38,6 +38,18 @@ export const getUserIdFromToken = async (
   }
 };
 
+export const getIsAdminFromToken = async (
+  token: string
+): Promise<boolean | null> => {
+  try {
+    const decoded = decodeJwt(token);
+    return (decoded as { is_admin: boolean }).is_admin;
+  } catch (error) {
+    console.error("Error getting user ID from token:", error);
+    return null;
+  }
+};
+
 export const generateNewAccessToken = async (
   refreshToken: string
 ): Promise<string | null> => {
