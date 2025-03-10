@@ -64,7 +64,8 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password")
 
         request = self.context.get("request")
-        if request and request.user and request.user.is_admin:
+        # Check if the user is authenticated before accessing is_admin
+        if request and request.user.is_authenticated and request.user.is_admin:
             validated_data.setdefault("is_verified", True)
         else:
             validated_data["is_verified"] = False
