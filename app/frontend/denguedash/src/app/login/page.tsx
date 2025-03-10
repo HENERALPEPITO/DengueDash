@@ -28,7 +28,7 @@ const Login = () => {
         }
         const isAdmin = dataFromToken.is_admin;
         if (isAdmin) {
-          router.push("/admin");
+          router.push("/admin/accounts/manage");
         } else {
           router.push("/user/analytics/dashboard");
         }

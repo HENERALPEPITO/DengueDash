@@ -6,7 +6,7 @@ const DEFAULT_PARAMS = {};
 
 const deleteCase = async (caseId: number) => {
   return axiosClient(
-    `case/delete/${caseId}`,
+    `case/delete/${caseId}/`,
     OPERATION,
     DEFAULT_DATA,
     DEFAULT_PARAMS
