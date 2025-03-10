@@ -1,21 +1,24 @@
 import MultiStepForm from "@components/case-report-form/MultiStepForm";
 import { cookies } from "next/headers";
-import { getUserIdFromToken } from "@/lib/token";
+import { getDataFromToken } from "@/lib/token";
 
 export default async function CaseReportForm() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token");
   // todo: refactor this
-  if (accessToken) {
-    const userId = await getUserIdFromToken(accessToken.value);
-    if (userId !== null) {
-      return <MultiStepForm userId={userId} />;
-    } else {
-      console.error("User ID is null");
-      return null;
-    }
-  } else {
+  if (!accessToken) {
     console.error("Access token is undefined");
     return null;
   }
+  const dataFromToken = await getDataFromToken(accessToken.value);
+  if (!dataFromToken) {
+    console.error("Data from token is null");
+    return null;
+  }
+  const userId = dataFromToken.user_id;
+  if (userId === null) {
+    console.error("User ID is null");
+    return null;
+  }
+  return <MultiStepForm userId={userId} />;
 }

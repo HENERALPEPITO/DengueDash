@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { UserLoggedIn } from "@interfaces/auth/user-auth.interface";
 import GuestHeader from "@components/guest/GuestHeader";
 import authService from "@services/auth.service";
+import { getDataFromToken } from "@/lib/token";
 
 const Login = () => {
   const router = useRouter();
@@ -17,9 +18,20 @@ const Login = () => {
     event.preventDefault();
     try {
       const response: UserLoggedIn = await authService.login(email, password);
-      console.log(response);
-      if (response.success) {
-        router.push("/user/analytics/dashboard");
+      const isSuccess = response.success;
+      const accessToken = response.access_token;
+      if (isSuccess && accessToken) {
+        const dataFromToken = await getDataFromToken(accessToken);
+        if (!dataFromToken) {
+          setErrorMessage("Data from token is null");
+          return;
+        }
+        const isAdmin = dataFromToken.is_admin;
+        if (isAdmin) {
+          router.push("/admin");
+        } else {
+          router.push("/user/analytics/dashboard");
+        }
       } else {
         setErrorMessage(response.message);
       }

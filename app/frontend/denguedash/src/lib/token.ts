@@ -1,3 +1,4 @@
+import { TokenData } from "@/interfaces/auth/token-data-interface";
 import { decodeJwt, jwtVerify } from "jose";
 
 export const verifyTokenSignature = async (
@@ -26,26 +27,38 @@ export const validateToken = async (token: string): Promise<boolean> => {
   }
 };
 
-export const getUserIdFromToken = async (
-  token: string
-): Promise<number | null> => {
-  try {
-    const decoded = decodeJwt(token);
-    return (decoded as { user_id: number }).user_id;
-  } catch (error) {
-    console.error("Error getting user ID from token:", error);
-    return null;
-  }
-};
+// export const getUserIdFromToken = async (
+//   token: string
+// ): Promise<number | null> => {
+//   try {
+//     const decoded = decodeJwt(token);
+//     return (decoded as { user_id: number }).user_id;
+//   } catch (error) {
+//     console.error("Error getting user ID from token:", error);
+//     return null;
+//   }
+// };
 
-export const getIsAdminFromToken = async (
+// export const getIsAdminFromToken = async (
+//   token: string
+// ): Promise<boolean | null> => {
+//   try {
+//     const decoded = decodeJwt(token);
+//     return (decoded as { is_admin: boolean }).is_admin;
+//   } catch (error) {
+//     console.error("Error getting user ID from token:", error);
+//     return null;
+//   }
+// };
+
+export const getDataFromToken = async (
   token: string
-): Promise<boolean | null> => {
+): Promise<TokenData | null> => {
   try {
-    const decoded = decodeJwt(token);
-    return (decoded as { is_admin: boolean }).is_admin;
+    const decoded = decodeJwt(token) as TokenData;
+    return decoded;
   } catch (error) {
-    console.error("Error getting user ID from token:", error);
+    console.error("Error getting data from token:", error);
     return null;
   }
 };
