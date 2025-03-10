@@ -44,7 +44,6 @@ export async function middleware(request: NextRequest) {
   const adminDashboardPath = "/admin/registration/manage-accounts";
   const userDashboardPath = "/user/analytics/dashboard";
 
-  // const isAdmin = await getIsAdminFromToken(accessToken.value);
   const dataFromToken = await getDataFromToken(accessToken.value);
   if (!dataFromToken) {
     deleteCookies();
