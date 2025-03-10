@@ -76,7 +76,7 @@ urlpatterns = [
         name="case-reports",
     ),
     path(
-        "dengue-case-reports/<int:case_id>",
+        "dengue-case-reports/<int:case_id>/",
         CaseDetailedView.as_view(),
         name="case-detailed",
     ),
