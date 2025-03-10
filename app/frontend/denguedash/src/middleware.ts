@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
 
   const adminPath = "/admin";
   const userPath = "/user";
-  const adminDashboardPath = "/admin/registration/manage-accounts";
+  const adminDashboardPath = "/admin/accounts/manage";
   const userDashboardPath = "/user/analytics/dashboard";
 
   const dataFromToken = await getDataFromToken(accessToken.value);
