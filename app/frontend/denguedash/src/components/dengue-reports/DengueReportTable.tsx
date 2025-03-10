@@ -112,6 +112,7 @@ export default function Component() {
                 className={
                   currentPage === 1 ? "pointer-events-none opacity-50" : ""
                 }
+                size="default"
               />
             </PaginationItem>
 
@@ -157,6 +158,7 @@ export default function Component() {
                     <PaginationLink
                       onClick={() => handlePageChange(page)}
                       isActive={currentPage === page}
+                      size="default"
                     >
                       {page}
                     </PaginationLink>
@@ -175,6 +177,7 @@ export default function Component() {
                     ? "pointer-events-none opacity-50"
                     : ""
                 }
+                size="default"
               />
             </PaginationItem>
           </PaginationContent>
