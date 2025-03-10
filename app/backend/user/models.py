@@ -22,9 +22,7 @@ class UserManager(BaseUserManager):
         )
 
         user.set_password(password)
-        extra_fields.setdefault("is_admin", False)
         extra_fields.setdefault("is_superuser", False)
-        extra_fields.setdefault("is_verified", False)
         user.save(using=self._db)
 
         return user
@@ -39,6 +37,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_verified", True)
+        extra_fields.setdefault("is_deletable", False)
         extra_fields.setdefault("dru", DRU.objects.get(id=1))
 
         return self.create_user(
@@ -83,12 +82,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     )
     dru = models.ForeignKey(
         DRU,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         blank=False,
-        null=True,
+        null=False,
         related_name="user",
     )
     is_admin = models.BooleanField(default=False)
+    is_deletable = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
