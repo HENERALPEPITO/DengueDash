@@ -1,11 +1,17 @@
+import random
 from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
 from dru.models import DRU, DRUType
+from faker import Faker
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
     help = "Seed initial DRU data"
 
     def handle(self, *args, **kwargs):
+        fake = Faker()
         drus = [
             {
                 "name": "Philippine Integrated Disease Surveillance and Response",
@@ -81,6 +87,31 @@ class Command(BaseCommand):
                 region=dru["region"],
                 email=dru["email"],
                 contact_number=dru["contact_number"],
+            )
+            # Make one admin and one encoder
+            User.objects.create_user(
+                email=dru["email"],
+                password="testpassword",
+                first_name=dru["name"],
+                middle_name="",
+                last_name="",
+                sex="N/A",
+                is_admin=True,
+                is_verified=True,
+                is_legacy=True,
+                dru=DRU.objects.get(dru_name=dru["name"]),
+            )
+            User.objects.create_user(
+                email=fake.email(),
+                password="testpassword",
+                first_name=fake.first_name(),
+                middle_name=fake.last_name(),
+                last_name=fake.last_name(),
+                sex=random.choice(["M", "F"]),
+                is_admin=False,
+                is_verified=True,
+                is_legacy=False,
+                dru=DRU.objects.get(dru_name=dru["name"]),
             )
 
         self.stdout.write(
