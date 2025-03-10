@@ -17,7 +17,7 @@ class DRU(BaseModel):
     region = models.CharField(
         max_length=50,
         blank=False,
-        null=False,
+        null=True,
     )
     surveillance_unit = models.CharField(
         max_length=50,
