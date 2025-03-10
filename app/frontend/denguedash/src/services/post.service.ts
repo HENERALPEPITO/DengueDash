@@ -1,13 +1,19 @@
+import { SignUpUserInterface } from "@/interfaces/services/post-service-interfaces";
 import { axiosClient } from "./auth.service";
 
 const OPERATION = "POST";
-const PARAMS = {};
+const DEFAULT_PARAMS = {};
 
 const submitForm = async (formData: any) => {
-  return axiosClient("case/create/", OPERATION, formData, PARAMS);
+  return axiosClient("case/create/", OPERATION, formData, DEFAULT_PARAMS);
+};
+
+const signUpUser = async (formData: SignUpUserInterface) => {
+  return axiosClient("register/user/", OPERATION, formData, DEFAULT_PARAMS);
 };
 
 const predictCases = async () => {
+  // todo: use data from openweatherapi
   const futureWeather = {
     future_weather: [
       {
@@ -37,9 +43,9 @@ const predictCases = async () => {
       },
     ],
   };
-  return axiosClient("predict", OPERATION, futureWeather, PARAMS);
+  return axiosClient("predict/", OPERATION, futureWeather, DEFAULT_PARAMS);
 };
 
-const postService = { submitForm, predictCases };
+const postService = { submitForm, predictCases, signUpUser };
 
 export default postService;

@@ -5,7 +5,17 @@ from .models import DRU, DRUType
 class DRUSerializer(serializers.ModelSerializer):
     class Meta:
         model = DRU
-        exclude = ["id"]
+        fields = ["dru_name", "id"]
+
+
+class SurveillanceUnitSerializer(serializers.Serializer):
+    su_name = serializers.CharField()
+    drus = DRUSerializer(many=True)
+
+
+class RegionSerializer(serializers.Serializer):
+    region_name = serializers.CharField()
+    surveillance_units = SurveillanceUnitSerializer(many=True)
 
 
 class DRUTypeSerializer(serializers.ModelSerializer):
@@ -19,6 +29,7 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
         queryset=DRUType.objects.all(),
         required=True,
     )
+
     class Meta:
         model = DRU
         fields = [
@@ -33,7 +44,7 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Todo: Validate contact number
-        
+
         dru_name = data.get("dru_name")
         surveillance_unit = data.get("surveillance_unit")
         if DRU.objects.filter(
@@ -41,14 +52,11 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
             dru_name=dru_name,
         ).exists():
             raise serializers.ValidationError(
-                {
-                    "success" : False,
-                    "message" : "DRU already exists"
-                }
+                {"success": False, "message": "DRU already exists"}
             )
-        
+
         return data
-        
+
     def create(self, validated_data):
         dru = DRU.objects.create(**validated_data)
         return dru

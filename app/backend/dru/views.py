@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework import status
 from dru.serializer import RegisterDRUSerializer
-from dru.models import DRUType
+from dru.models import DRUType, DRU
 
 User = get_user_model()
 
@@ -76,7 +76,7 @@ class RegisterDRUView(APIView):
                         sex="N/A",
                         is_admin=True,
                         is_verified=True,
-                        is_deletable=False,
+                        is_legacy=True,
                         dru=new_dru,
                     )
             except Exception as e:
@@ -100,3 +100,49 @@ class RegisterDRUView(APIView):
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class DRUHierarchyView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        regions = {}
+        drus = DRU.objects.all()
+
+        for dru in drus:
+
+            BLACKLISTED_DRU_TYPES = ["National", "RESU", "PESU/CESU"]
+            if dru.dru_type.dru_classification in BLACKLISTED_DRU_TYPES:
+                continue
+
+            region_name = dru.region
+            su_name = dru.surveillance_unit
+
+            if region_name not in regions:
+                regions[region_name] = {}
+
+            if su_name not in regions[region_name]:
+                regions[region_name][su_name] = []
+
+            regions[region_name][su_name].append(
+                {
+                    "dru_name": dru.dru_name,
+                    "id": dru.id,
+                }
+            )
+
+        output = []
+        for region, surveillance_units in regions.items():
+            region_data = {
+                "region_name": region,
+                "surveillance_units": [
+                    {
+                        "su_name": su,
+                        "drus": drus,
+                    }
+                    for su, drus in surveillance_units.items()
+                ],
+            }
+            output.append(region_data)
+
+        return JsonResponse({"data": output})
