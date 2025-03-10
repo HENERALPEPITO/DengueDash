@@ -28,6 +28,13 @@ class LoginSerializer(TokenObtainPairSerializer):
                 "An unexpected error occurred during login."
             )
         user = self.user
+
+        # Unverified users cannot login
+        if not user.is_verified:
+            raise CustomValidationException(
+                "Account is not verified. Please wait for admin approval"
+            )
+
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
 
