@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from auth.views import (
     LoginView,
-    AuthCheckView,
+    # AuthCheckView,
 )
 from user.views import (
     UserDetailView,
@@ -19,7 +19,10 @@ from case.views.case_count_view import (
     BarangayCountView,
     DengueCountDeathsView,
 )
-from dru.views import RegisterDRUView
+from dru.views import (
+    RegisterDRUView,
+    DRUHierarchyView,
+)
 
 from weather.views import WeatherView
 
@@ -48,10 +51,15 @@ urlpatterns = [
         name="register-dru",
     ),
     path(
-        "auth/check",
-        AuthCheckView.as_view(),
-        name="auth-check",
+        "dru-hierarchy/",
+        DRUHierarchyView.as_view(),
+        name="dru-hierarchy",
     ),
+    # path(
+    #     "auth/check/",
+    #     AuthCheckView.as_view(),
+    #     name="auth-check",
+    # ),
     path(
         "user/",
         UserDetailView.as_view(),
@@ -63,7 +71,7 @@ urlpatterns = [
         name="create-case",
     ),
     path(
-        "dengue-case-reports",
+        "dengue-case-reports/",
         CaseReportView.as_view(),
         name="case-reports",
     ),
@@ -73,34 +81,34 @@ urlpatterns = [
         name="case-detailed",
     ),
     path(
-        "quick-stat",
+        "quick-stat/",
         QuickStatisticsView.as_view(),
-        name="quick-stat",
+        name="quick-stat/",
     ),
     path(
-        "cases-per-barangay",
+        "cases-per-barangay/",
         BarangayCountView.as_view(),
         name="cases-per-barangay",
     ),
     path(
-        "cases-deaths",
+        "cases-deaths/",
         DengueCountDeathsView.as_view(),
         name="cases-deaths",
     ),
     path(
-        "weather",
+        "weather/",
         WeatherView.as_view(),
         name="weather",
     ),
     # Delete
     path(
-        "case/delete/<int:case_id>",
+        "case/delete/<int:case_id>/",
         CaseDeleteView.as_view(),
         name="case-delete",
     ),
     # LSTM Prediction
     path(
-        "predict",
+        "predict/",
         LstmPredictionView.as_view(),
         name="lstm-predict",
     ),
