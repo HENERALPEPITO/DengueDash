@@ -35,9 +35,11 @@ const locations = [
 ];
 locations.unshift({ value: "All", label: "All" });
 
+const START_YEAR = 2011;
+
 const years = Array.from(
-  { length: new Date().getFullYear() - 2016 + 1 },
-  (_, i) => (2016 + i).toString()
+  { length: new Date().getFullYear() - START_YEAR + 1 },
+  (_, i) => (START_YEAR + i).toString()
 );
 // Add "All" option in the first index
 years.unshift("All");
@@ -76,6 +78,7 @@ export default function StatDashboard() {
     return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
   }, [barangayData]);
 
+  // todo: add try catch
   const fetchQuickStat = async (year: number | null) => {
     const response: CurrentCaseCount = await fetchService.getQuickStat(year);
     setCaseData(response);
@@ -91,6 +94,7 @@ export default function StatDashboard() {
     }
   };
 
+  // todo: add try catch
   const fetchBarangayData = async (year: number | null) => {
     const response: BarangayData[] =
       await fetchService.getDengueCountPerBarangay(year);
