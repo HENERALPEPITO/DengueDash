@@ -4,9 +4,8 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from user.serializers import (
     UserSerializer,
-    RegisterSerializer,
+    RegisterUserSerializer,
 )
-from dru.models import DRU
 
 
 class UserDetailView(APIView):
@@ -21,7 +20,9 @@ class RegisterUserView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
+        serializer = RegisterUserSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(
