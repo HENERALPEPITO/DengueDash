@@ -27,6 +27,7 @@ export const validateToken = async (token: string): Promise<boolean> => {
   }
 };
 
+// todo: cleanup
 // export const getUserIdFromToken = async (
 //   token: string
 // ): Promise<number | null> => {
