@@ -9,15 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@shadcn/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@shadcn/components/ui/pagination";
+
 import { Button } from "@/shadcn/components/ui/button";
 import {
   Case,
@@ -26,6 +18,7 @@ import {
 import Link from "next/link";
 import fetchService from "@/services/fetch.service";
 import { Separator } from "@/shadcn/components/ui/separator";
+import CustomPagination from "../common/CustomPagination";
 
 export default function Component() {
   const [cases, setCases] = useState<Case[]>([]);
@@ -111,86 +104,11 @@ export default function Component() {
           </TableBody>
         </Table>
 
-        <div className="mt-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                  size="default"
-                />
-              </PaginationItem>
-
-              {(() => {
-                const pageNumbers = [];
-                if (totalPages <= 5) {
-                  // If there are 5 or fewer pages, show all
-                  for (let i = 1; i <= totalPages; i++) {
-                    pageNumbers.push(i);
-                  }
-                } else {
-                  // Always show first page
-                  pageNumbers.push(1);
-
-                  if (currentPage > 3) {
-                    pageNumbers.push(null); // null represents ellipsis
-                  }
-
-                  // Show current page and one or two surrounding pages
-                  for (
-                    let i = Math.max(2, currentPage - 1);
-                    i <= Math.min(totalPages - 1, currentPage + 1);
-                    i++
-                  ) {
-                    pageNumbers.push(i);
-                  }
-
-                  if (currentPage < totalPages - 2) {
-                    pageNumbers.push(null); // null represents ellipsis
-                  }
-
-                  // Always show last page
-                  pageNumbers.push(totalPages);
-                }
-
-                return pageNumbers.map((page, index) =>
-                  page === null ? (
-                    <PaginationItem key={`ellipsis-${index}`}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  ) : (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => handlePageChange(page)}
-                        isActive={currentPage === page}
-                        size="default"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )
-                );
-              })()}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    handlePageChange(Math.min(totalPages, currentPage + 1))
-                  }
-                  className={
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                  size="default"
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        <CustomPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
+        />
       </div>
       ;
     </div>
