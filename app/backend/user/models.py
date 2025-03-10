@@ -39,6 +39,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_verified", True)
+        extra_fields.setdefault("dru", DRU.objects.get(id=1))
 
         return self.create_user(
             email,
