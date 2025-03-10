@@ -8,9 +8,18 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         drus = [
             {
+                "name": "Philippine Integrated Disease Surveillance and Response",
+                "address": "DOH Building, Sta. Cruz, Manila",
+                "type": DRUType.objects.get(id=1),
+                "unit": None,
+                "region": None,
+                "email": "pidsr@gmail.com",
+                "contact_number": "09123456785",
+            },
+            {
                 "name": "Western Visayas Regional Epedemiology and Surveillance Unit",
                 "address": "MHAM Building, Iloilo City",
-                "type": DRUType.objects.get(id=1),
+                "type": DRUType.objects.get(id=2),
                 "unit": None,
                 "region": "Western Visayas",
                 "email": "iloiloresu@gmail.com",
@@ -19,7 +28,7 @@ class Command(BaseCommand):
             {
                 "name": "Iloilo Provincial Epedemiology and Surveillance Unit",
                 "address": "Provincial Capitol, Iloilo City",
-                "type": DRUType.objects.get(id=2),
+                "type": DRUType.objects.get(id=3),
                 "unit": "Iloilo Province",
                 "region": "Western Visayas",
                 "email": "iloilopesu@gmail.com",
@@ -28,7 +37,7 @@ class Command(BaseCommand):
             {
                 "name": "Iloilo City Epedemiology and Surveillance Unit",
                 "address": "City Hall, Iloilo City",
-                "type": DRUType.objects.get(id=2),
+                "type": DRUType.objects.get(id=3),
                 "unit": "Iloilo City",
                 "region": "Western Visayas",
                 "email": "iloilocesu@gmail.com",
@@ -37,7 +46,7 @@ class Command(BaseCommand):
             {
                 "name": "Molo District Health Center",
                 "address": "Locsin Street, Molo",
-                "type": DRUType.objects.get(id=4),
+                "type": DRUType.objects.get(id=5),
                 "unit": "Iloilo City",
                 "region": "Western Visayas",
                 "email": "molodistricthealth@gmail.com",
@@ -46,7 +55,7 @@ class Command(BaseCommand):
             {
                 "name": "Jaro 1 Health Center",
                 "address": "Washington Street, Jaro",
-                "type": DRUType.objects.get(id=4),
+                "type": DRUType.objects.get(id=5),
                 "unit": "Iloilo City",
                 "region": "Western Visayas",
                 "email": "jaro1health@gmail.com",
@@ -55,7 +64,7 @@ class Command(BaseCommand):
             {
                 "name": "Saint Paul's Hospital",
                 "address": "General Luna Street",
-                "type": DRUType.objects.get(id=6),
+                "type": DRUType.objects.get(id=7),
                 "unit": "Iloilo City",
                 "region": "Western Visayas",
                 "email": "saintpaul@gmail.com",
