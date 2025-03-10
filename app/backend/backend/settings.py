@@ -168,6 +168,8 @@ SIMPLE_JWT = {
     "REFRESH_COOKIE_PATH": "/",  # URL path where cookie will be sent
     "COOKIE_SAMESITE": "Lax",  # Should cookie be sent cross site
     "ALGORITHM": "HS256",
+    # TOKEN REFRESH
+    "TOKEN_REFRESH_SERIALIZER": "auth.serializers.CustomTokenRefreshSerializer",
 }
 
 CORS_ALLOWED_ORIGINS = [
