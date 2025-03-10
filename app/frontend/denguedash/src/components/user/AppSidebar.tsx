@@ -14,6 +14,7 @@ import {
   Sparkles,
   Table,
   TrendingUpDown,
+  UserPlus,
 } from "lucide-react";
 
 import {
@@ -85,6 +86,21 @@ export default function AppSidebar({
     ],
     navMain: isAdmin
       ? [
+          {
+            title: "Registration",
+            url: "registration",
+            icon: UserPlus,
+            items: [
+              {
+                title: "Manage Accounts",
+                url: "/admin/accounts/manage",
+              },
+              {
+                title: "Pending Accounts",
+                url: "/admin/accounts/pending",
+              },
+            ],
+          },
           {
             title: "Analytics",
             url: "analytics",
