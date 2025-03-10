@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_sex_display()
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -32,6 +32,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
     )
+
+    # Optional fields [These fields are used by the admin]
+    is_verified = serializers.BooleanField(required=False)
+    is_admin = serializers.BooleanField(required=False)
 
     class Meta:
         model = User
@@ -44,14 +48,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             "last_name",
             "sex",
             "dru",
+            "is_verified",
+            "is_admin",
         ]
-
-    """
-    Todo: Super Admins should register Admins
-    Todo: Admins should register Users
-
-    Todo: Admins should register nominated DRUs
-    """
 
     def validate(self, attrs):
 
@@ -60,49 +59,16 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return attrs
 
-        # Todo: Refactor in the future
-        # if attrs["classification"] == UserClassification.objects.get(
-        #     classification="super_admin"
-        # ):
-        #     raise serializers.ValidationError(
-        #         {"classification": "Invalid Classification."}
-        #     )
-
-        # Appropriate Classification for DRU type
-        # if attrs["classification"] == UserClassification.objects.get(
-        #     classification="admin_region"
-        # ) and attrs["dru"].dru_type != DRUType.objects.get(
-        #     dru_classification="RESU",
-        # ):
-        #     raise serializers.ValidationError(
-        #         {
-        #             "dru": "Invalid DRU type for Regional Admin Account",
-        #         }
-        #     )
-
-        # if attrs["classification"] == UserClassification.objects.get(
-        #     classification="admin_local"
-        # ) and attrs["dru"].dru_type != DRUType.objects.get(
-        #     dru_classification="PESU/CESU",
-        # ):
-        #     raise serializers.ValidationError(
-        #         {"dru": "Invalid DRU type for PESU/CESU Admin Account"},
-        #     )
-
-        # Todo: Save for future use
-        # if attrs["classification"] == UserClassification.objects.get(
-        #     classification="encoder"
-        # ) and (
-        #     attrs["dru"].dru_type == DRUType.objects.get(dru_classification="PESU/CESU")
-        #     or attrs["dru"].dru_type == DRUType.objects.get(dru_classification="RESU")
-        # ):
-        #     raise serializers.ValidationError(
-        #         {"dru": "Invalid DRU type for Encoder Account"},
-        #     )
-
     def create(self, validated_data):
         validated_data.pop("password_confirm")
         password = validated_data.pop("password")
+
+        request = self.context.get("request")
+        if request and request.user and request.user.is_admin:
+            validated_data.setdefault("is_verified", True)
+        else:
+            validated_data["is_verified"] = False
+            validated_data["is_admin"] = False
 
         return User.objects.create_user(
             password=password,
