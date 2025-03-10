@@ -6,6 +6,7 @@ from auth.views import (
 )
 from user.views import (
     UserDetailView,
+    UsersListView,
     RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -64,6 +65,11 @@ urlpatterns = [
         "user/",
         UserDetailView.as_view(),
         name="user",
+    ),
+    path(
+        "user/list/",
+        UsersListView.as_view(),
+        name="user-list",
     ),
     path(
         "case/create/",

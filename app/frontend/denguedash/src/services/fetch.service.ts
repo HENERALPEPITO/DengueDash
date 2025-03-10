@@ -46,7 +46,7 @@ const getDRUHierarchy = async () => {
 };
 
 // Requests that must need authentication
-const getDengueReports = async (page: number, itemsPerPage: number = 10) => {
+const getDengueReports = async (page: number, itemsPerPage: number = 8) => {
   return axiosClient("dengue-case-reports/", OPERATION, DEFAULT_DATA, {
     page,
     itemsPerPage,
@@ -62,6 +62,14 @@ const getCaseViewDetails = async (caseId: number) => {
   );
 };
 
+// ADMIN
+const getUsersList = async (page: number, itemsPerPage: number = 8) => {
+  return axiosClient("user/list/", OPERATION, DEFAULT_DATA, {
+    page,
+    itemsPerPage,
+  });
+};
+
 const fetchService = {
   getQuickStat,
   getDengueCountPerBarangay,
@@ -69,6 +77,7 @@ const fetchService = {
   getDengueReports,
   getCaseViewDetails,
   getDRUHierarchy,
+  getUsersList,
 };
 
 export default fetchService;

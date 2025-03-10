@@ -1,3 +1,5 @@
+import { PaginationInterface } from "../common/pagination-interface";
+
 interface Person {
   full_name: string;
 }
@@ -15,10 +17,7 @@ export interface Case {
   patient: Patient;
 }
 
-export interface DengueReportPagination {
-  count: number;
-  next: string | null;
-  previous: string | null;
+export interface DengueReportPagination extends PaginationInterface {
   results: Case[];
 }
 

@@ -23,6 +23,26 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_sex_display()
 
 
+class UsersListSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "full_name",
+            "email",
+            "role",
+        ]
+
+    def get_full_name(self, obj):
+        return f"{obj.last_name}, {obj.first_name} {obj.middle_name}".strip()
+
+    def get_role(self, obj):
+        return "Admin" if obj.is_admin else "Encoder"
+
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
