@@ -28,10 +28,10 @@ export default function Component() {
   const itemsPerPage = 8;
 
   useEffect(() => {
-    fetchUsers(currentPage);
+    fetchCases(currentPage);
   }, [currentPage]);
 
-  const fetchUsers = async (page: number) => {
+  const fetchCases = async (page: number) => {
     setIsLoading(true);
     try {
       const response: DengueReportPagination =
