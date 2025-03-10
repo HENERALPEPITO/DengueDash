@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getIsAdminFromToken,
+  getDataFromToken,
   validateToken,
   verifyTokenSignature,
 } from "./lib/token";
@@ -41,10 +41,16 @@ export async function middleware(request: NextRequest) {
 
   const adminPath = "/admin";
   const userPath = "/user";
-  const adminDashboardPath = "/admin/analytics/dashboard";
+  const adminDashboardPath = "/admin/registration/manage-accounts";
   const userDashboardPath = "/user/analytics/dashboard";
 
-  const isAdmin = await getIsAdminFromToken(accessToken.value);
+  // const isAdmin = await getIsAdminFromToken(accessToken.value);
+  const dataFromToken = await getDataFromToken(accessToken.value);
+  if (!dataFromToken) {
+    deleteCookies();
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  const isAdmin = dataFromToken.is_admin;
   if (request.nextUrl.pathname.startsWith(adminPath) && !isAdmin) {
     return NextResponse.redirect(new URL(userDashboardPath, request.url));
   }
