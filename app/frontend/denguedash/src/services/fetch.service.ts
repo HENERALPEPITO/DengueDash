@@ -4,7 +4,7 @@ const OPERATION = "GET";
 const DEFAULT_DATA = null;
 const DEFAULT_PARAMS = {};
 
-// Requests that does not need authentication
+// Requests that do not need authentication
 const getQuickStat = async (year: number | null = null) => {
   return axiosClient(
     "quick-stat/",
