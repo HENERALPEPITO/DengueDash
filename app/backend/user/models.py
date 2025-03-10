@@ -37,7 +37,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_verified", True)
-        extra_fields.setdefault("is_deletable", False)
+        extra_fields.setdefault("is_legacy", True)
         extra_fields.setdefault("dru", DRU.objects.get(id=1))
 
         return self.create_user(
@@ -60,8 +60,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         null=False,
     )
     first_name = models.CharField(
-        max_length=50,
-        blank=True,
+        max_length=100,
+        blank=False,
         null=False,
     )
     middle_name = models.CharField(
@@ -88,7 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         related_name="user",
     )
     is_admin = models.BooleanField(default=False)
-    is_deletable = models.BooleanField(default=True)
+    is_legacy = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
