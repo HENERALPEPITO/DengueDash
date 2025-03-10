@@ -87,8 +87,8 @@ export default function AppSidebar({
     navMain: isAdmin
       ? [
           {
-            title: "Registration",
-            url: "registration",
+            title: "Accounts",
+            url: "accounts",
             icon: UserPlus,
             items: [
               {
