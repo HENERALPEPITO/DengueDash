@@ -5,11 +5,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from api.custom_exceptions.custom_validation_exception import CustomValidationException
 
-# from user.models import UserClassification
-from dru.models import DRU, DRUType
-
 
 User = get_user_model()
+
 
 class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -32,7 +30,9 @@ class LoginSerializer(TokenObtainPairSerializer):
 
         access_token = AccessToken.for_user(user)
         is_user_admin = user.is_admin
+        user_dru_type = user.dru.dru_type.dru_classification
         # Additional data appended to the token
         access_token["is_admin"] = is_user_admin
+        access_token["user_dru_type"] = user_dru_type
         data["access"] = str(access_token)
         return data
