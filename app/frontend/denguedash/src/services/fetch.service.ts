@@ -70,6 +70,16 @@ const getUsersList = async (page: number, itemsPerPage: number = 8) => {
   });
 };
 
+const getUsersUnverifiedList = async (
+  page: number,
+  itemsPerPage: number = 8
+) => {
+  return axiosClient("user/list/unverified/", OPERATION, DEFAULT_DATA, {
+    page,
+    itemsPerPage,
+  });
+};
+
 const fetchService = {
   getQuickStat,
   getDengueCountPerBarangay,
@@ -78,6 +88,7 @@ const fetchService = {
   getCaseViewDetails,
   getDRUHierarchy,
   getUsersList,
+  getUsersUnverifiedList,
 };
 
 export default fetchService;

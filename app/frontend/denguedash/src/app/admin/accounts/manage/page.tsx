@@ -1,4 +1,5 @@
 import AccountsTable from "@/components/accounts/AccountsTable";
+import UnverifiedAccountsTable from "@/components/accounts/UnverifiedAccountsTable";
 import { Separator } from "@/shadcn/components/ui/separator";
 import {
   Tabs,
@@ -32,12 +33,11 @@ export default function ManageAccounts() {
           </TabsList>
 
           <TabsContent value="verified">
-            {/* <RequestsTable status="verified" /> */}
             <AccountsTable />
           </TabsContent>
 
           <TabsContent value="pending">
-            {/* <RequestsTable status="finished" /> */}
+            <UnverifiedAccountsTable />
           </TabsContent>
 
           <TabsContent value="blacklisted">
