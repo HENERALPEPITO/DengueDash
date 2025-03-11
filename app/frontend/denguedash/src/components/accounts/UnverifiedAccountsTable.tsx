@@ -19,6 +19,7 @@ import { Skeleton } from "@/shadcn/components/ui/skeleton";
 import { Button } from "@/shadcn/components/ui/button";
 import patchService from "@/services/patch.service";
 import { BasePatchServiceResponse } from "@/interfaces/services/patch-service.interfaces";
+import { CustomAlertDialog } from "../common/CustomAlertDialog";
 
 export default function UnverifiedAccountsTable() {
   const [users, setUsers] = useState<UnverifiedUserBriefDetail[]>([]);
@@ -54,10 +55,8 @@ export default function UnverifiedAccountsTable() {
   };
 
   const approveUser = async (userId: number) => {
-    // console.log(userId);
     const response: BasePatchServiceResponse =
       await patchService.approveUserVerification(userId);
-
     if (response.success) {
       fetchUsers(currentPage);
     }
@@ -96,8 +95,22 @@ export default function UnverifiedAccountsTable() {
                 <TableCell>{user.sex_display}</TableCell>
                 <TableCell>{user.created_at}</TableCell>
                 <TableCell className="flex gap-3">
-                  <Button onClick={() => approveUser(user.id)}>Approve</Button>
-                  <Button variant={"destructive"}>Delete</Button>
+                  <CustomAlertDialog
+                    title="Approve User"
+                    description="Are you sure you want to approve this user? This action cannot be undone."
+                    actionLabel="Approve"
+                    onAction={() => approveUser(user.id)}
+                  >
+                    <Button variant={"default"}>Approve</Button>
+                  </CustomAlertDialog>
+                  <CustomAlertDialog
+                    title="Approve User"
+                    description="Are you sure you want to delete this user? This action cannot be undone."
+                    actionLabel="Delete"
+                    onAction={() => approveUser(user.id)}
+                  >
+                    <Button variant={"destructive"}>Delete</Button>
+                  </CustomAlertDialog>
                 </TableCell>
               </TableRow>
             ))
