@@ -82,9 +82,7 @@ export default function AccountsTable() {
                 {/* Todo: Change this shit */}
                 <TableCell>
                   <Button variant={"outline"} asChild>
-                    {/* <Link href={`dengue-reports/${dengueCase.case_id}`}>
-                      Open
-                    </Link> */}
+                    <Link href={`manage/${user.id}`}>Open</Link>
                   </Button>
                 </TableCell>
               </TableRow>
