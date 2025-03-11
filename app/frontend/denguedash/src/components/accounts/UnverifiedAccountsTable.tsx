@@ -15,6 +15,7 @@ import {
 import fetchService from "@/services/fetch.service";
 import { useEffect, useState } from "react";
 import CustomPagination from "../common/CustomPagination";
+import { Skeleton } from "@/shadcn/components/ui/skeleton";
 
 export default function UnverifiedAccountsTable() {
   const [users, setUsers] = useState<UnverifiedUserBriefDetail[]>([]);
@@ -56,6 +57,7 @@ export default function UnverifiedAccountsTable() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Sex</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -64,12 +66,12 @@ export default function UnverifiedAccountsTable() {
           {isLoading ? (
             <TableRow>
               <TableCell colSpan={4} className="text-center">
-                Loading...
+                <Skeleton className="w-1/2 h-4 mb-2" />
               </TableCell>
             </TableRow>
           ) : users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
+              <TableCell colSpan={5} className="text-center">
                 No Pending Unverified Accounts
               </TableCell>
             </TableRow>
@@ -78,6 +80,7 @@ export default function UnverifiedAccountsTable() {
               <TableRow key={user.id}>
                 <TableCell>{user.full_name}</TableCell>
                 <TableCell>{user.email}</TableCell>
+                <TableCell>{user.sex_display}</TableCell>
                 <TableCell>{user.created_at}</TableCell>
                 <TableCell>
                   <button className="text-blue-500">Edit</button>

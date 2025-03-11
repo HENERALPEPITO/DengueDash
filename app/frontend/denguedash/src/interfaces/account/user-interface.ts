@@ -5,6 +5,7 @@ export interface UserBriefDetail {
   full_name: string;
   email: string;
   role: string;
+  sex_display: string;
 }
 
 export interface UserListPagination extends PaginationInterface {
@@ -16,6 +17,7 @@ export interface UnverifiedUserBriefDetail {
   full_name: string;
   email: string;
   created_at: string;
+  sex_display: string;
 }
 
 export interface UnverifiedUserListPagination extends PaginationInterface {

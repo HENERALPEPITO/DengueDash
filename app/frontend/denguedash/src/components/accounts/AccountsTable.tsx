@@ -15,6 +15,9 @@ import {
 import fetchService from "@/services/fetch.service";
 import { useEffect, useState } from "react";
 import CustomPagination from "../common/CustomPagination";
+import { Skeleton } from "@/shadcn/components/ui/skeleton";
+import { Button } from "@/shadcn/components/ui/button";
+import Link from "next/link";
 
 export default function AccountsTable() {
   const [users, setUsers] = useState<UserBriefDetail[]>([]);
@@ -58,14 +61,15 @@ export default function AccountsTable() {
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
+            <TableHead>Sex</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
-                Loading...
+              <TableCell colSpan={5} className="text-center">
+                <Skeleton className="h-4" />
               </TableCell>
             </TableRow>
           ) : (
@@ -74,10 +78,14 @@ export default function AccountsTable() {
                 <TableCell>{user.full_name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
+                <TableCell>{user.sex_display}</TableCell>
                 {/* Todo: Change this shit */}
                 <TableCell>
-                  <button className="text-blue-500">Edit</button>
-                  <button className="text-red-500">Delete</button>
+                  <Button variant={"outline"} asChild>
+                    {/* <Link href={`dengue-reports/${dengueCase.case_id}`}>
+                      Open
+                    </Link> */}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))

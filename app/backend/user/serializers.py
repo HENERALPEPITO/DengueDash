@@ -4,37 +4,10 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    dru = serializers.StringRelatedField()
-    sex_display = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = [
-            "email",
-            "first_name",
-            "middle_name",
-            "last_name",
-            "sex_display",
-            "dru",
-        ]
-
-    def get_sex_display(self, obj):
-        return obj.get_sex_display()
-
-
-class UsersListSerializer(serializers.ModelSerializer):
+class BaseUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "full_name",
-            "email",
-            "role",
-        ]
+    sex_display = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
         return f"{obj.last_name}, {obj.first_name} {obj.middle_name}".strip()
@@ -42,35 +15,76 @@ class UsersListSerializer(serializers.ModelSerializer):
     def get_role(self, obj):
         return "Admin" if obj.is_admin else "Encoder"
 
-
-class UsersUnverifiedListSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-    created_at = serializers.DateTimeField(format="%Y-%m-%d")
+    def get_sex_display(self, obj):
+        return obj.get_sex_display()
 
     class Meta:
         model = User
+        # No fields here since this is an abstract base serializer.
+        fields = []
+
+
+class AdminBrowseUserSerializer(BaseUserSerializer):
+    dru = serializers.StringRelatedField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+    updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+    last_login = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "sex_display",
+            "role",
+            "dru",
+            "created_at",
+            "updated_at",
+            "last_login",
+        ]
+
+
+class MyUserSerializer(BaseUserSerializer):
+    dru = serializers.StringRelatedField()
+
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "sex_display",
+            "role",
+            "dru",
+        ]
+
+
+class UsersListSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
         fields = [
             "id",
             "full_name",
             "email",
+            "sex_display",
+            "role",
+        ]
+
+
+class UsersUnverifiedListSerializer(BaseUserSerializer):
+    created_at = serializers.DateTimeField(format="%Y-%m-%d")
+
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "full_name",
+            "email",
+            "sex_display",
             "created_at",
         ]
 
-    def get_full_name(self, obj):
-        return f"{obj.last_name}, {obj.first_name} {obj.middle_name}".strip()
-
 
 class RegisterUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-    )
-    password_confirm = serializers.CharField(
-        write_only=True,
-        required=True,
-    )
-
-    # Optional fields [These fields are used by the admin]
+    password = serializers.CharField(write_only=True, required=True)
+    password_confirm = serializers.CharField(write_only=True, required=True)
     is_verified = serializers.BooleanField(required=False)
     is_admin = serializers.BooleanField(required=False)
 
@@ -90,25 +104,18 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password": "Passwords do not match."})
-
         return attrs
 
     def create(self, validated_data):
         validated_data.pop("password_confirm")
         password = validated_data.pop("password")
-
         request = self.context.get("request")
-        # Check if the user is authenticated before accessing is_admin
         if request and request.user.is_authenticated and request.user.is_admin:
             validated_data.setdefault("is_verified", True)
         else:
             validated_data["is_verified"] = False
             validated_data["is_admin"] = False
 
-        return User.objects.create_user(
-            password=password,
-            **validated_data,
-        )
+        return User.objects.create_user(password=password, **validated_data)
