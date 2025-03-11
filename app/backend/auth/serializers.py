@@ -1,111 +1,15 @@
-from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+)
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from api.custom_exceptions.custom_validation_exception import CustomValidationException
-from user.models import UserClassification
-from dru.models import DRU, DRUType
 
 
 User = get_user_model()
-
-
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-    )
-    password_confirm = serializers.CharField(
-        write_only=True,
-        required=True,
-    )
-    classification = serializers.PrimaryKeyRelatedField(
-        queryset=UserClassification.objects.all(),
-        required=True,
-    )
-
-    dru = serializers.PrimaryKeyRelatedField(
-        queryset=DRU.objects.all(),
-        required=False,
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            "email",
-            "password",
-            "password_confirm",
-            "first_name",
-            "middle_name",
-            "last_name",
-            "sex",
-            "dru",
-            "classification",
-        ]
-
-    """
-    Todo: Super Admins should register Admins
-    Todo: Admins should register Users
-
-    Todo: Admins should register nominated DRUs
-    """
-
-    def validate(self, attrs):
-        # Todo: Refactor in the future
-        if attrs["classification"] == UserClassification.objects.get(
-            classification="super_admin"
-        ):
-            raise serializers.ValidationError(
-                {"classification": "Invalid Classification."}
-            )
-
-        # Appropriate Classification for DRU type
-        if attrs["classification"] == UserClassification.objects.get(
-            classification="admin_region"
-        ) and attrs["dru"].dru_type != DRUType.objects.get(
-            dru_classification="RESU",
-        ):
-            raise serializers.ValidationError(
-                {
-                    "dru": "Invalid DRU type for Regional Admin Account",
-                }
-            )
-
-        if attrs["classification"] == UserClassification.objects.get(
-            classification="admin_local"
-        ) and attrs["dru"].dru_type != DRUType.objects.get(
-            dru_classification="PESU/CESU",
-        ):
-            raise serializers.ValidationError(
-                {"dru": "Invalid DRU type for PESU/CESU Admin Account"},
-            )
-
-        # Todo: Save for future use
-        # if attrs["classification"] == UserClassification.objects.get(
-        #     classification="encoder"
-        # ) and (
-        #     attrs["dru"].dru_type == DRUType.objects.get(dru_classification="PESU/CESU")
-        #     or attrs["dru"].dru_type == DRUType.objects.get(dru_classification="RESU")
-        # ):
-        #     raise serializers.ValidationError(
-        #         {"dru": "Invalid DRU type for Encoder Account"},
-        #     )
-
-        if attrs["password"] != attrs["password_confirm"]:
-            raise serializers.ValidationError({"password": "Passwords do not match."})
-
-        return attrs
-
-    def create(self, validated_data):
-        validated_data.pop("password_confirm")
-        password = validated_data.pop("password")
-
-        return User.objects.create_user(
-            password=password,
-            **validated_data,
-        )
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -124,12 +28,46 @@ class LoginSerializer(TokenObtainPairSerializer):
                 "An unexpected error occurred during login."
             )
         user = self.user
+
+        # Unverified users cannot login
+        if not user.is_verified:
+            raise CustomValidationException(
+                "Account is not verified. Please wait for admin approval"
+            )
+
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
 
-        # Modify the default access token by including the user_type
         access_token = AccessToken.for_user(user)
-        user_type = user.classification.classification
-        access_token["user_type"] = user_type
+        is_user_admin = user.is_admin
+        user_dru_type = user.dru.dru_type.dru_classification
+        # Additional data appended to the token
+        access_token["is_admin"] = is_user_admin
+        access_token["user_dru_type"] = user_dru_type
         data["access"] = str(access_token)
+        return data
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        refresh_token = attrs.get("refresh")
+        if not refresh_token:
+            raise CustomValidationException("Refresh token is required.")
+
+        try:
+            decoded_refresh = RefreshToken(refresh_token)
+            user_id = decoded_refresh["user_id"]
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise CustomValidationException("User not found.")
+        except KeyError:
+            raise CustomValidationException("Invalid token.")
+
+        access_token = AccessToken(data["access"])
+        access_token["is_admin"] = user.is_admin
+        access_token["user_dru_type"] = user.dru.dru_type.dru_classification
+        data["access"] = str(access_token)
+
         return data

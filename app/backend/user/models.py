@@ -4,16 +4,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
     BaseUserManager,
 )
+from core.models import BaseModel
 from dru.models import DRU
-
-
-class UserClassification(models.Model):
-    classification = models.CharField(
-        max_length=50,
-    )
-
-    def __str__(self):
-        return self.classification
 
 
 class UserManager(BaseUserManager):
@@ -23,15 +15,14 @@ class UserManager(BaseUserManager):
         password=None,
         **extra_fields,
     ):
-        classification = extra_fields.pop("classification", None)
 
         user = self.model(
             email=self.normalize_email(email),
-            classification=classification,
             **extra_fields,
         )
 
         user.set_password(password)
+        extra_fields.setdefault("is_superuser", False)
         user.save(using=self._db)
 
         return user
@@ -43,16 +34,11 @@ class UserManager(BaseUserManager):
         **extra_fields,
     ):
 
-        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
-        # Set the classification_id that links to admin
-        extra_fields.setdefault(
-            "classification_id",
-            # UserClassification.objects.filter(classification="Admin")
-            # .values_list("id", flat=True)
-            # .first(),
-            UserClassification.objects.get(classification="Admin").id,
-        )
+        extra_fields.setdefault("is_verified", True)
+        extra_fields.setdefault("is_legacy", True)
+        extra_fields.setdefault("dru", DRU.objects.get(id=1))
 
         return self.create_user(
             email,
@@ -61,52 +47,49 @@ class UserManager(BaseUserManager):
         )
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(
         max_length=255,
         unique=True,
         blank=False,
+        null=False,
     )
     last_name = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=False,
     )
     first_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=False,
         null=False,
     )
     middle_name = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=False,
     )
     sex_choices = [
         ("M", "Male"),
         ("F", "Female"),
+        ("N/A", "Not Applicable"),
     ]
     sex = models.CharField(
-        max_length=6,
+        max_length=3,
         choices=sex_choices,
         blank=False,
         null=False,
     )
     dru = models.ForeignKey(
         DRU,
-        on_delete=models.SET_NULL,
-        blank=False,
-        null=True,
-        related_name="user",
-    )
-    classification = models.ForeignKey(
-        UserClassification,
         on_delete=models.CASCADE,
         blank=False,
         null=False,
         related_name="user",
     )
-    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+    is_legacy = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [

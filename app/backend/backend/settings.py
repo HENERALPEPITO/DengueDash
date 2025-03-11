@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "api",
     # "auth",
+    "core",
     "seeders",
     "case",
     "dru",
@@ -65,7 +66,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "api.middleware.JWTAuthMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -146,7 +146,9 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         # "api.authenticate.CustomJWTAuthentication"
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
@@ -166,6 +168,8 @@ SIMPLE_JWT = {
     "REFRESH_COOKIE_PATH": "/",  # URL path where cookie will be sent
     "COOKIE_SAMESITE": "Lax",  # Should cookie be sent cross site
     "ALGORITHM": "HS256",
+    # TOKEN REFRESH
+    "TOKEN_REFRESH_SERIALIZER": "auth.serializers.CustomTokenRefreshSerializer",
 }
 
 CORS_ALLOWED_ORIGINS = [

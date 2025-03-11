@@ -10,6 +10,7 @@ from case.models import (
 )
 from user.models import User
 
+
 class Command(BaseCommand):
     help = "Seed random initial patient case data"
 
@@ -200,20 +201,20 @@ class Command(BaseCommand):
         ]
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_file_path = os.path.join(base_dir, 'csv', 'weather_dataset.csv')
+        csv_file_path = os.path.join(base_dir, "csv", "weather_dataset.csv")
 
-        with open(csv_file_path, mode='r') as file:
+        with open(csv_file_path, mode="r") as file:
             reader = csv.DictReader(file)
 
             for row in reader:
-                year, week = row['Time'].split('-w')
+                year, week = row["Time"].split("-w")
                 year, week = int(year), int(week)
 
-                number_of_cases = row['Cases']
+                number_of_cases = row["Cases"]
 
                 for case in range(int(number_of_cases)):
                     first_day_of_year = datetime(year, 1, 1)
-                    start_day = first_day_of_year + timedelta(weeks=week-1)
+                    start_day = first_day_of_year + timedelta(weeks=week - 1)
                     start_day -= timedelta(days=start_day.weekday())
 
                     random_day = random.randint(0, 6)
@@ -224,7 +225,8 @@ class Command(BaseCommand):
                     date_of_birth = fake.date_of_birth(minimum_age=1, maximum_age=100)
                     sex = random.choice(["M", "F"])
                     addr_barangay = random.choice(barangays)
-                    interviewer = User.objects.get(id=random.randint(1, 5))
+                    interviewer_ids = [4, 6, 8, 10, 12, 14]
+                    interviewer = User.objects.get(id=random.choice(interviewer_ids))
 
                     patient = Patient.objects.create(
                         first_name=first_name,
@@ -298,7 +300,6 @@ class Command(BaseCommand):
                         interviewer=interviewer,
                         patient=patient,
                     )
-
 
         self.stdout.write(
             self.style.SUCCESS(

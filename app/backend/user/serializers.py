@@ -1,34 +1,129 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from user.models import UserClassification
 
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    # Convert the primary key to string
-    classification = serializers.StringRelatedField()
-    dru = serializers.StringRelatedField()
-    # Show the proper name instead of abbreviated value in tuple
+class BaseUserSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
     sex_display = serializers.SerializerMethodField()
+
+    def get_full_name(self, obj):
+        return f"{obj.last_name}, {obj.first_name} {obj.middle_name}".strip()
+
+    def get_role(self, obj):
+        return "Admin" if obj.is_admin else "Encoder"
+
+    def get_sex_display(self, obj):
+        return obj.get_sex_display()
+
+    class Meta:
+        model = User
+        # No fields here since this is an abstract base serializer.
+        fields = []
+
+
+class AdminBrowseUserSerializer(BaseUserSerializer):
+    dru = serializers.StringRelatedField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+    updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+    last_login = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "sex_display",
+            "role",
+            "dru",
+            "created_at",
+            "updated_at",
+            "last_login",
+        ]
+
+
+class MyUserSerializer(BaseUserSerializer):
+    dru = serializers.StringRelatedField()
+
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "sex_display",
+            "role",
+            "dru",
+        ]
+
+
+class UsersListSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "full_name",
+            "email",
+            "sex_display",
+            "role",
+        ]
+
+
+class UsersUnverifiedListSerializer(BaseUserSerializer):
+    created_at = serializers.DateTimeField(format="%Y-%m-%d")
+
+    class Meta(BaseUserSerializer.Meta):
+        fields = [
+            "id",
+            "full_name",
+            "email",
+            "sex_display",
+            "created_at",
+        ]
+
+
+class RegisterUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+    password_confirm = serializers.CharField(write_only=True, required=True)
+    is_verified = serializers.BooleanField(required=False)
+    is_admin = serializers.BooleanField(required=False)
 
     class Meta:
         model = User
         fields = [
             "email",
+            "password",
+            "password_confirm",
             "first_name",
             "middle_name",
             "last_name",
-            "sex_display",
-            "classification",
+            "sex",
             "dru",
+            "is_verified",
+            "is_admin",
         ]
 
-    def get_sex_display(self, obj):
-        return obj.get_sex_display()
+    def validate(self, attrs):
+        if attrs["password"] != attrs["password_confirm"]:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop("password_confirm")
+        password = validated_data.pop("password")
+        request = self.context.get("request")
+        if request and request.user.is_authenticated and request.user.is_admin:
+            validated_data.setdefault("is_verified", True)
+        else:
+            validated_data["is_verified"] = False
+            validated_data["is_admin"] = False
+
+        return User.objects.create_user(password=password, **validated_data)
 
 
-class UserClassificationSerializer(serializers.ModelSerializer):
+class VerifyUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserClassification
-        fields = "__all__"
+        model = User
+        field = [
+            "is_verified",
+        ]

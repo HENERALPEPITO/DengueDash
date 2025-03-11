@@ -8,15 +8,13 @@ import {
   Command,
   CreditCard,
   FolderMinus,
-  Frame,
   GalleryVerticalEnd,
   LogOut,
-  Map,
-  PieChart,
   Settings2,
   Sparkles,
   Table,
   TrendingUpDown,
+  UserPlus,
 } from "lucide-react";
 
 import {
@@ -56,9 +54,13 @@ import {
 
 type AppSidebarProps = {
   sectionSegment: string;
+  isAdmin: boolean;
 };
 
-export default function AppSidebar({ sectionSegment }: AppSidebarProps) {
+export default function AppSidebar({
+  sectionSegment,
+  isAdmin,
+}: AppSidebarProps) {
   const data = {
     user: {
       name: "shadcn",
@@ -82,89 +84,143 @@ export default function AppSidebar({ sectionSegment }: AppSidebarProps) {
         plan: "Free",
       },
     ],
-    navMain: [
-      {
-        title: "Analytics",
-        url: "analytics",
-        icon: TrendingUpDown,
-        items: [
+    navMain: isAdmin
+      ? [
           {
-            title: "Dashboard",
-            url: "/user/analytics/dashboard",
+            title: "Accounts",
+            url: "accounts",
+            icon: UserPlus,
+            items: [
+              {
+                title: "Manage Accounts",
+                url: "/admin/accounts/manage",
+              },
+              {
+                title: "Pending Accounts",
+                url: "/admin/accounts/pending",
+              },
+            ],
           },
           {
-            title: "Forecasting",
-            url: "/user/analytics/forecasting",
+            title: "Analytics",
+            url: "analytics",
+            icon: TrendingUpDown,
+            items: [
+              {
+                title: "Dashboard",
+                url: "/admin/analytics/dashboard",
+              },
+              {
+                title: "Forecasting",
+                url: "/admin/analytics/forecasting",
+              },
+            ],
+          },
+          {
+            title: "Data Tables",
+            url: "data-tables",
+            icon: Table,
+            items: [
+              {
+                title: "Dengue Reports",
+                url: "/user/data-tables/dengue-reports",
+              },
+              {
+                title: "Another Report",
+                url: "#",
+              },
+            ],
+          },
+          {
+            title: "Settings",
+            url: "#",
+            icon: Settings2,
+            items: [
+              {
+                title: "General",
+                url: "#",
+              },
+              {
+                title: "Team",
+                url: "#",
+              },
+              {
+                title: "Billing",
+                url: "#",
+              },
+              {
+                title: "Limits",
+                url: "#",
+              },
+            ],
+          },
+        ]
+      : [
+          {
+            title: "Analytics",
+            url: "analytics",
+            icon: TrendingUpDown,
+            items: [
+              {
+                title: "Dashboard",
+                url: "/user/analytics/dashboard",
+              },
+              {
+                title: "Forecasting",
+                url: "/user/analytics/forecasting",
+              },
+            ],
+          },
+          {
+            title: "Forms",
+            url: "forms",
+            icon: FolderMinus,
+            items: [
+              {
+                title: "Case Report Form",
+                url: "/user/forms/case-report-form",
+              },
+            ],
+          },
+          {
+            title: "Data Tables",
+            url: "data-tables",
+            icon: Table,
+            items: [
+              {
+                title: "Dengue Reports",
+                url: "/user/data-tables/dengue-reports",
+              },
+              {
+                title: "Another Report",
+                url: "#",
+              },
+            ],
+          },
+          {
+            title: "Settings",
+            url: "#",
+            icon: Settings2,
+            items: [
+              {
+                title: "General",
+                url: "#",
+              },
+              {
+                title: "Team",
+                url: "#",
+              },
+              {
+                title: "Billing",
+                url: "#",
+              },
+              {
+                title: "Limits",
+                url: "#",
+              },
+            ],
           },
         ],
-      },
-      {
-        title: "Forms",
-        url: "forms",
-        icon: FolderMinus,
-        items: [
-          {
-            title: "Case Report Form",
-            url: "/user/forms/case-report-form",
-          },
-        ],
-      },
-      {
-        title: "Data Tables",
-        url: "data-tables",
-        icon: Table,
-        items: [
-          {
-            title: "Dengue Reports",
-            url: "/user/data-tables/dengue-reports",
-          },
-          {
-            title: "Another Report",
-            url: "#",
-          },
-        ],
-      },
-      {
-        title: "Settings",
-        url: "#",
-        icon: Settings2,
-        items: [
-          {
-            title: "General",
-            url: "#",
-          },
-          {
-            title: "Team",
-            url: "#",
-          },
-          {
-            title: "Billing",
-            url: "#",
-          },
-          {
-            title: "Limits",
-            url: "#",
-          },
-        ],
-      },
-    ],
-    projects: [
-      {
-        name: "Design Engineering",
-        url: "#",
-        icon: Frame,
-      },
-      {
-        name: "Sales & Marketing",
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: "Travel",
-        url: "#",
-        icon: Map,
-      },
-    ],
   };
 
   const [activeTeam] = React.useState(data.teams[0]);

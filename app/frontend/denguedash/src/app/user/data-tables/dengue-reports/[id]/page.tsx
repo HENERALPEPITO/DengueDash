@@ -26,13 +26,9 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEffect, useState } from "react";
 import { Button } from "@/shadcn/components/ui/button";
 import deleteService from "@/services/delete.service";
-// import { useRouter } from "next/router";
 import { redirect } from "next/navigation";
 
 export default function ReportView({ params }: any) {
-  // const router = useRouter();
-  // const router = useRouter();
-  // const push = router ? router.push : () => {};
   const [caseDetails, setCaseDetails] = useState<CaseView>();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -40,7 +36,6 @@ export default function ReportView({ params }: any) {
     const fetchData = async () => {
       const { id } = await params;
       const apiResult: CaseView = await fetchService.getCaseViewDetails(id);
-      console.log(id);
       setCaseDetails(apiResult);
     };
     fetchData();

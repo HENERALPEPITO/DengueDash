@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex justify-center gap-4 px-5 pt-2 pb-5">
       <div className="w-5/6">
         <SidebarProvider>
-          <AppSidebar sectionSegment={segment} />
+          <AppSidebar sectionSegment={segment} isAdmin={false} />
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
               <div className="flex items-center gap-2">

@@ -1,13 +1,17 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from auth.views import (
-    RegisterView,
     LoginView,
-    AuthCheckView,
+    # AuthCheckView,
 )
 from user.views import (
-    UserClassificationView,
-    UserDetailView,
+    AdminBrowseUserView,
+    MyUserView,
+    UsersListView,
+    UsersUnverifiedListView,
+    VerifiyUserView,
+    DeleteUserView,
+    RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
 from case.views.case_report_view import (
@@ -20,6 +24,10 @@ from case.views.case_count_view import (
     BarangayCountView,
     DengueCountDeathsView,
 )
+from dru.views import (
+    RegisterDRUView,
+    DRUHierarchyView,
+)
 
 from weather.views import WeatherView
 
@@ -28,9 +36,9 @@ from lstm_prediction.views import LstmPredictionView
 
 urlpatterns = [
     path(
-        "register/",
-        RegisterView.as_view(),
-        name="register",
+        "register/user/",
+        RegisterUserView.as_view(),
+        name="register-user",
     ),
     path(
         "login/",
@@ -43,19 +51,49 @@ urlpatterns = [
         name="token_refresh",
     ),
     path(
-        "classifications/",
-        UserClassificationView.as_view(),
-        name="classifications",
+        "register/dru/",
+        RegisterDRUView.as_view(),
+        name="register-dru",
     ),
     path(
-        "auth/check",
-        AuthCheckView.as_view(),
-        name="auth-check",
+        "dru-hierarchy/",
+        DRUHierarchyView.as_view(),
+        name="dru-hierarchy",
     ),
+    # path(
+    #     "auth/check/",
+    #     AuthCheckView.as_view(),
+    #     name="auth-check",
+    # ),
     path(
         "user/",
-        UserDetailView.as_view(),
+        MyUserView.as_view(),
         name="user",
+    ),
+    path(
+        "user/<int:user_id>/",
+        AdminBrowseUserView.as_view(),
+        name="user-browse",
+    ),
+    path(
+        "user/verify/<int:user_id>/",
+        VerifiyUserView.as_view(),
+        name="user-verify",
+    ),
+    path(
+        "user/delete/<int:user_id>/",
+        DeleteUserView.as_view(),
+        name="user-delete",
+    ),
+    path(
+        "user/list/",
+        UsersListView.as_view(),
+        name="user-list",
+    ),
+    path(
+        "user/list/unverified/",
+        UsersUnverifiedListView.as_view(),
+        name="user-list-unverified",
     ),
     path(
         "case/create/",
@@ -63,44 +101,44 @@ urlpatterns = [
         name="create-case",
     ),
     path(
-        "dengue-case-reports",
+        "dengue-case-reports/",
         CaseReportView.as_view(),
         name="case-reports",
     ),
     path(
-        "dengue-case-reports/<int:case_id>",
+        "dengue-case-reports/<int:case_id>/",
         CaseDetailedView.as_view(),
         name="case-detailed",
     ),
     path(
-        "quick-stat",
+        "quick-stat/",
         QuickStatisticsView.as_view(),
-        name="quick-stat",
+        name="quick-stat/",
     ),
     path(
-        "cases-per-barangay",
+        "cases-per-barangay/",
         BarangayCountView.as_view(),
         name="cases-per-barangay",
     ),
     path(
-        "cases-deaths",
+        "cases-deaths/",
         DengueCountDeathsView.as_view(),
         name="cases-deaths",
     ),
     path(
-        "weather",
+        "weather/",
         WeatherView.as_view(),
         name="weather",
     ),
     # Delete
     path(
-        "case/delete/<int:case_id>",
+        "case/delete/<int:case_id>/",
         CaseDeleteView.as_view(),
         name="case-delete",
     ),
     # LSTM Prediction
     path(
-        "predict",
+        "predict/",
         LstmPredictionView.as_view(),
         name="lstm-predict",
     ),

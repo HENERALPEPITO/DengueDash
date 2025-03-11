@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateToken, verifyTokenSignature } from "./lib/token";
+import {
+  getDataFromToken,
+  validateToken,
+  verifyTokenSignature,
+} from "./lib/token";
 import { cookies } from "next/headers";
 
 export async function middleware(request: NextRequest) {
@@ -35,20 +39,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  const adminPath = "/admin";
+  const userPath = "/user";
+  const adminDashboardPath = "/admin/accounts/manage";
+  const userDashboardPath = "/user/analytics/dashboard";
+
+  const dataFromToken = await getDataFromToken(accessToken.value);
+  if (!dataFromToken) {
+    deleteCookies();
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  const isAdmin = dataFromToken.is_admin;
+  if (request.nextUrl.pathname.startsWith(adminPath) && !isAdmin) {
+    return NextResponse.redirect(new URL(userDashboardPath, request.url));
+  }
+  if (request.nextUrl.pathname.startsWith(userPath) && isAdmin) {
+    return NextResponse.redirect(new URL(adminDashboardPath, request.url));
+  }
+
   return NextResponse.next();
 }
 
-// Todo: Add more routes
-// Todo: Implement different views for different user roles
-// Eg. Admin => /admin/dashboard
-// Eg. User => /user/dashboard
 export const config = {
-  matcher: [
-    "/user/analytics/dashboard",
-    "/user/analytics/forecasting",
-    "/user/forms/case-report-form",
-    "/user/data-tables/dengue-reports",
-    // todo: this link does not work
-    "/user/data-tables/dengue-reports/[id]",
-  ],
+  matcher: ["/admin/:path*", "/user/:path*"],
 };
