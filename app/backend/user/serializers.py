@@ -119,3 +119,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             validated_data["is_admin"] = False
 
         return User.objects.create_user(password=password, **validated_data)
+
+
+class VerifyUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        field = [
+            "is_verified",
+        ]

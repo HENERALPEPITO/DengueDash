@@ -51,7 +51,7 @@ class AdminBrowseUserView(APIView):
 
 
 class BaseUserListView(ListAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsUserAdmin]
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
     pagination_class = APIPagination
 
     def get_queryset(self):
@@ -98,3 +98,35 @@ class RegisterUserView(APIView):
             )
 
         return JsonResponse({"success": False, "message": serializer.errors})
+
+
+class VerifiyUserView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def patch(self, request, user_id):
+        current_user = request.user
+        user_to_find = User.objects.filter(id=user_id).first()
+        if user_to_find is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if user_to_find.dru_id != current_user.dru.id:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not allowed to perform this action",
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        user_to_find.is_verified = True
+        user_to_find.save()
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "User verified successfully",
+            }
+        )

@@ -9,6 +9,7 @@ from user.views import (
     MyUserView,
     UsersListView,
     UsersUnverifiedListView,
+    VerifiyUserView,
     RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -72,6 +73,11 @@ urlpatterns = [
         "user/<int:user_id>/",
         AdminBrowseUserView.as_view(),
         name="user-browse",
+    ),
+    path(
+        "user/verify/<int:user_id>/",
+        VerifiyUserView.as_view(),
+        name="user-verify",
     ),
     path(
         "user/list/",
