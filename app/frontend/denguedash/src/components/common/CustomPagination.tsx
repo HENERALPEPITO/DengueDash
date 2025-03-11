@@ -19,7 +19,7 @@ export default function CustomPagination({
   totalPages,
   handlePageChange,
 }: CustomPaginationProps) {
-  return (
+  return totalPages > 1 ? (
     <div className="mt-4">
       <Pagination>
         <PaginationContent>
@@ -100,5 +100,5 @@ export default function CustomPagination({
         </PaginationContent>
       </Pagination>
     </div>
-  );
+  ) : null;
 }
