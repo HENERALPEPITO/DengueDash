@@ -88,7 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         related_name="user",
     )
     is_admin = models.BooleanField(default=False)
-    is_legacy = models.BooleanField(default=True)
+    is_legacy = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
