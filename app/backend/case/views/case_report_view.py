@@ -39,6 +39,7 @@ def get_filter_criteria(user, action="view"):
     # Return the corresponding filter or default to using the user's DRU
     return mapping.get(user.dru.dru_type, {"interviewer": user.dru})
 
+    # todo: cleanup
     # classification = user.classification.classification
 
     # if classification == "admin_local":
