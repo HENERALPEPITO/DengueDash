@@ -50,7 +50,7 @@ axiosProtected.interceptors.response.use(
 
 export const axiosClient = async (
   endpoint: string,
-  method: "GET" | "POST" | "DELETE",
+  method: "GET" | "POST" | "DELETE" | "PATCH",
   data: any = null,
   params: Record<string, any> = {},
   useAuth = true
@@ -69,6 +69,9 @@ export const axiosClient = async (
         break;
       case "DELETE":
         response = await client.delete(endpoint, config);
+        break;
+      case "PATCH":
+        response = await client.patch(endpoint, data, config);
         break;
       default:
         throw new Error("Invalid method");
