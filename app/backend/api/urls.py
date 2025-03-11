@@ -7,6 +7,7 @@ from auth.views import (
 from user.views import (
     UserDetailView,
     UsersListView,
+    UsersUnverifiedListView,
     RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -70,6 +71,11 @@ urlpatterns = [
         "user/list/",
         UsersListView.as_view(),
         name="user-list",
+    ),
+    path(
+        "user/list/unverified/",
+        UsersUnverifiedListView.as_view(),
+        name="user-list-unverified",
     ),
     path(
         "case/create/",

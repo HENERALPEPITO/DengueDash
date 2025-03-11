@@ -43,6 +43,23 @@ class UsersListSerializer(serializers.ModelSerializer):
         return "Admin" if obj.is_admin else "Encoder"
 
 
+class UsersUnverifiedListSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d")
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "full_name",
+            "email",
+            "created_at",
+        ]
+
+    def get_full_name(self, obj):
+        return f"{obj.last_name}, {obj.first_name} {obj.middle_name}".strip()
+
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
