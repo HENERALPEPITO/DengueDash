@@ -7,7 +7,8 @@ from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from api.pagination import APIPagination
 from user.serializers import (
-    UserSerializer,
+    AdminBrowseUserSerializer,
+    MyUserSerializer,
     UsersListSerializer,
     UsersUnverifiedListSerializer,
     RegisterUserSerializer,
@@ -17,12 +18,35 @@ from auth.permission import IsUserAdmin
 User = get_user_model()
 
 
-# Optionally, you can wrap the data as follows:
-class UserDetailView(APIView):
+class MyUserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
+        serializer = MyUserSerializer(request.user)
+        return Response(serializer.data)
+
+
+class AdminBrowseUserView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def get(self, request, user_id):
+        user = User.objects.filter(
+            id=user_id,
+            is_legacy=False,
+            is_verified=True,
+            dru_id=request.user.dru.id,
+        ).first()
+
+        if user is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = AdminBrowseUserSerializer(user)
         return Response(serializer.data)
 
 

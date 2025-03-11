@@ -5,7 +5,8 @@ from auth.views import (
     # AuthCheckView,
 )
 from user.views import (
-    UserDetailView,
+    AdminBrowseUserView,
+    MyUserView,
     UsersListView,
     UsersUnverifiedListView,
     RegisterUserView,
@@ -64,8 +65,13 @@ urlpatterns = [
     # ),
     path(
         "user/",
-        UserDetailView.as_view(),
+        MyUserView.as_view(),
         name="user",
+    ),
+    path(
+        "user/<int:user_id>/",
+        AdminBrowseUserView.as_view(),
+        name="user-browse",
     ),
     path(
         "user/list/",
