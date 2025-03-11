@@ -10,6 +10,7 @@ from user.views import (
     UsersListView,
     UsersUnverifiedListView,
     VerifiyUserView,
+    DeleteUserView,
     RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -78,6 +79,11 @@ urlpatterns = [
         "user/verify/<int:user_id>/",
         VerifiyUserView.as_view(),
         name="user-verify",
+    ),
+    path(
+        "user/delete/<int:user_id>/",
+        DeleteUserView.as_view(),
+        name="user-delete",
     ),
     path(
         "user/list/",

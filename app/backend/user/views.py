@@ -130,3 +130,34 @@ class VerifiyUserView(APIView):
                 "message": "User verified successfully",
             }
         )
+
+
+class DeleteUserView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def delete(self, request, user_id):
+        current_user = request.user
+        user_to_delete = User.objects.filter(id=user_id).first()
+        if user_to_delete is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if user_to_delete.dru_id != current_user.dru.id:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not allowed to perform this action",
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        user_to_delete.delete()
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "User deleted successfully",
+            }
+        )
