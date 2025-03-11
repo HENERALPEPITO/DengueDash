@@ -16,6 +16,9 @@ import fetchService from "@/services/fetch.service";
 import { useEffect, useState } from "react";
 import CustomPagination from "../common/CustomPagination";
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
+import { Button } from "@/shadcn/components/ui/button";
+import patchService from "@/services/patch.service";
+import { BasePatchServiceResponse } from "@/interfaces/services/patch-service.interfaces";
 
 export default function UnverifiedAccountsTable() {
   const [users, setUsers] = useState<UnverifiedUserBriefDetail[]>([]);
@@ -50,6 +53,16 @@ export default function UnverifiedAccountsTable() {
     setCurrentPage(page);
   };
 
+  const approveUser = async (userId: number) => {
+    // console.log(userId);
+    const response: BasePatchServiceResponse =
+      await patchService.approveUserVerification(userId);
+
+    if (response.success) {
+      fetchUsers(currentPage);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 border border-gray-200 rounded-lg">
       <Table>
@@ -65,7 +78,7 @@ export default function UnverifiedAccountsTable() {
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
+              <TableCell colSpan={5} className="text-center">
                 <Skeleton className="w-1/2 h-4 mb-2" />
               </TableCell>
             </TableRow>
@@ -82,9 +95,9 @@ export default function UnverifiedAccountsTable() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.sex_display}</TableCell>
                 <TableCell>{user.created_at}</TableCell>
-                <TableCell>
-                  <button className="text-blue-500">Edit</button>
-                  <button className="text-red-500">Delete</button>
+                <TableCell className="flex gap-3">
+                  <Button onClick={() => approveUser(user.id)}>Approve</Button>
+                  <Button variant={"destructive"}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))
