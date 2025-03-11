@@ -1,4 +1,4 @@
-import { SignUpUserInterface } from "@/interfaces/services/post-service-interfaces";
+import { SignUpUserInterface } from "@/interfaces/services/post-service.interfaces";
 import { axiosClient } from "./auth.service";
 
 const OPERATION = "POST";
