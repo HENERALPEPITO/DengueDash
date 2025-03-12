@@ -79,7 +79,6 @@ export default function AccountsTable() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell>{user.sex_display}</TableCell>
-                {/* Todo: Change this shit */}
                 <TableCell>
                   <Button variant={"outline"} asChild>
                     <Link href={`manage/${user.id}`}>Open</Link>
