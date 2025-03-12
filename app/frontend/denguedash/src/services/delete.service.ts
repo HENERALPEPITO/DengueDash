@@ -13,7 +13,7 @@ const deleteCase = async (caseId: number) => {
   );
 };
 
-const deleteUnverifiedUser = async (userId: number) => {
+const deleteUser = async (userId: number) => {
   return axiosClient(
     `user/delete/${userId}/`,
     OPERATION,
@@ -24,7 +24,7 @@ const deleteUnverifiedUser = async (userId: number) => {
 
 const deleteService = {
   deleteCase,
-  deleteUnverifiedUser,
+  deleteUser,
 };
 
 export default deleteService;
