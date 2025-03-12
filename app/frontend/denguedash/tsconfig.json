@@ -38,7 +38,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/types/phil-reg-prov-mun-brgy.ts"
+    "src/types/phil-reg-prov-mun-brgy.interface.ts"
   ],
   "exclude": ["node_modules"]
 }

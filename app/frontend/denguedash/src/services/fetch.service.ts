@@ -80,6 +80,15 @@ const getUsersUnverifiedList = async (
   });
 };
 
+const getUserDetails = async (userId: number) => {
+  return axiosClient(`user/${userId}`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
+// ALL
+const getMyUserDetails = async () => {
+  return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
 const fetchService = {
   getQuickStat,
   getDengueCountPerBarangay,
@@ -89,6 +98,8 @@ const fetchService = {
   getDRUHierarchy,
   getUsersList,
   getUsersUnverifiedList,
+  getMyUserDetails,
+  getUserDetails,
 };
 
 export default fetchService;

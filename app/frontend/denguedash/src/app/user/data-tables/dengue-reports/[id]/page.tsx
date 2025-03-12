@@ -10,9 +10,10 @@ export default function UserDengueReportView({ params }: any) {
 
   useEffect(() => {
     const fetchData = async () => {
+      // todo: add try catch block
       const { id } = await params;
-      const apiResult: CaseView = await fetchService.getCaseViewDetails(id);
-      setCaseDetails(apiResult);
+      const response: CaseView = await fetchService.getCaseViewDetails(id);
+      setCaseDetails(response);
     };
     fetchData();
   }, [params]);

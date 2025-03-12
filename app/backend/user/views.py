@@ -132,6 +132,38 @@ class VerifiyUserView(APIView):
         )
 
 
+class ToggleUserRoleView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def patch(self, request, user_id):
+        current_user = request.user
+        user_to_find = User.objects.filter(id=user_id).first()
+        if user_to_find is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if user_to_find.dru_id != current_user.dru.id:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not allowed to perform this action",
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        user_to_find.is_admin = not user_to_find.is_admin
+        user_to_find.save()
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "User role updated successfully",
+            }
+        )
+
+
 class DeleteUserView(APIView):
     permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 

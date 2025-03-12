@@ -20,8 +20,15 @@ class BaseUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # No fields here since this is an abstract base serializer.
-        fields = []
+        # Default fields for user serialization.
+        fields = [
+            "id",
+            "email",
+            "full_name",
+            "sex_display",
+            "role",
+            "dru",
+        ]
 
 
 class AdminBrowseUserSerializer(BaseUserSerializer):
@@ -31,13 +38,7 @@ class AdminBrowseUserSerializer(BaseUserSerializer):
     last_login = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
 
     class Meta(BaseUserSerializer.Meta):
-        fields = [
-            "id",
-            "email",
-            "full_name",
-            "sex_display",
-            "role",
-            "dru",
+        fields = BaseUserSerializer.Meta.fields + [
             "created_at",
             "updated_at",
             "last_login",
@@ -48,18 +49,12 @@ class MyUserSerializer(BaseUserSerializer):
     dru = serializers.StringRelatedField()
 
     class Meta(BaseUserSerializer.Meta):
-        fields = [
-            "id",
-            "email",
-            "full_name",
-            "sex_display",
-            "role",
-            "dru",
-        ]
+        fields = BaseUserSerializer.Meta.fields
 
 
 class UsersListSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
+        # Only return a subset of the fields.
         fields = [
             "id",
             "full_name",
@@ -73,6 +68,7 @@ class UsersUnverifiedListSerializer(BaseUserSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d")
 
     class Meta(BaseUserSerializer.Meta):
+        # Use a subset of fields, including created_at.
         fields = [
             "id",
             "full_name",

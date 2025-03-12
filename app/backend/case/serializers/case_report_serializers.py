@@ -155,5 +155,9 @@ class CaseViewSerializer(serializers.ModelSerializer):
 
     def get_can_delete(self, obj):
         if request := self.context.get("request", None):
-            return obj.interviewer == request.user
+            # return obj.interviewer == request.user
+            # todo: debate with sir dimzon if which choice is better
+            # todo: only the user that created the case can delete it
+            # todo: or the user that created the case and the admin can delete it
+            return request.user.is_admin or obj.interviewer == request.user
         return False

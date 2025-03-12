@@ -2,17 +2,21 @@ from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
     TokenRefreshSerializer,
 )
+from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from api.custom_exceptions.custom_validation_exception import CustomValidationException
+from user.serializers import BaseUserSerializer
 
 
 User = get_user_model()
 
 
 class LoginSerializer(TokenObtainPairSerializer):
+    dru = serializers.StringRelatedField()
+
     def validate(self, attrs):
         if request := self.context.get("request"):
             attrs["username"] = request.data.get("email")
@@ -45,6 +49,10 @@ class LoginSerializer(TokenObtainPairSerializer):
         access_token["is_admin"] = is_user_admin
         access_token["user_dru_type"] = user_dru_type
         data["access"] = str(access_token)
+
+        # Append user data
+        user_data = BaseUserSerializer(user).data
+        data["user_data"] = user_data
         return data
 
 

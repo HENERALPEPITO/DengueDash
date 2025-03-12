@@ -21,6 +21,8 @@ import patchService from "@/services/patch.service";
 import { CustomAlertDialog } from "../common/CustomAlertDialog";
 import { BaseServiceResponse } from "@/interfaces/services/services.interface";
 import deleteService from "@/services/delete.service";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function UnverifiedAccountsTable() {
   const [users, setUsers] = useState<UnverifiedUserBriefDetail[]>([]);
@@ -59,15 +61,39 @@ export default function UnverifiedAccountsTable() {
     const response: BaseServiceResponse =
       await patchService.approveUserVerification(userId);
     if (response.success) {
+      toast.success("User Approved", {
+        description: "The selected user has been successfully approved",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
       fetchUsers(currentPage);
+      // todo: email the user that their account has been approved
+    } else {
+      toast.error("Failed to approve user", {
+        description: response.message,
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
     }
   };
 
-  const deleteUser = async (userId: number) => {
+  const deleteUnverifiedUser = async (userId: number) => {
     const response: BaseServiceResponse =
-      await deleteService.deleteUnverifiedUser(userId);
+      await deleteService.deleteUser(userId);
     if (response.success) {
+      toast.success("User Deleted", {
+        description: "The selected user has been successfully deleted",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
       fetchUsers(currentPage);
+      // todo: email the user that their account has been disapproved
+    } else {
+      toast.error("Failed to delete user", {
+        description: response.message,
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
     }
   };
 
@@ -116,7 +142,8 @@ export default function UnverifiedAccountsTable() {
                     title="Approve User"
                     description="Are you sure you want to delete this user? This action cannot be undone."
                     actionLabel="Delete"
-                    onAction={() => deleteUser(user.id)}
+                    variant="destructive"
+                    onAction={() => deleteUnverifiedUser(user.id)}
                   >
                     <Button variant={"destructive"}>Delete</Button>
                   </CustomAlertDialog>
