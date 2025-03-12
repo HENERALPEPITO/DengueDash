@@ -26,18 +26,18 @@ def get_filter_criteria(user, action="view"):
     Generate filter criteria based on user classification and action type.
     - action: "view" or "delete"
     """
-    # For deleting or non-admin users, restrict to their own records
-    if action == "delete" or not user.is_admin:
+    if action == "delete":
         return {"interviewer": user}
 
-    # For admin users, use a mapping based on DRU type
-    mapping = {
-        "National": {},
-        "RESU": {"interviewer__dru__region": user.dru.region},
-        "PESU/CESU": {"interviewer__dru": user.surveillance_unit},
-    }
-    # Return the corresponding filter or default to using the user's DRU
-    return mapping.get(user.dru.dru_type, {"interviewer": user.dru})
+    interviewer_dru_type = str(user.dru.dru_type)
+    if interviewer_dru_type == "National":
+        return {}
+    elif interviewer_dru_type == "RESU":
+        return {"interviewer__dru__region": user.dru.region}
+    elif interviewer_dru_type == "PESU/CESU":
+        return {"interviewer__dru__surveillance_unit": user.dru.surveillance_unit}
+    else:
+        return {"interviewer__dru": user.dru}
 
     # todo: cleanup
     # classification = user.classification.classification
