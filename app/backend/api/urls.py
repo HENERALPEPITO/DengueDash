@@ -11,6 +11,7 @@ from user.views import (
     UsersUnverifiedListView,
     VerifiyUserView,
     DeleteUserView,
+    ToggleUserRoleView,
     RegisterUserView,
 )
 from case.views.patient_case_view import PatientCaseView
@@ -89,6 +90,11 @@ urlpatterns = [
         "user/verify/<int:user_id>/",
         VerifiyUserView.as_view(),
         name="user-verify",
+    ),
+    path(
+        "user/toggle-role/<int:user_id>/",
+        ToggleUserRoleView.as_view(),
+        name="user-toggle-role",
     ),
     path(
         "user/delete/<int:user_id>/",
