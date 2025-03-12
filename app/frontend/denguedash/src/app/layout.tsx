@@ -4,6 +4,7 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import { Poppins } from "next/font/google";
 import { UserProvider } from "@/contexts/UserContext";
+import { Toaster } from "sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
       >
         <UserProvider>{children}</UserProvider>
+        <Toaster position="bottom-right" closeButton richColors theme="light" />
       </body>
     </html>
   );
