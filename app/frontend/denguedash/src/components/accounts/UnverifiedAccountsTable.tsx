@@ -145,6 +145,7 @@ export default function UnverifiedAccountsTable() {
                     title="Approve User"
                     description="Are you sure you want to delete this user? This action cannot be undone."
                     actionLabel="Delete"
+                    variant="destructive"
                     onAction={() => deleteUser(user.id)}
                   >
                     <Button variant={"destructive"}>Delete</Button>
