@@ -23,3 +23,12 @@ export interface UnverifiedUserBriefDetail {
 export interface UnverifiedUserListPagination extends PaginationInterface {
   results: UnverifiedUserBriefDetail[];
 }
+
+export interface MyUserInterface {
+  id: number;
+  email: string;
+  full_name: string;
+  sex_display: string;
+  role: string;
+  dru: string;
+}
