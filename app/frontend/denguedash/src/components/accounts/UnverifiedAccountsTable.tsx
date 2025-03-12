@@ -71,6 +71,12 @@ export default function UnverifiedAccountsTable() {
       });
       fetchUsers(currentPage);
       // todo: email the user that their account has been approved
+    } else {
+      toast.error("Failed to approve user", {
+        description: response.message,
+        duration: toasterDuration,
+        dismissible: isDismissible,
+      });
     }
   };
 
@@ -85,6 +91,12 @@ export default function UnverifiedAccountsTable() {
       });
       fetchUsers(currentPage);
       // todo: email the user that their account has been disapproved
+    } else {
+      toast.error("Failed to delete user", {
+        description: response.message,
+        duration: toasterDuration,
+        dismissible: isDismissible,
+      });
     }
   };
 
