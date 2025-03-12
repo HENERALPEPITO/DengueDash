@@ -32,3 +32,9 @@ export interface MyUserInterface {
   role: string;
   dru: string;
 }
+
+export interface UserDetailInterface extends MyUserInterface {
+  created_at: string | null;
+  updated_at: string | null;
+  last_login: string | null;
+}
