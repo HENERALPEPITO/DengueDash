@@ -13,6 +13,15 @@ const approveUserVerification = async (userId: number) => {
   );
 };
 
-const patchService = { approveUserVerification };
+const toggleUserRole = async (userId: number) => {
+  return axiosClient(
+    `user/toggle-role/${userId}/`,
+    OPERATION,
+    DEFAULT_DATA,
+    DEFAULT_PARAMS
+  );
+};
+
+const patchService = { approveUserVerification, toggleUserRole };
 
 export default patchService;
