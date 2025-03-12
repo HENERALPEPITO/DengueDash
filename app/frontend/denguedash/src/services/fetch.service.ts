@@ -62,6 +62,10 @@ const getCaseViewDetails = async (caseId: number) => {
   );
 };
 
+const getMyUserDetails = async () => {
+  return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
 // ADMIN
 const getUsersList = async (page: number, itemsPerPage: number = 8) => {
   return axiosClient("user/list/", OPERATION, DEFAULT_DATA, {
@@ -89,6 +93,7 @@ const fetchService = {
   getDRUHierarchy,
   getUsersList,
   getUsersUnverifiedList,
+  getMyUserDetails,
 };
 
 export default fetchService;
