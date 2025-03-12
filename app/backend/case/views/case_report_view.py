@@ -21,14 +21,7 @@ def fetch_cases_for_week(start_date):
     return cases
 
 
-def get_filter_criteria(user, action="view"):
-    """
-    Generate filter criteria based on user classification and action type.
-    - action: "view" or "delete"
-    """
-    if action == "delete":
-        return {"interviewer": user}
-
+def get_filter_criteria(user):
     interviewer_dru_type = str(user.dru.dru_type)
     if interviewer_dru_type == "National":
         return {}
@@ -135,7 +128,7 @@ class CaseDeleteView(APIView):
 
     def delete(self, request, case_id):
         user = request.user
-        filter_kwargs = get_filter_criteria(user, action="delete")
+        filter_kwargs = get_filter_criteria(user)
 
         # Attempt to retrieve the case based on user credentials
         case = Case.objects.filter(
