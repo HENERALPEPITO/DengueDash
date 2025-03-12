@@ -2,7 +2,6 @@
 
 import GuestHeader from "@/components/guest/GuestHeader";
 import { signUpSchema } from "@/lib/signup/schema";
-import { toast } from "@/shadcn/hooks/use-toast";
 import { Button } from "@shadcn/components/ui/button";
 import {
   Form,
@@ -77,10 +76,7 @@ export default function SignUp() {
     } catch (error) {
       console.error("Failed to create account:", error);
     }
-    // toast({
-    //   title: "Account created",
-    //   description: "Please wait for the admin to approve your account",
-    // });
+    // todo: show sonner toast
   };
 
   return (
