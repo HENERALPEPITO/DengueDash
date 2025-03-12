@@ -21,7 +21,8 @@ import patchService from "@/services/patch.service";
 import { CustomAlertDialog } from "../common/CustomAlertDialog";
 import { BaseServiceResponse } from "@/interfaces/services/services.interface";
 import deleteService from "@/services/delete.service";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function UnverifiedAccountsTable() {
   const [users, setUsers] = useState<UnverifiedUserBriefDetail[]>([]);
@@ -29,10 +30,6 @@ export default function UnverifiedAccountsTable() {
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
-
-  // Toaster settings
-  const toasterDuration = 3000;
-  const isDismissible = true;
 
   useEffect(() => {
     fetchUsers(currentPage);
@@ -66,36 +63,36 @@ export default function UnverifiedAccountsTable() {
     if (response.success) {
       toast.success("User Approved", {
         description: "The selected user has been successfully approved",
-        duration: toasterDuration,
-        dismissible: isDismissible,
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
       });
       fetchUsers(currentPage);
       // todo: email the user that their account has been approved
     } else {
       toast.error("Failed to approve user", {
         description: response.message,
-        duration: toasterDuration,
-        dismissible: isDismissible,
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
       });
     }
   };
 
-  const deleteUser = async (userId: number) => {
+  const deleteUnverifiedUser = async (userId: number) => {
     const response: BaseServiceResponse =
-      await deleteService.deleteUnverifiedUser(userId);
+      await deleteService.deleteUser(userId);
     if (response.success) {
       toast.success("User Deleted", {
         description: "The selected user has been successfully deleted",
-        duration: toasterDuration,
-        dismissible: isDismissible,
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
       });
       fetchUsers(currentPage);
       // todo: email the user that their account has been disapproved
     } else {
       toast.error("Failed to delete user", {
         description: response.message,
-        duration: toasterDuration,
-        dismissible: isDismissible,
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
       });
     }
   };
@@ -146,7 +143,7 @@ export default function UnverifiedAccountsTable() {
                     description="Are you sure you want to delete this user? This action cannot be undone."
                     actionLabel="Delete"
                     variant="destructive"
-                    onAction={() => deleteUser(user.id)}
+                    onAction={() => deleteUnverifiedUser(user.id)}
                   >
                     <Button variant={"destructive"}>Delete</Button>
                   </CustomAlertDialog>
@@ -162,8 +159,6 @@ export default function UnverifiedAccountsTable() {
         totalPages={totalPages}
         handlePageChange={handlePageChange}
       />
-
-      <Toaster position="bottom-right" closeButton richColors theme="light" />
     </div>
   );
 }
