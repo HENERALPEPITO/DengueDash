@@ -20,7 +20,7 @@ const Login = () => {
     // useContext takes time to update, so we need to use useEffect to check if the user is saved to context
     if (user?.role === "Admin") {
       router.push("/admin/accounts/manage");
-    } else if (user?.role === "User") {
+    } else if (user?.role === "Encoder") {
       router.push("/user/analytics/dashboard");
     }
   }, [user, router]);
@@ -36,6 +36,7 @@ const Login = () => {
         const userDetails: MyUserInterface = loginResponse.user_data;
 
         setUser(userDetails);
+        console.log(user);
       } else {
         setErrorMessage(loginResponse.message);
       }
