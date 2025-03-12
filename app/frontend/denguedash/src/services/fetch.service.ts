@@ -62,10 +62,6 @@ const getCaseViewDetails = async (caseId: number) => {
   );
 };
 
-const getMyUserDetails = async () => {
-  return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
-};
-
 // ADMIN
 const getUsersList = async (page: number, itemsPerPage: number = 8) => {
   return axiosClient("user/list/", OPERATION, DEFAULT_DATA, {
@@ -84,6 +80,15 @@ const getUsersUnverifiedList = async (
   });
 };
 
+const getUserDetails = async (userId: number) => {
+  return axiosClient(`user/${userId}`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
+// ALL
+const getMyUserDetails = async () => {
+  return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
 const fetchService = {
   getQuickStat,
   getDengueCountPerBarangay,
@@ -94,6 +99,7 @@ const fetchService = {
   getUsersList,
   getUsersUnverifiedList,
   getMyUserDetails,
+  getUserDetails,
 };
 
 export default fetchService;
