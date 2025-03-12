@@ -1,39 +1,43 @@
 "use client";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { UserLoggedIn } from "@interfaces/auth/user-auth.interface";
 import GuestHeader from "@components/guest/GuestHeader";
 import authService from "@services/auth.service";
-import { getDataFromToken } from "@/lib/token";
+import { UserContext } from "@/contexts/UserContext";
+import { MyUserInterface } from "@/interfaces/account/user-interface";
 
 const Login = () => {
   const router = useRouter();
+  const { user, setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    // useContext takes time to update, so we need to use useEffect to check if the user is saved to context
+    if (user?.role === "Admin") {
+      router.push("/admin/accounts/manage");
+    } else if (user?.role === "User") {
+      router.push("/user/analytics/dashboard");
+    }
+  }, [user, router]);
+
   const loginUser = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response: UserLoggedIn = await authService.login(email, password);
-      const isSuccess = response.success;
-      const accessToken = response.access_token;
-      if (isSuccess && accessToken) {
-        const dataFromToken = await getDataFromToken(accessToken);
-        if (!dataFromToken) {
-          setErrorMessage("Data from token is null");
-          return;
-        }
-        const isAdmin = dataFromToken.is_admin;
-        if (isAdmin) {
-          router.push("/admin/accounts/manage");
-        } else {
-          router.push("/user/analytics/dashboard");
-        }
+      const loginResponse: UserLoggedIn = await authService.login(
+        email,
+        password
+      );
+      if (loginResponse.success) {
+        const userDetails: MyUserInterface = loginResponse.user_data;
+
+        setUser(userDetails);
       } else {
-        setErrorMessage(response.message);
+        setErrorMessage(loginResponse.message);
       }
     } catch (error) {
       console.log(error);
