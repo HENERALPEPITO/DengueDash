@@ -57,173 +57,121 @@ type AppSidebarProps = {
   isAdmin: boolean;
 };
 
+interface NavSubItem {
+  title: string;
+  url: string;
+}
+
+interface NavItem {
+  title: string;
+  url: string;
+  icon: React.ComponentType;
+  items: NavSubItem[];
+}
+
 export default function AppSidebar({
   sectionSegment,
   isAdmin,
 }: AppSidebarProps) {
-  const data = {
-    user: {
-      name: "shadcn",
-      email: "m@example.com",
-      avatar: "/avatars/shadcn.jpg",
-    },
-    teams: [
-      {
-        name: "Acme Inc",
-        logo: GalleryVerticalEnd,
-        plan: "Enterprise",
-      },
-      {
-        name: "Acme Corp.",
-        logo: AudioWaveform,
-        plan: "Startup",
-      },
-      {
-        name: "Evil Corp.",
-        logo: Command,
-        plan: "Free",
-      },
-    ],
-    navMain: isAdmin
-      ? [
-          {
-            title: "Accounts",
-            url: "accounts",
-            icon: UserPlus,
-            items: [
-              {
-                title: "Manage Accounts",
-                url: "/admin/accounts/manage",
-              },
-              {
-                title: "Pending Accounts",
-                url: "/admin/accounts/pending",
-              },
-            ],
-          },
-          {
-            title: "Analytics",
-            url: "analytics",
-            icon: TrendingUpDown,
-            items: [
-              {
-                title: "Dashboard",
-                url: "/admin/analytics/dashboard",
-              },
-              {
-                title: "Forecasting",
-                url: "/admin/analytics/forecasting",
-              },
-            ],
-          },
-          {
-            title: "Data Tables",
-            url: "data-tables",
-            icon: Table,
-            items: [
-              {
-                title: "Dengue Reports",
-                url: "/user/data-tables/dengue-reports",
-              },
-              {
-                title: "Another Report",
-                url: "#",
-              },
-            ],
-          },
-          {
-            title: "Settings",
-            url: "#",
-            icon: Settings2,
-            items: [
-              {
-                title: "General",
-                url: "#",
-              },
-              {
-                title: "Team",
-                url: "#",
-              },
-              {
-                title: "Billing",
-                url: "#",
-              },
-              {
-                title: "Limits",
-                url: "#",
-              },
-            ],
-          },
-        ]
-      : [
-          {
-            title: "Analytics",
-            url: "analytics",
-            icon: TrendingUpDown,
-            items: [
-              {
-                title: "Dashboard",
-                url: "/user/analytics/dashboard",
-              },
-              {
-                title: "Forecasting",
-                url: "/user/analytics/forecasting",
-              },
-            ],
-          },
-          {
-            title: "Forms",
-            url: "forms",
-            icon: FolderMinus,
-            items: [
-              {
-                title: "Case Report Form",
-                url: "/user/forms/case-report-form",
-              },
-            ],
-          },
-          {
-            title: "Data Tables",
-            url: "data-tables",
-            icon: Table,
-            items: [
-              {
-                title: "Dengue Reports",
-                url: "/user/data-tables/dengue-reports",
-              },
-              {
-                title: "Another Report",
-                url: "#",
-              },
-            ],
-          },
-          {
-            title: "Settings",
-            url: "#",
-            icon: Settings2,
-            items: [
-              {
-                title: "General",
-                url: "#",
-              },
-              {
-                title: "Team",
-                url: "#",
-              },
-              {
-                title: "Billing",
-                url: "#",
-              },
-              {
-                title: "Limits",
-                url: "#",
-              },
-            ],
-          },
-        ],
+  // Static data for user and teams.
+  const user = {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   };
 
-  const [activeTeam] = React.useState(data.teams[0]);
+  const teams = [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ];
+
+  // Common navigation items.
+  const analyticsNav: NavItem = {
+    title: "Analytics",
+    url: "analytics",
+    icon: TrendingUpDown,
+    items: [
+      {
+        title: "Dashboard",
+        url: isAdmin
+          ? "/admin/analytics/dashboard"
+          : "/user/analytics/dashboard",
+      },
+      {
+        title: "Forecasting",
+        url: isAdmin
+          ? "/admin/analytics/forecasting"
+          : "/user/analytics/forecasting",
+      },
+    ],
+  };
+
+  const dataTablesNav: NavItem = {
+    title: "Data Tables",
+    url: "data-tables",
+    icon: Table,
+    items: [
+      {
+        title: "Dengue Reports",
+        url: isAdmin
+          ? "/admin/data-tables/dengue-reports"
+          : "/user/data-tables/dengue-reports",
+      },
+    ],
+  };
+
+  const settingsNav: NavItem = {
+    title: "Settings",
+    url: "#",
+    icon: Settings2,
+    items: [
+      { title: "General", url: "#" },
+      { title: "Team", url: "#" },
+      { title: "Billing", url: "#" },
+      { title: "Limits", url: "#" },
+    ],
+  };
+
+  // Items that differ by role.
+  const adminNav: NavItem[] = [
+    {
+      title: "Accounts",
+      url: "accounts",
+      icon: UserPlus,
+      items: [{ title: "Manage Accounts", url: "/admin/accounts/manage" }],
+    },
+  ];
+
+  const userNav: NavItem[] = [
+    {
+      title: "Forms",
+      url: "forms",
+      icon: FolderMinus,
+      items: [
+        { title: "Case Report Form", url: "/user/forms/case-report-form" },
+      ],
+    },
+  ];
+
+  // Build the navigation array based on isAdmin flag.
+  const navMain: NavItem[] = isAdmin
+    ? [...adminNav, analyticsNav, dataTablesNav, settingsNav]
+    : [analyticsNav, ...userNav, dataTablesNav, settingsNav];
+
+  const [activeTeam] = React.useState(teams[0]);
 
   return (
     <Sidebar collapsible="icon">
@@ -252,11 +200,11 @@ export default function AppSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Modules</SidebarGroupLabel>
           <SidebarMenu>
-            {data.navMain.map((item) => (
+            {navMain.map((item) => (
               <Collapsible
                 key={item.title}
                 asChild
-                defaultOpen={sectionSegment == item.url} // open tab onLoad
+                defaultOpen={sectionSegment === item.url}
                 className="group/collapsible"
               >
                 <SidebarMenuItem>
@@ -269,7 +217,7 @@ export default function AppSidebar({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
+                      {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <a href={subItem.url}>
@@ -296,14 +244,12 @@ export default function AppSidebar({
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={data.user.avatar} alt={data.user.name} />
+                    <AvatarImage src={user.avatar} alt={user.name} />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {data.user.name}
-                    </span>
-                    <span className="truncate text-xs">{data.user.email}</span>
+                    <span className="truncate font-semibold">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -317,19 +263,14 @@ export default function AppSidebar({
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={data.user.avatar}
-                        alt={data.user.name}
-                      />
+                      <AvatarImage src={user.avatar} alt={user.name} />
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {data.user.name}
+                        {user.name}
                       </span>
-                      <span className="truncate text-xs">
-                        {data.user.email}
-                      </span>
+                      <span className="truncate text-xs">{user.email}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

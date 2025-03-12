@@ -5,7 +5,7 @@ import { CaseView } from "@/interfaces/dengue-reports/dengue-reports.interface";
 import fetchService from "@/services/fetch.service";
 import { useState, useEffect } from "react";
 
-export default function UserDengueReportView({ params }: any) {
+export default function AdminDengueReportView({ params }: any) {
   const [caseDetails, setCaseDetails] = useState<CaseView>();
 
   useEffect(() => {
