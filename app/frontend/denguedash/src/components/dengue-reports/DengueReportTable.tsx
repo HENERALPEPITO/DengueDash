@@ -78,6 +78,7 @@ export default function Component() {
             {isLoading ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center">
+                  {/* Todo: Add skeleton Loader */}
                   Loading...
                 </TableCell>
               </TableRow>
@@ -110,7 +111,6 @@ export default function Component() {
           handlePageChange={handlePageChange}
         />
       </div>
-      ;
     </div>
   );
 }
