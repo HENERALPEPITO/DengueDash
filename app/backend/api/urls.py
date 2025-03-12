@@ -66,24 +66,14 @@ urlpatterns = [
     #     name="auth-check",
     # ),
     path(
-        "user/",
+        "user/me/",
         MyUserView.as_view(),
-        name="user",
+        name="my-user",
     ),
     path(
         "user/<int:user_id>/",
         AdminBrowseUserView.as_view(),
         name="user-browse",
-    ),
-    path(
-        "user/verify/<int:user_id>/",
-        VerifiyUserView.as_view(),
-        name="user-verify",
-    ),
-    path(
-        "user/delete/<int:user_id>/",
-        DeleteUserView.as_view(),
-        name="user-delete",
     ),
     path(
         "user/list/",
@@ -94,6 +84,16 @@ urlpatterns = [
         "user/list/unverified/",
         UsersUnverifiedListView.as_view(),
         name="user-list-unverified",
+    ),
+    path(
+        "user/verify/<int:user_id>/",
+        VerifiyUserView.as_view(),
+        name="user-verify",
+    ),
+    path(
+        "user/delete/<int:user_id>/",
+        DeleteUserView.as_view(),
+        name="user-delete",
     ),
     path(
         "case/create/",
