@@ -51,6 +51,8 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@shadcn/components/ui/sidebar";
+import { useContext } from "react";
+import { UserContext } from "@/contexts/UserContext";
 
 type AppSidebarProps = {
   sectionSegment: string;
@@ -74,9 +76,11 @@ export default function AppSidebar({
   isAdmin,
 }: AppSidebarProps) {
   // Static data for user and teams.
-  const user = {
-    name: "shadcn",
-    email: "m@example.com",
+  const { user } = useContext(UserContext);
+  const userProfile = {
+    // todo: fetch the user profile again if context is null
+    name: user?.full_name,
+    email: user?.email,
     avatar: "/avatars/shadcn.jpg",
   };
 
@@ -244,12 +248,19 @@ export default function AppSidebar({
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarImage
+                      src={userProfile.avatar}
+                      alt={userProfile.name}
+                    />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate font-semibold">
+                      {userProfile.name}
+                    </span>
+                    <span className="truncate text-xs">
+                      {userProfile.email}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -263,14 +274,19 @@ export default function AppSidebar({
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage
+                        src={userProfile.avatar}
+                        alt={userProfile.name}
+                      />
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {user.name}
+                        {userProfile.name}
                       </span>
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate text-xs">
+                        {userProfile.email}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
