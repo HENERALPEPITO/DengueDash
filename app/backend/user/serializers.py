@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from dru.models import DRU
 
 User = get_user_model()
 
@@ -102,6 +103,21 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password": "Passwords do not match."})
+
+        request = self.context.get("request")
+        # If not an authenticated admin, perform DRU type validation.
+        if not (request and request.user.is_authenticated and request.user.is_admin):
+            dru = attrs.get("dru")
+            if dru:
+                # Blacklisted DRU types for non-admin registrations.
+                DRU_TYPE_BLACKLIST_FOR_UNAUTH_USERS = ["National", "RESU", "PESU/CESU"]
+                if (
+                    dru.dru_type.dru_classification
+                    in DRU_TYPE_BLACKLIST_FOR_UNAUTH_USERS
+                ):
+                    raise serializers.ValidationError(
+                        {"dru": "You are not authorized to register with this DRU."}
+                    )
         return attrs
 
     def create(self, validated_data):

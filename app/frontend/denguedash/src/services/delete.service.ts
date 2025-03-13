@@ -22,9 +22,19 @@ const deleteUser = async (userId: number) => {
   );
 };
 
+const deleteDRU = async (druId: number) => {
+  return axiosClient(
+    `dru/delete/${druId}/`,
+    OPERATION,
+    DEFAULT_DATA,
+    DEFAULT_PARAMS
+  );
+};
+
 const deleteService = {
   deleteCase,
   deleteUser,
+  deleteDRU,
 };
 
 export default deleteService;

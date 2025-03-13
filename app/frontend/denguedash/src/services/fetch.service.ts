@@ -27,7 +27,7 @@ const getDengueCountPerBarangay = async (year: number | null = null) => {
 
 const getCasesDeaths = async (year: number | null = null) => {
   return axiosClient(
-    "cases-deaths/",
+    "cases/deaths/",
     OPERATION,
     DEFAULT_DATA,
     year ? { year } : {},
@@ -37,7 +37,7 @@ const getCasesDeaths = async (year: number | null = null) => {
 
 const getDRUHierarchy = async () => {
   return axiosClient(
-    "dru-hierarchy",
+    "dru/hierarchy",
     OPERATION,
     DEFAULT_DATA,
     DEFAULT_PARAMS,
@@ -84,6 +84,17 @@ const getUserDetails = async (userId: number) => {
   return axiosClient(`user/${userId}`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
 };
 
+const getDRUList = async (page: number, itemsPerPage: number = 8) => {
+  return axiosClient("dru/list/", OPERATION, DEFAULT_DATA, {
+    page,
+    itemsPerPage,
+  });
+};
+
+const getDRUProfile = async (druId: number) => {
+  return axiosClient(`dru/${druId}/`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
 // ALL
 const getMyUserDetails = async () => {
   return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
@@ -100,6 +111,8 @@ const fetchService = {
   getUsersUnverifiedList,
   getMyUserDetails,
   getUserDetails,
+  getDRUList,
+  getDRUProfile,
 };
 
 export default fetchService;

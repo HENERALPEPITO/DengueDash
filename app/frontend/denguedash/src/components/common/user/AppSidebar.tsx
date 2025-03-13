@@ -9,6 +9,7 @@ import {
   CreditCard,
   FolderMinus,
   GalleryVerticalEnd,
+  Hospital,
   LogOut,
   Settings2,
   Sparkles,
@@ -174,9 +175,35 @@ export default function AppSidebar({
     },
   ];
 
+  const manageDruNav: NavItem[] = [
+    {
+      title: "DRU",
+      url: "dru",
+      icon: Hospital,
+      items: [
+        {
+          title: "Manage DRU",
+          url: "/user/admin/dru/manage",
+        },
+        {
+          title: "Add DRU",
+          url: "/user/admin/dru/add",
+        },
+      ],
+    },
+  ];
+
   // Build the navigation array based on isAdmin flag.
   const navMain: NavItem[] = isAdmin
-    ? [...adminNav, analyticsNav, dataTablesNav, settingsNav]
+    ? [
+        ...adminNav,
+        ...(druType === "RESU" || druType === "PESU/CESU"
+          ? [...manageDruNav]
+          : []),
+        analyticsNav,
+        dataTablesNav,
+        settingsNav,
+      ].filter(Boolean) // Filter out any false values
     : [analyticsNav, ...userNav, dataTablesNav, settingsNav];
 
   const [activeTeam] = React.useState(teams[0]);

@@ -1,6 +1,15 @@
 "use client";
 
 import {
+  BriefDRUDetails,
+  DRUListPagination,
+} from "@/interfaces/dru/dru.interface";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
+import fetchService from "@/services/fetch.service";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import CustomPagination from "../common/CustomPagination";
+import {
   Table,
   TableBody,
   TableCell,
@@ -8,50 +17,37 @@ import {
   TableHeader,
   TableRow,
 } from "@shadcn/components/ui/table";
-import {
-  UserBriefDetail,
-  UserListPagination,
-} from "@/interfaces/account/user-interface";
-import fetchService from "@/services/fetch.service";
-import { useEffect, useState } from "react";
-import CustomPagination from "../common/CustomPagination";
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
 import { Button } from "@/shadcn/components/ui/button";
 import Link from "next/link";
-import { toast } from "sonner";
-import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
-export default function AccountsTable() {
-  const [users, setUsers] = useState<UserBriefDetail[]>([]);
+export default function DRUTable() {
+  const [drus, setDrus] = useState<BriefDRUDetails[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
 
   useEffect(() => {
-    fetchUsers(currentPage);
+    fetchDRUs(currentPage);
   }, [currentPage]);
 
-  const fetchUsers = async (page: number) => {
+  const fetchDRUs = async (page: number) => {
     setIsLoading(true);
     try {
-      const response: UserListPagination = await fetchService.getUsersList(
+      const response: DRUListPagination = await fetchService.getDRUList(
         page,
         itemsPerPage
       );
-      const data: UserBriefDetail[] = response.results;
-      setUsers(data);
-
-      const totalCount = parseInt(response.count.toString() || "0", 10);
-      setTotalPages(Math.ceil(totalCount / itemsPerPage));
-      console.log(totalPages);
+      const data: BriefDRUDetails[] = response.results;
+      setDrus(data);
     } catch (error) {
-      toast.error("Failed to fetch user", {
+      toast.error("Failed to fetch DRUs", {
         description: "Something went wrong",
         duration: defaultToastSettings.duration,
         dismissible: defaultToastSettings.isDismissible,
       });
-      console.error("Failed to fetch users:", error);
+      console.error("Failed to fetch DRUs:", error);
     } finally {
       setIsLoading(false);
     }
@@ -60,35 +56,31 @@ export default function AccountsTable() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
   return (
     <div className="container mx-auto p-4 border border-gray-200 rounded-lg">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
+            <TableHead>DRU Name</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Sex</TableHead>
-            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center">
+              <TableCell colSpan={3} className="text-center">
                 <Skeleton className="h-5" />
               </TableCell>
             </TableRow>
           ) : (
-            users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.full_name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>{user.sex_display}</TableCell>
+            drus.map((dru) => (
+              <TableRow key={dru.id}>
+                <TableCell>{dru.dru_name}</TableCell>
+                <TableCell>{dru.email}</TableCell>
                 <TableCell>
                   <Button variant={"outline"} asChild>
-                    <Link href={`manage/${user.id}`}>Open</Link>
+                    <Link href={`manage/${dru.id}`}>Open</Link>
                   </Button>
                 </TableCell>
               </TableRow>

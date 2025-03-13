@@ -22,7 +22,7 @@ import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 import patchService from "@/services/patch.service";
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
 
-export default function UserDetailView({ params }: any) {
+export default function UserProfileView({ params }: any) {
   const router = useRouter();
   const [userData, setUserData] = useState<UserDetailInterface>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -110,9 +110,8 @@ export default function UserDetailView({ params }: any) {
       <Separator className="mt-2" />
       <div className="container py-5">
         <Card className="shadow-md">
-          <CardHeader className="pb-4"></CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 mt-6">
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Name
