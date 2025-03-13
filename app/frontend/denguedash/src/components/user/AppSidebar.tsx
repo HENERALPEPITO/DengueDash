@@ -78,7 +78,6 @@ export default function AppSidebar({
   // Static data for user and teams.
   const { user } = useContext(UserContext);
   const userProfile = {
-    // todo: fetch the user profile again if context is null
     name: user?.full_name,
     email: user?.email,
     avatar: "/avatars/shadcn.jpg",
