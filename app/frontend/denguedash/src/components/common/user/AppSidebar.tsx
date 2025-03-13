@@ -57,6 +57,7 @@ import { UserContext } from "@/contexts/UserContext";
 type AppSidebarProps = {
   sectionSegment: string;
   isAdmin: boolean;
+  druType: string;
 };
 
 interface NavSubItem {
@@ -74,6 +75,7 @@ interface NavItem {
 export default function AppSidebar({
   sectionSegment,
   isAdmin,
+  druType,
 }: AppSidebarProps) {
   // Static data for user and teams.
   const { user } = useContext(UserContext);
@@ -110,14 +112,14 @@ export default function AppSidebar({
       {
         title: "Dashboard",
         url: isAdmin
-          ? "/admin/analytics/dashboard"
-          : "/user/analytics/dashboard",
+          ? "/user/admin/analytics/dashboard"
+          : "/user/encoder/analytics/dashboard",
       },
       {
         title: "Forecasting",
         url: isAdmin
-          ? "/admin/analytics/forecasting"
-          : "/user/analytics/forecasting",
+          ? "/user/admin/analytics/forecasting"
+          : "/user/encoder/analytics/forecasting",
       },
     ],
   };
@@ -130,8 +132,8 @@ export default function AppSidebar({
       {
         title: "Dengue Reports",
         url: isAdmin
-          ? "/admin/data-tables/dengue-reports"
-          : "/user/data-tables/dengue-reports",
+          ? "/user/admin/data-tables/dengue-reports"
+          : "/user/encoder/data-tables/dengue-reports",
       },
     ],
   };
@@ -154,7 +156,7 @@ export default function AppSidebar({
       title: "Accounts",
       url: "accounts",
       icon: UserPlus,
-      items: [{ title: "Manage Accounts", url: "/admin/accounts/manage" }],
+      items: [{ title: "Manage Accounts", url: "/user/admin/accounts/manage" }],
     },
   ];
 
@@ -164,7 +166,10 @@ export default function AppSidebar({
       url: "forms",
       icon: FolderMinus,
       items: [
-        { title: "Case Report Form", url: "/user/forms/case-report-form" },
+        {
+          title: "Case Report Form",
+          url: "/user/encoder/forms/case-report-form",
+        },
       ],
     },
   ];
