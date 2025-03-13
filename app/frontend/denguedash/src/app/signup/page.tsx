@@ -24,10 +24,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { DRUHierarchy } from "@/interfaces/dru/dru-hierarchy";
+import { DRUHierarchy } from "@/interfaces/dru/dru-hierarchy.interface";
 import fetchService from "@/services/fetch.service";
 import Link from "next/link";
 import postService from "@/services/post.service";
+import {
+  BaseErrorResponse,
+  BaseServiceResponse,
+} from "@/interfaces/services/services.interface";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function SignUp() {
   const [DRUData, setDRUData] = useState<DRUHierarchy | null>(null);
@@ -69,14 +75,41 @@ export default function SignUp() {
       dru: parseInt(values.dru, 10),
     };
     try {
-      const response = await postService.signUpUser(formData);
-      //   todo: handle response
-      console.log(response);
-      //   form.reset();
+      const response: BaseServiceResponse | BaseErrorResponse =
+        await postService.signUpUser(formData);
+      if (response.success) {
+        toast.success("Account created successfully", {
+          description: "Please wait for admin approval to access the system",
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+        // todo: find another ways to fully reset the form
+        form.reset();
+      } else {
+        if (typeof response.message === "string") {
+          // Simple message (like general failure message)
+          toast.warning("Failed to create account", {
+            description: response.message,
+            duration: defaultToastSettings.duration,
+            dismissible: defaultToastSettings.isDismissible,
+          });
+        } else {
+          // Object-based message, where fields are keys and values are error arrays
+          let errorMessages = "";
+          for (const [field, errors] of Object.entries(response.message)) {
+            errorMessages += `${field}: ${errors.join(", ")}\n`;
+          }
+
+          toast.warning("Failed to create account", {
+            description: errorMessages,
+            duration: defaultToastSettings.duration,
+            dismissible: defaultToastSettings.isDismissible,
+          });
+        }
+      }
     } catch (error) {
       console.error("Failed to create account:", error);
     }
-    // todo: show sonner toast
   };
 
   return (
