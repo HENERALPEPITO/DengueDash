@@ -20,10 +20,16 @@ import deleteService from "@/services/delete.service";
 import { useRouter } from "next/navigation";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 import patchService from "@/services/patch.service";
+import { Skeleton } from "@/shadcn/components/ui/skeleton";
 
 export default function UserDetailView({ params }: any) {
+  const router = useRouter();
+  const [userData, setUserData] = useState<UserDetailInterface>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const { id } = await params;
         const response: UserDetailInterface =
@@ -31,14 +37,12 @@ export default function UserDetailView({ params }: any) {
         setUserData(response);
       } catch (error) {
         console.error("Failed to fetch user details:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
   }, [params]);
-
-  const router = useRouter();
-
-  const [userData, setUserData] = useState<UserDetailInterface>();
 
   const handleRoleToggle = async () => {
     if (userData?.role !== undefined && userData?.id !== undefined) {
@@ -93,6 +97,7 @@ export default function UserDetailView({ params }: any) {
   };
 
   return (
+    // Todo: Add skeleton loader
     <div className="flex flex-col gap-3">
       <div className="flex flex-row justify-between gap-1">
         <div>
@@ -112,31 +117,51 @@ export default function UserDetailView({ params }: any) {
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Name
                 </h3>
-                <p className="font-medium">{userData?.full_name}</p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">{userData?.full_name}</p>
+                )}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Email
                 </h3>
-                <p className="font-medium">{userData?.email}</p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">{userData?.email}</p>
+                )}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Sex
                 </h3>
-                <p className="font-medium">{userData?.sex_display}</p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">{userData?.sex_display}</p>
+                )}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Role
                 </h3>
-                <p className="font-medium capitalize">{userData?.role}</p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">{userData?.role}</p>
+                )}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Hospital (DRU)
                 </h3>
-                <p className="font-medium">{userData?.dru}</p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">{userData?.dru}</p>
+                )}
               </div>
             </div>
 
@@ -147,31 +172,43 @@ export default function UserDetailView({ params }: any) {
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Created At
                 </h3>
-                <p className="font-medium">
-                  {userData?.created_at
-                    ? formatDateTime(userData.created_at)
-                    : "N/A"}
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">
+                    {userData?.created_at
+                      ? formatDateTime(userData.created_at)
+                      : "N/A"}
+                  </p>
+                )}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Updated At
                 </h3>
-                <p className="font-medium">
-                  {userData?.updated_at
-                    ? formatDateTime(userData.updated_at)
-                    : "N/A"}
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">
+                    {userData?.updated_at
+                      ? formatDateTime(userData.updated_at)
+                      : "N/A"}
+                  </p>
+                )}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Last Login
                 </h3>
-                <p className="font-medium">
-                  {userData?.last_login
-                    ? formatDateTime(userData.last_login)
-                    : "N/A"}
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-5" />
+                ) : (
+                  <p className="font-medium">
+                    {userData?.last_login
+                      ? formatDateTime(userData.last_login)
+                      : "N/A"}
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
