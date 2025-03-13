@@ -27,31 +27,6 @@ export const validateToken = async (token: string): Promise<boolean> => {
   }
 };
 
-// todo: cleanup
-// export const getUserIdFromToken = async (
-//   token: string
-// ): Promise<number | null> => {
-//   try {
-//     const decoded = decodeJwt(token);
-//     return (decoded as { user_id: number }).user_id;
-//   } catch (error) {
-//     console.error("Error getting user ID from token:", error);
-//     return null;
-//   }
-// };
-
-// export const getIsAdminFromToken = async (
-//   token: string
-// ): Promise<boolean | null> => {
-//   try {
-//     const decoded = decodeJwt(token);
-//     return (decoded as { is_admin: boolean }).is_admin;
-//   } catch (error) {
-//     console.error("Error getting user ID from token:", error);
-//     return null;
-//   }
-// };
-
 export const getDataFromToken = async (
   token: string
 ): Promise<TokenData | null> => {
