@@ -39,10 +39,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const adminPath = "/admin";
-  const userPath = "/user";
-  const adminDashboardPath = "/admin/accounts/manage";
-  const userDashboardPath = "/user/analytics/dashboard";
+  const adminPath = "/user/admin";
+  const encoderPath = "/user/encoder";
+  const adminDashboardPath = adminPath.concat("/accounts/manage");
+  const encoderDashboardPath = encoderPath.concat("/analytics/dashboard");
 
   const dataFromToken = await getDataFromToken(accessToken.value);
   if (!dataFromToken) {
@@ -51,9 +51,9 @@ export async function middleware(request: NextRequest) {
   }
   const isAdmin = dataFromToken.is_admin;
   if (request.nextUrl.pathname.startsWith(adminPath) && !isAdmin) {
-    return NextResponse.redirect(new URL(userDashboardPath, request.url));
+    return NextResponse.redirect(new URL(encoderDashboardPath, request.url));
   }
-  if (request.nextUrl.pathname.startsWith(userPath) && isAdmin) {
+  if (request.nextUrl.pathname.startsWith(encoderPath) && isAdmin) {
     return NextResponse.redirect(new URL(adminDashboardPath, request.url));
   }
 
@@ -61,5 +61,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/user/:path*"],
+  matcher: ["/user/:path*"],
 };

@@ -69,7 +69,7 @@ export default function AccountsTable() {
           {isLoading ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center">
-                <Skeleton className="h-4" />
+                <Skeleton className="h-5" />
               </TableCell>
             </TableRow>
           ) : (

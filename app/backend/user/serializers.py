@@ -10,7 +10,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
     sex_display = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
-        return f"{obj.last_name}, {obj.first_name} {obj.middle_name}".strip()
+        return f"{obj.first_name} {obj.middle_name} {obj.last_name}".strip()
 
     def get_role(self, obj):
         return "Admin" if obj.is_admin else "Encoder"

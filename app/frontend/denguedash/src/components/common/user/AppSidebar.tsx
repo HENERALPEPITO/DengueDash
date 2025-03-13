@@ -51,10 +51,13 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@shadcn/components/ui/sidebar";
+import { useContext } from "react";
+import { UserContext } from "@/contexts/UserContext";
 
 type AppSidebarProps = {
   sectionSegment: string;
   isAdmin: boolean;
+  druType: string;
 };
 
 interface NavSubItem {
@@ -72,11 +75,13 @@ interface NavItem {
 export default function AppSidebar({
   sectionSegment,
   isAdmin,
+  druType,
 }: AppSidebarProps) {
   // Static data for user and teams.
-  const user = {
-    name: "shadcn",
-    email: "m@example.com",
+  const { user } = useContext(UserContext);
+  const userProfile = {
+    name: user?.full_name,
+    email: user?.email,
     avatar: "/avatars/shadcn.jpg",
   };
 
@@ -107,14 +112,14 @@ export default function AppSidebar({
       {
         title: "Dashboard",
         url: isAdmin
-          ? "/admin/analytics/dashboard"
-          : "/user/analytics/dashboard",
+          ? "/user/admin/analytics/dashboard"
+          : "/user/encoder/analytics/dashboard",
       },
       {
         title: "Forecasting",
         url: isAdmin
-          ? "/admin/analytics/forecasting"
-          : "/user/analytics/forecasting",
+          ? "/user/admin/analytics/forecasting"
+          : "/user/encoder/analytics/forecasting",
       },
     ],
   };
@@ -127,8 +132,8 @@ export default function AppSidebar({
       {
         title: "Dengue Reports",
         url: isAdmin
-          ? "/admin/data-tables/dengue-reports"
-          : "/user/data-tables/dengue-reports",
+          ? "/user/admin/data-tables/dengue-reports"
+          : "/user/encoder/data-tables/dengue-reports",
       },
     ],
   };
@@ -151,7 +156,7 @@ export default function AppSidebar({
       title: "Accounts",
       url: "accounts",
       icon: UserPlus,
-      items: [{ title: "Manage Accounts", url: "/admin/accounts/manage" }],
+      items: [{ title: "Manage Accounts", url: "/user/admin/accounts/manage" }],
     },
   ];
 
@@ -161,7 +166,10 @@ export default function AppSidebar({
       url: "forms",
       icon: FolderMinus,
       items: [
-        { title: "Case Report Form", url: "/user/forms/case-report-form" },
+        {
+          title: "Case Report Form",
+          url: "/user/encoder/forms/case-report-form",
+        },
       ],
     },
   ];
@@ -244,12 +252,19 @@ export default function AppSidebar({
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarImage
+                      src={userProfile.avatar}
+                      alt={userProfile.name}
+                    />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate font-semibold">
+                      {userProfile.name}
+                    </span>
+                    <span className="truncate text-xs">
+                      {userProfile.email}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -263,14 +278,19 @@ export default function AppSidebar({
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage
+                        src={userProfile.avatar}
+                        alt={userProfile.name}
+                      />
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {user.name}
+                        {userProfile.name}
                       </span>
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate text-xs">
+                        {userProfile.email}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

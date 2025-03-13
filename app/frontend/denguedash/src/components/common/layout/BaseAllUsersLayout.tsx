@@ -5,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@shadcn/components/ui/sidebar";
-import AppSidebar from "@components/user/AppSidebar";
+import AppSidebar from "@/components/common/user/AppSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,12 +15,26 @@ import {
   BreadcrumbSeparator,
 } from "@/shadcn/components/ui/breadcrumb";
 import { Separator } from "@/shadcn/components/ui/separator";
+
 import { useEffect, useState } from "react";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+type LayoutComponentsProps = {
+  isAdmin: boolean;
+  druType: string;
+  children: React.ReactNode;
+};
+
+export default function LayoutComponents({
+  isAdmin,
+  druType,
+  children,
+}: LayoutComponentsProps) {
+  // Make the segments update in the sidebar
   const [segment, setSegment] = useState<string | null>(null);
   useEffect(() => {
-    setSegment(window.location.pathname.split("/")[2]);
+    // Index 3 is the segment
+    // Examples: account, analytics, data-tables
+    setSegment(window.location.pathname.split("/")[3]);
   }, []);
 
   if (segment == null) {
@@ -31,7 +45,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex justify-center gap-4 px-5 pt-2 pb-5">
       <div className="w-5/6">
         <SidebarProvider>
-          <AppSidebar sectionSegment={segment} isAdmin={true} />
+          <AppSidebar
+            sectionSegment={segment}
+            isAdmin={isAdmin}
+            druType={druType}
+          />
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
               <div className="flex items-center gap-2">

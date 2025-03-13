@@ -19,9 +19,9 @@ const Login = () => {
   useEffect(() => {
     // useContext takes time to update, so we need to use useEffect to check if the user is saved to context
     if (user?.role === "Admin") {
-      router.push("/admin/accounts/manage");
+      router.push("/user/admin/accounts/manage");
     } else if (user?.role === "Encoder") {
-      router.push("/user/analytics/dashboard");
+      router.push("/user/encoder/analytics/dashboard");
     }
   }, [user, router]);
 

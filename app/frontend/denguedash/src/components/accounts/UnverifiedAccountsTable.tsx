@@ -113,7 +113,7 @@ export default function UnverifiedAccountsTable() {
           {isLoading ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center">
-                <Skeleton className="w-1/2 h-4 mb-2" />
+                <Skeleton className="h-5" />
               </TableCell>
             </TableRow>
           ) : users.length === 0 ? (
