@@ -1,6 +1,5 @@
 from datetime import timedelta
 from rest_framework import permissions
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +8,7 @@ from case.serializers.case_report_serializers import CaseReportSerializer
 from case.serializers.case_report_serializers import CaseViewSerializer
 from api.pagination import APIPagination
 from django.db.models import Case as DBCase, Value, When
+from django.http import JsonResponse
 
 
 def fetch_cases_for_week(start_date):
@@ -32,16 +32,6 @@ def get_filter_criteria(user):
     else:
         return {"interviewer__dru": user.dru}
 
-    # todo: cleanup
-    # classification = user.classification.classification
-
-    # if classification == "admin_local":
-    #     return {"interviewer__dru__surveillance_unit": user.dru.surveillance_unit}
-    # elif classification == "admin_region":
-    #     return {"interviewer__dru__region": user.dru.region}
-    # else:
-    #     return {"interviewer__dru": user.dru}
-
 
 class CaseReportView(ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -49,7 +39,6 @@ class CaseReportView(ListAPIView):
     pagination_class = APIPagination
 
     def get_queryset(self):
-        # Get the authenticated user
         user = self.request.user
 
         # Generate filter criteria using the helper function
@@ -113,9 +102,11 @@ class CaseDetailedView(APIView):
         ).first()
 
         if case is None:
-            # Raise a PermissionDenied exception if no case is found
-            raise PermissionDenied(
-                detail="You do not have the necessary permissions to access this case."
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You do not have the necessary permissions to access this case or the case does not exist.",
+                }
             )
 
         # Serialize and return the case data
@@ -137,9 +128,16 @@ class CaseDeleteView(APIView):
         ).first()
 
         if case is None:
-            # Raise a PermissionDenied exception if no case is found
-            raise PermissionDenied(
-                detail="You do not have the necessary permissions to access this case or the case does not exist."
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You do not have the necessary permissions to access this case or the case does not exist.",
+                }
             )
         case.delete()
-        return Response({"message": "Case deleted successfully."})
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "Case deleted successfully.",
+            }
+        )
