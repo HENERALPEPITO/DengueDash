@@ -18,6 +18,8 @@ import CustomPagination from "../common/CustomPagination";
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
 import { Button } from "@/shadcn/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function AccountsTable() {
   const [users, setUsers] = useState<UserBriefDetail[]>([]);
@@ -44,6 +46,11 @@ export default function AccountsTable() {
       setTotalPages(Math.ceil(totalCount / itemsPerPage));
       console.log(totalPages);
     } catch (error) {
+      toast.error("Failed to fetch user", {
+        description: "Something went wrong",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
       console.error("Failed to fetch users:", error);
     } finally {
       setIsLoading(false);
