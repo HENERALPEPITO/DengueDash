@@ -75,7 +75,7 @@ export default function UserDetailView({ params }: any) {
         userData.id
       );
       if (response.success) {
-        router.push("/admin/accounts/manage/?status=user-deleted");
+        router.push("/user/admin/accounts/manage/?status=user-deleted");
       } else {
         toast.error("Failed to delete user", {
           description: response.message,
