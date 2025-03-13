@@ -54,8 +54,8 @@ export default function DengueReportView({
       if (response.success) {
         const constantPath = "data-tables/dengue-reports/?status=case-deleted";
         user?.role === "Encoder"
-          ? router.push("/user/".concat(constantPath))
-          : router.push("/admin/".concat(constantPath));
+          ? router.push("/user/encoder/".concat(constantPath))
+          : router.push("/user/admin/".concat(constantPath));
       } else {
         toast.error("Failed to delete case", {
           description: response.message,
