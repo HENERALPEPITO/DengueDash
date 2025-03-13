@@ -20,17 +20,23 @@ import {
   AlertDialogTrigger,
 } from "@shadcn/components/ui/alert-dialog";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/shadcn/components/ui/button";
 import deleteService from "@/services/delete.service";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { CustomAlertDialog } from "../common/CustomAlertDialog";
+import { BaseServiceResponse } from "@/interfaces/services/services.interface";
+import { UserContext } from "@/contexts/UserContext";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function DengueReportView({
   caseDetails,
 }: {
   caseDetails: CaseView;
 }) {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+  const { user } = useContext(UserContext);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -41,14 +47,23 @@ export default function DengueReportView({
   };
 
   const handleDelete = async () => {
-    setIsDeleting(true);
     if (caseDetails?.case_id !== undefined) {
-      const isDeleted = await deleteService.deleteCase(caseDetails.case_id);
-      if (isDeleted) {
-        redirect("/user/data-tables/dengue-reports");
+      const response: BaseServiceResponse = await deleteService.deleteCase(
+        caseDetails.case_id
+      );
+      if (response.success) {
+        const constantPath = "data-tables/dengue-reports/?status=case-deleted";
+        user?.role === "Encoder"
+          ? router.push("/user/".concat(constantPath))
+          : router.push("/admin/".concat(constantPath));
+      } else {
+        toast.error("Failed to delete case", {
+          description: response.message,
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
       }
     }
-    setIsDeleting(false);
   };
 
   const InfoRow = ({
@@ -161,31 +176,15 @@ export default function DengueReportView({
         />
         {caseDetails.can_delete && (
           <div className="py-5 px-8">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" className="text-red-600">
-                  Delete Case
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    the case record and remove all related data.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <CustomAlertDialog
+              title="Delete Case"
+              description="Are you sure you want to delete this case? This action cannot be undone."
+              actionLabel="Delete"
+              variant="destructive"
+              onAction={handleDelete}
+            >
+              <Button variant="destructive">Delete Case</Button>
+            </CustomAlertDialog>
           </div>
         )}
       </div>
@@ -286,6 +285,25 @@ export default function DengueReportView({
           {/* Right Column */}
           <div className="space-y-6">
             <InfoRow label="Outcome" value={caseDetails.outcome_display} />
+          </div>
+        </div>
+      </CardContent>
+
+      {/* Interviewer Section */}
+      <SectionHeader icon="carbon:result" title="Interviewer" />
+      <CardContent>
+        <div className="mx-auto grid grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            <InfoRow
+              label="Interviewer"
+              value={caseDetails.interviewer.full_name}
+            />
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            <InfoRow label="DRU" value={caseDetails.interviewer.dru} />
           </div>
         </div>
       </CardContent>
