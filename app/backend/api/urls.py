@@ -28,6 +28,9 @@ from case.views.case_count_view import (
 from dru.views import (
     RegisterDRUView,
     DRUHierarchyView,
+    DRUListView,
+    DRUProfileView,
+    DeleteDRUView,
 )
 
 from weather.views import WeatherView
@@ -57,9 +60,24 @@ urlpatterns = [
         name="register-dru",
     ),
     path(
-        "dru-hierarchy/",
+        "dru/hierarchy/",
         DRUHierarchyView.as_view(),
         name="dru-hierarchy",
+    ),
+    path(
+        "dru/list/",
+        DRUListView.as_view(),
+        name="dru-list",
+    ),
+    path(
+        "dru/<int:dru_id>/",
+        DRUProfileView.as_view(),
+        name="dru-list",
+    ),
+    path(
+        "dru/delete/<int:dru_id>/",
+        DeleteDRUView.as_view(),
+        name="dru-delete",
     ),
     # path(
     #     "auth/check/",
@@ -127,7 +145,7 @@ urlpatterns = [
         name="cases-per-barangay",
     ),
     path(
-        "cases-deaths/",
+        "cases/deaths/",
         DengueCountDeathsView.as_view(),
         name="cases-deaths",
     ),

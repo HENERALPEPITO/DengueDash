@@ -169,6 +169,17 @@ class DeleteUserView(APIView):
 
     def delete(self, request, user_id):
         current_user = request.user
+
+        if not current_user.is_admin:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not authorized to perform this action",
+                }
+            )
+
+        # Todo: Follow propr logic
+        # Basis: DeleteDRUView
         user_to_delete = User.objects.filter(id=user_id).first()
         if user_to_delete is None:
             return JsonResponse(

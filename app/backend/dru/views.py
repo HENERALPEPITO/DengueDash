@@ -2,10 +2,19 @@ from django.http import JsonResponse
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework import permissions
 from rest_framework import status
-from dru.serializer import RegisterDRUSerializer
+from rest_framework.response import Response
+from dru.serializer import (
+    RegisterDRUSerializer,
+    DRUListSerializer,
+    DRUProfileSerializer,
+)
 from dru.models import DRUType, DRU
+from auth.permission import IsUserAdmin
+from api.pagination import APIPagination
+
 
 User = get_user_model()
 
@@ -146,3 +155,128 @@ class DRUHierarchyView(APIView):
             output.append(region_data)
 
         return JsonResponse({"data": output})
+
+
+class DRUListView(ListAPIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+    pagination_class = APIPagination
+
+    serializer_class = DRUListSerializer
+
+    def get_queryset(self):
+        current_user = self.request.user
+        dru_type = str(current_user.dru.dru_type)
+        if dru_type == "RESU":
+            return DRU.objects.filter(
+                region=current_user.dru.region,
+                dru_type__dru_classification="PESU/CESU",
+            )
+        elif dru_type == "PESU/CESU":
+            return DRU.objects.filter(
+                surveillance_unit=current_user.dru.surveillance_unit,
+            ).exclude(dru_type__dru_classification="PESU/CESU")
+        # All regional DRUs
+        elif dru_type == "National":
+            return DRU.objects.filter(
+                dru_type__dru_classification="RESU",
+            )
+
+
+class DRUProfileView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def get(self, _, dru_id):
+        dru = DRU.objects.filter(id=dru_id).first()
+
+        if dru is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "DRU not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = DRUProfileSerializer(dru)
+        return Response(serializer.data)
+
+
+class DeleteDRUView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def delete(self, request, dru_id):
+        current_user = request.user
+
+        if not current_user.is_admin:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not authorized to perform this action",
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        is_superuser = current_user.is_superuser
+        dru_to_delete = DRU.objects.filter(id=dru_id).first()
+
+        if dru_to_delete is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "DRU not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not is_superuser:
+            current_user_dru_type = str(current_user.dru.dru_type)
+            request_dru_type = str(dru_to_delete.dru_type)
+            ALLOWED_DRU_TYPES = ["RESU", "PESU/CESU"]
+            if current_user_dru_type not in ALLOWED_DRU_TYPES:
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "You are not authorized to perform this action",
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            # For Regional DRUs
+            current_user_region = str(current_user.dru.region)
+            request_region = str(dru_to_delete.region)
+            # For PESU/CESU DRUs
+            current_user_su = str(current_user.dru.surveillance_unit)
+            request_su = str(dru_to_delete.surveillance_unit)
+
+            if current_user_dru_type == "RESU":
+                if (
+                    request_dru_type != "PESU/CESU"
+                    or current_user_region != request_region
+                ):
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "message": "Invalid Action",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            elif current_user_dru_type == "PESU/CESU":
+                if (
+                    request_dru_type in ALLOWED_DRU_TYPES
+                    or current_user_su != request_su
+                ):
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "message": "Invalid Action",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+        dru_to_delete.delete()
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "DRU deleted successfully",
+            }
+        )
