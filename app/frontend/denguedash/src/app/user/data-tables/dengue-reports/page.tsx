@@ -1,5 +1,5 @@
-import DengueReportTable from "@/components/dengue-reports/DengueReportTable";
+import BaseDengueReportPage from "@/components/dengue-reports/BaseDengueReportPage";
 
 export default function DengueReports() {
-  return <DengueReportTable />;
+  return <BaseDengueReportPage />;
 }
