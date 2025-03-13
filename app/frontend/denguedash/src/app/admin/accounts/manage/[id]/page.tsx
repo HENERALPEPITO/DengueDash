@@ -41,13 +41,6 @@ export default function UserDetailView({ params }: any) {
   const [userData, setUserData] = useState<UserDetailInterface>();
 
   const handleRoleToggle = async () => {
-    // const newRole = userData?.role === "Encoder" ? "Admin" : "Encoder";
-    // setUserData({ ...userData!, role: newRole });
-    // toast.success("User Role Updated", {
-    //   description: `The user role has been successfully updated to ${newRole}`,
-    //   duration: defaultToastSettings.duration,
-    //   dismissible: defaultToastSettings.isDismissible,
-    // });
     if (userData?.role !== undefined && userData?.id !== undefined) {
       const response: BaseServiceResponse = await patchService.toggleUserRole(
         userData.id
