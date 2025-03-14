@@ -8,14 +8,14 @@ export const signUpSchema = z
     password: z.string().min(8, {
       message: "Password must be at least 8 characters.",
     }),
-    confirmPassword: z.string().min(8, {
+    password_confirm: z.string().min(8, {
       message: "Password must be at least 8 characters.",
     }),
-    firstName: z.string().min(1, {
+    first_name: z.string().min(1, {
       message: "First Name is required.",
     }),
-    middleName: z.string().optional(),
-    lastName: z.string().min(1, {
+    middle_name: z.string().optional(),
+    last_name: z.string().min(1, {
       message: "Last Name is required.",
     }),
     sex: z.string({
@@ -24,14 +24,14 @@ export const signUpSchema = z
     region: z.string({
       required_error: "Please select your region.",
     }),
-    surveillanceUnit: z.string({
+    surveillance_unit: z.string({
       required_error: "Please select your surveillance unit.",
     }),
     dru: z.string({
       required_error: "Please select your DRU.",
     }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.password_confirm, {
     message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
