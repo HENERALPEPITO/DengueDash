@@ -82,6 +82,8 @@ export default function SignUp() {
           dismissible: defaultToastSettings.isDismissible,
         });
         // todo: find another ways to fully reset the form
+        // todo: makes select value empty after reset
+        // todo: must find way to reset select value
         form.reset();
       } else {
         console.log("Failed to create account:", response);
