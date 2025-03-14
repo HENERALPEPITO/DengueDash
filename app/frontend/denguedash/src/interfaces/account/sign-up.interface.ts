@@ -1,11 +1,11 @@
 export interface SignUpUserInterface {
-  confirmPassword: string;
+  password_confirm: string;
   dru: number;
-  firstName: string;
-  lastName: string;
-  middleName?: string | undefined;
+  first_name: string;
+  last_name: string;
+  middle_name?: string | undefined;
   password: string;
   region: string;
   sex: string;
-  surveillanceUnit: string;
+  surveillance_unit: string;
 }
