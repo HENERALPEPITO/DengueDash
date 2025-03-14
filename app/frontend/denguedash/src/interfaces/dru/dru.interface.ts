@@ -20,3 +20,20 @@ export interface DRUProfileInterface {
   dru_type: string;
   surveillance_unit: string;
 }
+
+interface DRUType {
+  id: number;
+  dru_classification: string;
+}
+
+export interface DRUTypeResponse {
+  data: DRUType[];
+}
+
+export interface RegisterDRUInterface {
+  dru_name: string;
+  email: string;
+  contact_number: string;
+  address: string;
+  dru_type: number;
+}

@@ -1,5 +1,6 @@
 import { SignUpUserInterface } from "@/interfaces/account/sign-up.interface";
 import { axiosClient } from "./auth.service";
+import { RegisterDRUInterface } from "@/interfaces/dru/dru.interface";
 
 const OPERATION = "POST";
 const DEFAULT_PARAMS = {};
@@ -9,7 +10,11 @@ const submitForm = async (formData: any) => {
 };
 
 const signUpUser = async (formData: SignUpUserInterface) => {
-  return axiosClient("register/user/", OPERATION, formData, DEFAULT_PARAMS);
+  return axiosClient("user/register/", OPERATION, formData, DEFAULT_PARAMS);
+};
+
+const registerDRU = async (formData: RegisterDRUInterface) => {
+  return axiosClient("dru/register/", OPERATION, formData, DEFAULT_PARAMS);
 };
 
 const predictCases = async () => {
@@ -46,6 +51,6 @@ const predictCases = async () => {
   return axiosClient("predict/", OPERATION, futureWeather, DEFAULT_PARAMS);
 };
 
-const postService = { submitForm, predictCases, signUpUser };
+const postService = { submitForm, predictCases, signUpUser, registerDRU };
 
 export default postService;

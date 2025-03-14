@@ -35,6 +35,8 @@ import {
 import { toast } from "sonner";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
+type SignUpFormValues = z.infer<typeof signUpSchema>;
+
 export default function SignUp() {
   const [DRUData, setDRUData] = useState<DRUHierarchy | null>(null);
   const [selectedRegion, setSelectedRegion] = useState("");
@@ -53,25 +55,21 @@ export default function SignUp() {
     fetchDRUHierarchyData();
   }, []);
 
-  const form = useForm<z.infer<typeof signUpSchema>>({
+  const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
+      password_confirm: "",
+      first_name: "",
+      middle_name: "",
+      last_name: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
+  const onSubmit = async (values: SignUpFormValues) => {
     const formData = {
       ...values,
-      first_name: values.firstName,
-      middle_name: values.middleName,
-      last_name: values.lastName,
-      password_confirm: values.confirmPassword,
       dru: parseInt(values.dru, 10),
     };
     try {
@@ -84,8 +82,11 @@ export default function SignUp() {
           dismissible: defaultToastSettings.isDismissible,
         });
         // todo: find another ways to fully reset the form
+        // todo: makes select value empty after reset
+        // todo: must find way to reset select value
         form.reset();
       } else {
+        console.log("Failed to create account:", response);
         if (typeof response.message === "string") {
           // Simple message (like general failure message)
           toast.warning("Failed to create account", {
@@ -94,21 +95,24 @@ export default function SignUp() {
             dismissible: defaultToastSettings.isDismissible,
           });
         } else {
-          // Object-based message, where fields are keys and values are error arrays
-          let errorMessages = "";
-          for (const [field, errors] of Object.entries(response.message)) {
-            errorMessages += `${field}: ${errors.join(", ")}\n`;
-          }
-
-          toast.warning("Failed to create account", {
-            description: errorMessages,
-            duration: defaultToastSettings.duration,
-            dismissible: defaultToastSettings.isDismissible,
+          Object.entries(response.message).forEach(([field, errors]) => {
+            (errors as string[]).forEach((error: string) => {
+              toast.warning("Failed to create account", {
+                description: `${field}: ${error}`,
+                duration: defaultToastSettings.duration,
+                dismissible: defaultToastSettings.isDismissible,
+              });
+            });
           });
         }
       }
     } catch (error) {
-      console.error("Failed to create account:", error);
+      toast.error("Failed to connect to server", {
+        description: "Please check your internet connection",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
+      console.error("Failed to connect to server:", error);
     }
   };
 
@@ -129,7 +133,7 @@ export default function SignUp() {
               {/* First Name */}
               <FormField
                 control={form.control}
-                name="firstName"
+                name="first_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>First Name</FormLabel>
@@ -144,7 +148,7 @@ export default function SignUp() {
               {/* Middle Name */}
               <FormField
                 control={form.control}
-                name="middleName"
+                name="middle_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>
@@ -166,7 +170,7 @@ export default function SignUp() {
               {/* Last Name */}
               <FormField
                 control={form.control}
-                name="lastName"
+                name="last_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Last Name</FormLabel>
@@ -237,7 +241,7 @@ export default function SignUp() {
                         field.onChange(value);
                         setSelectedRegion(value);
                         // Reset dependent fields when region changes
-                        form.setValue("surveillanceUnit", "");
+                        form.setValue("surveillance_unit", "");
                         form.setValue("dru", "");
                         setSelectedSu("");
                       }}
@@ -267,7 +271,7 @@ export default function SignUp() {
               {/* Surveillance Unit */}
               <FormField
                 control={form.control}
-                name="surveillanceUnit"
+                name="surveillance_unit"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Surveillance Unit</FormLabel>
@@ -381,7 +385,7 @@ export default function SignUp() {
               {/* Confirm Password */}
               <FormField
                 control={form.control}
-                name="confirmPassword"
+                name="password_confirm"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Confirm Password</FormLabel>

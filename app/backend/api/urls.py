@@ -30,6 +30,7 @@ from dru.views import (
     DRUHierarchyView,
     DRUListView,
     DRUProfileView,
+    DRUTypeView,
     DeleteDRUView,
 )
 
@@ -39,11 +40,6 @@ from lstm_prediction.views import LstmPredictionView
 
 
 urlpatterns = [
-    path(
-        "register/user/",
-        RegisterUserView.as_view(),
-        name="register-user",
-    ),
     path(
         "login/",
         LoginView.as_view(),
@@ -55,9 +51,9 @@ urlpatterns = [
         name="token_refresh",
     ),
     path(
-        "register/dru/",
-        RegisterDRUView.as_view(),
-        name="register-dru",
+        "dru/types/",
+        DRUTypeView.as_view(),
+        name="dru-types",
     ),
     path(
         "dru/hierarchy/",
@@ -73,6 +69,11 @@ urlpatterns = [
         "dru/<int:dru_id>/",
         DRUProfileView.as_view(),
         name="dru-list",
+    ),
+    path(
+        "dru/register/",
+        RegisterDRUView.as_view(),
+        name="dru-register",
     ),
     path(
         "dru/delete/<int:dru_id>/",
@@ -113,6 +114,11 @@ urlpatterns = [
         "user/toggle-role/<int:user_id>/",
         ToggleUserRoleView.as_view(),
         name="user-toggle-role",
+    ),
+    path(
+        "user/register/",
+        RegisterUserView.as_view(),
+        name="register-user",
     ),
     path(
         "user/delete/<int:user_id>/",
