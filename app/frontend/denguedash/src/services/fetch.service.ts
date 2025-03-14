@@ -95,6 +95,10 @@ const getDRUProfile = async (druId: number) => {
   return axiosClient(`dru/${druId}/`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
 };
 
+const getDRUTypes = async () => {
+  return axiosClient("dru/types/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
 // ALL
 const getMyUserDetails = async () => {
   return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
@@ -113,6 +117,7 @@ const fetchService = {
   getUserDetails,
   getDRUList,
   getDRUProfile,
+  getDRUTypes,
 };
 
 export default fetchService;

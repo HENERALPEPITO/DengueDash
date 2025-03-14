@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.db import transaction
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
@@ -10,6 +11,8 @@ from dru.serializer import (
     RegisterDRUSerializer,
     DRUListSerializer,
     DRUProfileSerializer,
+    DRUTypeSerializer,
+    RegionSerializer,
 )
 from dru.models import DRUType, DRU
 from auth.permission import IsUserAdmin
@@ -34,7 +37,7 @@ class RegisterDRUView(APIView):
 
         is_superuser = current_user.is_superuser
         if not is_superuser:
-            current_user_dru_type = current_user.dru.dru_type
+            current_user_dru_type = str(current_user.dru.dru_type)
             ALLOWED_DRU_TYPES = ["National", "RESU", "PESU/CESU"]
             if current_user_dru_type not in ALLOWED_DRU_TYPES:
                 return JsonResponse(
@@ -42,7 +45,8 @@ class RegisterDRUView(APIView):
                         "success": False,
                         "message": "You are not authorized to perform this action",
                     },
-                    status=status.HTTP_403_FORBIDDEN,
+                    # todo: might bring this back; must update frontend
+                    # status=status.HTTP_403_FORBIDDEN,
                 )
 
             request_user_dru_type = DRUType.objects.get(
@@ -55,7 +59,8 @@ class RegisterDRUView(APIView):
                         "success": False,
                         "message": "Invalid Action",
                     },
-                    status=status.HTTP_400_BAD_REQUEST,
+                    # todo: might bring this back; must update frontend
+                    # status=status.HTTP_400_BAD_REQUEST
                 )
             elif (
                 current_user_dru_type == "PESU/CESU"
@@ -66,11 +71,15 @@ class RegisterDRUView(APIView):
                         "success": False,
                         "message": "Invalid Action",
                     },
-                    status=status.HTTP_400_BAD_REQUEST,
+                    # todo: might bring this back; must update frontend
+                    # status=status.HTTP_400_BAD_REQUEST,
                 )
 
         # Create DRU
-        serializer = RegisterDRUSerializer(data=request.data)
+        serializer = RegisterDRUSerializer(
+            data=request.data,
+            context={"request": request},
+        )
         if serializer.is_valid():
             try:
                 with transaction.atomic():
@@ -91,7 +100,8 @@ class RegisterDRUView(APIView):
             except Exception as e:
                 return JsonResponse(
                     {"success": False, "message": f"User creation failed: {str(e)}"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    # todo: might bring this back; must update frontend
+                    # status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
             return JsonResponse(
@@ -107,7 +117,8 @@ class RegisterDRUView(APIView):
                 "success": False,
                 "message": serializer.errors,
             },
-            status=status.HTTP_400_BAD_REQUEST,
+            # todo: might bring this back; must update frontend
+            # status=status.HTTP_400_BAD_REQUEST,
         )
 
 
@@ -119,7 +130,6 @@ class DRUHierarchyView(APIView):
         drus = DRU.objects.all()
 
         for dru in drus:
-
             BLACKLISTED_DRU_TYPES = ["National", "RESU", "PESU/CESU"]
             if dru.dru_type.dru_classification in BLACKLISTED_DRU_TYPES:
                 continue
@@ -133,16 +143,10 @@ class DRUHierarchyView(APIView):
             if su_name not in regions[region_name]:
                 regions[region_name][su_name] = []
 
-            regions[region_name][su_name].append(
-                {
-                    "dru_name": dru.dru_name,
-                    "id": dru.id,
-                }
-            )
+            regions[region_name][su_name].append(dru)
 
-        output = []
-        for region, surveillance_units in regions.items():
-            region_data = {
+        output = [
+            {
                 "region_name": region,
                 "surveillance_units": [
                     {
@@ -152,9 +156,24 @@ class DRUHierarchyView(APIView):
                     for su, drus in surveillance_units.items()
                 ],
             }
-            output.append(region_data)
+            for region, surveillance_units in regions.items()
+        ]
 
-        return JsonResponse({"data": output})
+        serializer = RegionSerializer(output, many=True)
+        return JsonResponse({"data": serializer.data})
+
+
+class DRUTypeView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        dru_types = DRUType.objects.exclude(
+            Q(dru_classification="National")
+            | Q(dru_classification="RESU")
+            | Q(dru_classification="PESU/CESU")
+        )
+        serializer = DRUTypeSerializer(dru_types, many=True)
+        return JsonResponse({"data": serializer.data})
 
 
 class DRUListView(ListAPIView):
