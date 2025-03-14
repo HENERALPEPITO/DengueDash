@@ -2,24 +2,30 @@ from rest_framework import serializers
 from .models import DRU, DRUType
 
 
-# class DRUSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = DRU
-#         fields = [
-#             "id",
-#             "dru_name",
-#             "email",
-#         ]
+class DRUTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DRUType
+        fields = [
+            "id",
+            "dru_classification",
+        ]
 
 
-# class SurveillanceUnitSerializer(serializers.Serializer):
-#     su_name = serializers.CharField()
-#     drus = DRUSerializer(many=True)
+class DRUSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DRU
+        fields = ["id", "dru_name"]
 
 
-# class RegionSerializer(serializers.Serializer):
-#     region_name = serializers.CharField()
-#     surveillance_units = SurveillanceUnitSerializer(many=True)
+class SUSerializer(serializers.Serializer):
+    su_name = serializers.CharField()
+    drus = DRUSerializer(many=True)
+
+
+class RegionSerializer(serializers.Serializer):
+    region_name = serializers.CharField()
+    surveillance_units = SUSerializer(many=True)
 
 
 class DRUListSerializer(serializers.ModelSerializer):
@@ -30,13 +36,6 @@ class DRUListSerializer(serializers.ModelSerializer):
             "dru_name",
             "email",
         ]
-
-
-# Todo: Delete this block of code
-class DRUTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DRUType
-        fields = ["dru_classification"]
 
 
 class RegisterDRUSerializer(serializers.ModelSerializer):
@@ -66,13 +65,18 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
             surveillance_unit=surveillance_unit,
             dru_name=dru_name,
         ).exists():
-            raise serializers.ValidationError(
-                {"success": False, "message": "DRU already exists"}
-            )
+            # raise serializers.ValidationError(
+            #     {"success": False, "message": "DRU already exists"}
+            # )
+            raise serializers.ValidationError({"dru_name": "DRU already exists"})
 
         return data
 
     def create(self, validated_data):
+        request = self.context.get("request")
+        validated_data["region"] = request.user.dru.region
+        validated_data["surveillance_unit"] = request.user.dru.surveillance_unit
+
         dru = DRU.objects.create(**validated_data)
         return dru
 
