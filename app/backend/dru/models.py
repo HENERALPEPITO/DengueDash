@@ -30,6 +30,7 @@ class DRU(BaseModel):
         null=False,
     )
     address = models.TextField(
+        unique=True,
         blank=False,
         null=False,
     )
@@ -39,8 +40,8 @@ class DRU(BaseModel):
         null=False,
     )
     contact_number = models.CharField(
-        max_length=20,
         unique=True,
+        max_length=20,
         blank=False,
         null=False,
     )

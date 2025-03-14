@@ -14,7 +14,7 @@ from weather.models import Weather
 
 
 class LstmPredictionView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def __init__(self):
         super().__init__()
@@ -52,7 +52,12 @@ class LstmPredictionView(APIView):
         return normalized_value * (max_val - min_val) + min_val
 
     # Generates predictions for the next n weeks using the model
-    def predict_next_n_weeks(self, initial_sequence, future_weather, n_weeks=8):
+    def predict_next_n_weeks(
+        self,
+        initial_sequence,
+        future_weather,
+        n_weeks=5,
+    ):
         predictions = []
         current_sequence = initial_sequence.copy()
 
