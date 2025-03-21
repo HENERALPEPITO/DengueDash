@@ -9,7 +9,8 @@ class Command(BaseCommand):
         dru_types = [
             "National",
             "RESU",
-            "PESU/CESU",
+            "PESU",
+            "CESU",
             "RHU",
             "CHO/MHO/PHO",
             "Government Hospital",

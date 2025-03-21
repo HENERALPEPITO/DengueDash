@@ -43,7 +43,7 @@ class Command(BaseCommand):
             {
                 "name": "Iloilo City Epedemiology and Surveillance Unit",
                 "address": "City Hall, Iloilo City",
-                "type": DRUType.objects.get(id=3),
+                "type": DRUType.objects.get(id=4),
                 "unit": "Iloilo City",
                 "region": "Western Visayas",
                 "email": "iloilocesu@gmail.com",

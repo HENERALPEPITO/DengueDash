@@ -38,7 +38,12 @@ class RegisterDRUView(APIView):
         is_superuser = current_user.is_superuser
         if not is_superuser:
             current_user_dru_type = str(current_user.dru.dru_type)
-            ALLOWED_DRU_TYPES = ["National", "RESU", "PESU/CESU"]
+            ALLOWED_DRU_TYPES = [
+                "National",
+                "RESU",
+                "PESU",
+                "CESU",
+            ]
             if current_user_dru_type not in ALLOWED_DRU_TYPES:
                 return JsonResponse(
                     {
@@ -53,7 +58,11 @@ class RegisterDRUView(APIView):
                 dru_type=request.data.get("dru_type")
             )
 
-            if current_user_dru_type == "RESU" and request_user_dru_type != "PESU/CESU":
+            if (
+                current_user_dru_type == "RESU"
+                and request_user_dru_type != "PESU"
+                and request_user_dru_type != "CESU"
+            ):
                 return JsonResponse(
                     {
                         "success": False,
@@ -63,9 +72,8 @@ class RegisterDRUView(APIView):
                     # status=status.HTTP_400_BAD_REQUEST
                 )
             elif (
-                current_user_dru_type == "PESU/CESU"
-                and request_user_dru_type in ALLOWED_DRU_TYPES
-            ):
+                current_user_dru_type == "PESU" or current_user_dru_type == "CESU"
+            ) and request_user_dru_type in ALLOWED_DRU_TYPES:
                 return JsonResponse(
                     {
                         "success": False,
@@ -130,7 +138,12 @@ class DRUHierarchyView(APIView):
         drus = DRU.objects.all()
 
         for dru in drus:
-            BLACKLISTED_DRU_TYPES = ["National", "RESU", "PESU/CESU"]
+            BLACKLISTED_DRU_TYPES = [
+                "National",
+                "RESU",
+                "PESU",
+                "CESU",
+            ]
             if dru.dru_type.dru_classification in BLACKLISTED_DRU_TYPES:
                 continue
 
@@ -170,7 +183,8 @@ class DRUTypeView(APIView):
         dru_types = DRUType.objects.exclude(
             Q(dru_classification="National")
             | Q(dru_classification="RESU")
-            | Q(dru_classification="PESU/CESU")
+            | Q(dru_classification="PESU")
+            | Q(dru_classification="CESU")
         )
         serializer = DRUTypeSerializer(dru_types, many=True)
         return JsonResponse({"data": serializer.data})
@@ -187,13 +201,17 @@ class DRUListView(ListAPIView):
         dru_type = str(current_user.dru.dru_type)
         if dru_type == "RESU":
             return DRU.objects.filter(
+                Q(dru_type__dru_classification="PESU")
+                | Q(dru_type__dru_classification="CESU"),
                 region=current_user.dru.region,
-                dru_type__dru_classification="PESU/CESU",
             )
-        elif dru_type == "PESU/CESU":
+        elif dru_type == "PESU" or dru_type == "CESU":
             return DRU.objects.filter(
                 surveillance_unit=current_user.dru.surveillance_unit,
-            ).exclude(dru_type__dru_classification="PESU/CESU")
+            ).exclude(
+                Q(dru_type__dru_classification="PESU")
+                | Q(dru_type__dru_classification="CESU")
+            )
         # All regional DRUs
         elif dru_type == "National":
             return DRU.objects.filter(
@@ -250,7 +268,7 @@ class DeleteDRUView(APIView):
         if not is_superuser:
             current_user_dru_type = str(current_user.dru.dru_type)
             request_dru_type = str(dru_to_delete.dru_type)
-            ALLOWED_DRU_TYPES = ["RESU", "PESU/CESU"]
+            ALLOWED_DRU_TYPES = ["RESU", "PESU", "CESU"]
             if current_user_dru_type not in ALLOWED_DRU_TYPES:
                 return JsonResponse(
                     {
@@ -269,7 +287,8 @@ class DeleteDRUView(APIView):
 
             if current_user_dru_type == "RESU":
                 if (
-                    request_dru_type != "PESU/CESU"
+                    request_dru_type != "PESU"
+                    and request_dru_type != "CESU"
                     or current_user_region != request_region
                 ):
                     return JsonResponse(
@@ -279,7 +298,7 @@ class DeleteDRUView(APIView):
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-            elif current_user_dru_type == "PESU/CESU":
+            elif current_user_dru_type == "PESU" or current_user_dru_type == "CESU":
                 if (
                     request_dru_type in ALLOWED_DRU_TYPES
                     or current_user_su != request_su

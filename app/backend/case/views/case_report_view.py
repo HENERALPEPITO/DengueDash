@@ -27,7 +27,7 @@ def get_filter_criteria(user):
         return {}
     elif interviewer_dru_type == "RESU":
         return {"interviewer__dru__region": user.dru.region}
-    elif interviewer_dru_type == "PESU/CESU":
+    elif interviewer_dru_type == "PESU" or interviewer_dru_type == "CESU":
         return {"interviewer__dru__surveillance_unit": user.dru.surveillance_unit}
     else:
         return {"interviewer__dru": user.dru}
