@@ -25,6 +25,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Successfully seederd DRU Types data",
+                "Successfully seeded DRU Types data",
             ),
         )

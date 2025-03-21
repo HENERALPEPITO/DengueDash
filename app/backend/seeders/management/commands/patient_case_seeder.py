@@ -225,7 +225,7 @@ class Command(BaseCommand):
                     date_of_birth = fake.date_of_birth(minimum_age=1, maximum_age=100)
                     sex = random.choice(["M", "F"])
                     addr_barangay = random.choice(barangays)
-                    interviewer_ids = [4, 6, 8, 10, 12, 14]
+                    interviewer_ids = [12, 14, 16]
                     interviewer = User.objects.get(id=random.choice(interviewer_ids))
 
                     patient = Patient.objects.create(
