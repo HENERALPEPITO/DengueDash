@@ -13,7 +13,7 @@ export interface DRUProfileInterface {
   dru_name: string;
   email: string;
   contact_number: string;
-  address: string;
+  full_address: string;
   region: string;
   created_at: string;
   updated_at: string;

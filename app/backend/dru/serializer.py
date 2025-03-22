@@ -86,8 +86,13 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
 
 class DRUProfileSerializer(serializers.ModelSerializer):
     dru_type = serializers.StringRelatedField()
+    full_address = serializers.SerializerMethodField()
+
     created_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
     updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+
+    def get_full_address(self, obj):
+        return f"{obj.addr_street}, {obj.addr_barangay}, {obj.addr_city}, {obj.addr_province}".strip()
 
     class Meta:
         model = DRU
@@ -96,7 +101,7 @@ class DRUProfileSerializer(serializers.ModelSerializer):
             "region",
             "surveillance_unit",
             "dru_name",
-            "address",
+            "full_address",
             "email",
             "contact_number",
             "dru_type",

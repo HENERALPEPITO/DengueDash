@@ -26,9 +26,9 @@ export default function DRUProfileView({ params }: any) {
       setIsLoading(true);
       try {
         const { id } = await params;
-        const response: DRUProfileInterface =
-          await fetchService.getDRUProfile(id);
+        const response = await fetchService.getDRUProfile(id);
         setDRUData(response);
+        console.log(response.created_at);
       } catch (error) {
         toast.error("Failed to fetch DRU details", {
           description: "Something went wrong",
@@ -114,7 +114,9 @@ export default function DRUProfileView({ params }: any) {
               {isLoading ? (
                 <Skeleton className="h-5" />
               ) : (
-                <p className="text-base font-medium mt-1">{druData?.address}</p>
+                <p className="text-base font-medium mt-1">
+                  {druData?.full_address}
+                </p>
               )}
             </div>
 
