@@ -12,13 +12,13 @@ class QuickStatisticsSerializer(serializers.Serializer):
     weekly_lab_confirmed_cases = serializers.IntegerField() or None
 
 
-class MapDengueCountSerializer(serializers.Serializer):
-    barangay = serializers.CharField()
+class LocationStatSerializer(serializers.Serializer):
+    location = serializers.CharField()
     case_count = serializers.IntegerField()
     death_count = serializers.IntegerField()
 
 
-class DengueCountDeathsSerializer(serializers.Serializer):
+class DateStatSerializer(serializers.Serializer):
     label = serializers.CharField()
     case_count = serializers.IntegerField()
     death_count = serializers.IntegerField()

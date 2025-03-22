@@ -110,7 +110,12 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             dru = attrs.get("dru")
             if dru:
                 # Blacklisted DRU types for non-admin registrations.
-                DRU_TYPE_BLACKLIST_FOR_UNAUTH_USERS = ["National", "RESU", "PESU/CESU"]
+                DRU_TYPE_BLACKLIST_FOR_UNAUTH_USERS = [
+                    "National",
+                    "RESU",
+                    "PESU",
+                    "CESU",
+                ]
                 if (
                     dru.dru_type.dru_classification
                     in DRU_TYPE_BLACKLIST_FOR_UNAUTH_USERS

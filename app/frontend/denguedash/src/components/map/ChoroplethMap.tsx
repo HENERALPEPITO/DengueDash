@@ -4,7 +4,7 @@ import { MapContainer, GeoJSON } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import { Layer, LeafletEventHandlerFn } from "leaflet";
 import geoJsonData from "@assets/geojsons/iloilo_barangays_random.json";
-import { BarangayData } from "@/interfaces/map/map.interface";
+import { LocationData } from "@/interfaces/map/map.interface";
 
 interface GeoJSONFeature {
   properties: {
@@ -14,7 +14,7 @@ interface GeoJSONFeature {
 }
 
 export type ChoroplethMapProps = {
-  dengueData: BarangayData[];
+  dengueData: LocationData[];
 };
 
 export default function ChoroplethMap({ dengueData }: ChoroplethMapProps) {
@@ -22,7 +22,7 @@ export default function ChoroplethMap({ dengueData }: ChoroplethMapProps) {
 
   const getBarangayCaseCount = (barangayName: string): number => {
     const barangayData = dengueData.find(
-      (data) => data.barangay === barangayName
+      (data) => data.location === barangayName
     );
     return barangayData ? barangayData.case_count : 0;
   };

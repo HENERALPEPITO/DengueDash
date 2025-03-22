@@ -1,14 +1,14 @@
 "use client";
 
-import {
+import type {
   BaseErrorResponse,
   BaseServiceResponse,
 } from "@/interfaces/services/services.interface";
 import { registerDRUSchema } from "@/lib/register-dru-form/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import { Button } from "@shadcn/components/ui/button";
 import {
   Card,
@@ -34,18 +34,125 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@shadcn/components/ui/select";
-import { Textarea } from "@shadcn/components/ui/textarea";
-import { DRUTypeResponse } from "@/interfaces/dru/dru.interface";
+import type { DRUTypeResponse } from "@/interfaces/dru/dru.interface";
 import fetchService from "@/services/fetch.service";
 import { toast } from "sonner";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 import postService from "@/services/post.service";
+import {
+  regions,
+  getProvincesByRegion,
+  getCityMunByProvince,
+  getBarangayByMun,
+} from "phil-reg-prov-mun-brgy";
 
 type RegisterDRUSchema = z.infer<typeof registerDRUSchema>;
 
 export default function AddDRU() {
   const [druTypes, setDruTypes] = useState<DRUTypeResponse>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedCityMunicipality, setSelectedCityMunicipality] = useState("");
+  const [, setSelectedBarangay] = useState("");
+
+  const form = useForm<RegisterDRUSchema>({
+    resolver: zodResolver(registerDRUSchema),
+    defaultValues: {
+      dru_name: "",
+      addr_street: "",
+      addr_barangay: "",
+      addr_city: "",
+      addr_province: "",
+      region: "",
+      email: "",
+      contact_number: "",
+      dru_type: "",
+    },
+  });
+
+  // Filtering functions for dependent dropdowns
+  const filteredProvince = () => {
+    if (!selectedRegion) {
+      return [];
+    }
+    return getProvincesByRegion(selectedRegion);
+  };
+
+  const filteredCityMunicipalities = () => {
+    if (!selectedProvince) {
+      return [];
+    }
+    return getCityMunByProvince(selectedProvince);
+  };
+
+  const filteredBarangays = () => {
+    if (!selectedCityMunicipality) {
+      return [];
+    }
+    return getBarangayByMun(selectedCityMunicipality);
+  };
+
+  // Modified handlers that update both local state AND form values
+  const handleRegionChange = (value: string) => {
+    const [regionName, regCode] = value.split("|");
+
+    // Update local state for filtering
+    setSelectedRegion(regCode);
+    setSelectedProvince("");
+    setSelectedCityMunicipality("");
+    setSelectedBarangay("");
+
+    // Update form values
+    form.setValue("region", regionName);
+    form.setValue("addr_province", "");
+    form.setValue("addr_city", "");
+    form.setValue("addr_barangay", "");
+
+    // Trigger validation
+    form.trigger("region");
+  };
+
+  const handleProvinceChange = (value: string) => {
+    const [provinceName, provCode] = value.split("|");
+
+    // Update local state for filtering
+    setSelectedProvince(provCode);
+    setSelectedCityMunicipality("");
+    setSelectedBarangay("");
+
+    // Update form values
+    form.setValue("addr_province", provinceName);
+    form.setValue("addr_city", "");
+    form.setValue("addr_barangay", "");
+
+    // Trigger validation
+    form.trigger("addr_province");
+  };
+
+  const handleCityMunicipalityChange = (value: string) => {
+    const [cityName, munCode] = value.split("|");
+
+    // Update local state for filtering
+    setSelectedCityMunicipality(munCode);
+    setSelectedBarangay("");
+
+    // Update form values
+    form.setValue("addr_city", cityName);
+    form.setValue("addr_barangay", "");
+
+    // Trigger validation
+    form.trigger("addr_city");
+  };
+
+  const handleBarangayChange = (value: string) => {
+    // Update form value
+    form.setValue("addr_barangay", value);
+    setSelectedBarangay(value);
+
+    // Trigger validation
+    form.trigger("addr_barangay");
+  };
 
   const fetchDRUTypes = async () => {
     try {
@@ -60,24 +167,15 @@ export default function AddDRU() {
     fetchDRUTypes();
   }, []);
 
-  const form = useForm<RegisterDRUSchema>({
-    resolver: zodResolver(registerDRUSchema),
-    defaultValues: {
-      dru_name: "",
-      address: "",
-      email: "",
-      contact_number: "",
-      dru_type: "",
-    },
-  });
-
   const onSubmit = async (values: RegisterDRUSchema) => {
     const formData = {
       ...values,
-      dru_type: parseInt(values.dru_type, 10),
+      dru_type: Number.parseInt(values.dru_type, 10),
     };
-    // todo: remove; for debugging purposes
     console.log(formData);
+
+    setIsSubmitting(true);
+
     try {
       const response: BaseServiceResponse | BaseErrorResponse =
         await postService.registerDRU(formData);
@@ -88,9 +186,13 @@ export default function AddDRU() {
           duration: defaultToastSettings.duration,
           dismissible: defaultToastSettings.isDismissible,
         });
-        // todo: makes select value empty after reset
-        // todo: must find way to reset select value
+
+        // Reset form and state
         form.reset();
+        setSelectedRegion("");
+        setSelectedProvince("");
+        setSelectedCityMunicipality("");
+        setSelectedBarangay("");
       } else {
         if (typeof response.message === "string") {
           toast.warning("Failed to create account", {
@@ -110,17 +212,19 @@ export default function AddDRU() {
           });
         }
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to connect to the server", {
         description: "Please check your internet connection",
         duration: defaultToastSettings.duration,
         dismissible: defaultToastSettings.isDismissible,
       });
     }
+
+    setIsSubmitting(false);
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl">
           Register Disease Reporting Unit
@@ -149,23 +253,175 @@ export default function AddDRU() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter complete address"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Address Fields - In specified order with Select components */}
+            <div className="space-y-4">
+              <h3 className="text-md font-medium">Address Information</h3>
+
+              {/* Region and Province in one row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Region - Select */}
+                <FormField
+                  control={form.control}
+                  name="region"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Region</FormLabel>
+                      <Select
+                        onValueChange={handleRegionChange}
+                        value={
+                          field.value ? `${field.value}|${selectedRegion}` : ""
+                        }
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Region" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {regions.map((region) => (
+                            <SelectItem
+                              key={region.reg_code}
+                              value={`${region.name}|${region.reg_code}`}
+                            >
+                              {region.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Province - Select */}
+                <FormField
+                  control={form.control}
+                  name="addr_province"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Province</FormLabel>
+                      <Select
+                        onValueChange={handleProvinceChange}
+                        value={
+                          field.value
+                            ? `${field.value}|${selectedProvince}`
+                            : ""
+                        }
+                        disabled={!selectedRegion}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Province" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {filteredProvince().map((province) => (
+                            <SelectItem
+                              key={province.prov_code}
+                              value={`${province.name}|${province.prov_code}`}
+                            >
+                              {province.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* City and Barangay in one row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* City/Municipality - Select */}
+                <FormField
+                  control={form.control}
+                  name="addr_city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City/Municipality</FormLabel>
+                      <Select
+                        onValueChange={handleCityMunicipalityChange}
+                        value={
+                          field.value
+                            ? `${field.value}|${selectedCityMunicipality}`
+                            : ""
+                        }
+                        disabled={!selectedProvince}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select City/Municipality" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {filteredCityMunicipalities().map((city) => (
+                            <SelectItem
+                              key={city.mun_code}
+                              value={`${city.name}|${city.mun_code}`}
+                            >
+                              {city.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Barangay - Select */}
+                <FormField
+                  control={form.control}
+                  name="addr_barangay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Barangay</FormLabel>
+                      <Select
+                        onValueChange={handleBarangayChange}
+                        value={field.value}
+                        disabled={!selectedCityMunicipality}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Barangay" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {filteredBarangays().map((barangay) => (
+                            <SelectItem
+                              key={barangay.name}
+                              value={barangay.name}
+                            >
+                              {barangay.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Street Address in its own row */}
+              <FormField
+                control={form.control}
+                name="addr_street"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="House/Building No., Street Name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -207,10 +463,7 @@ export default function AddDRU() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>DRU Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select DRU type" />

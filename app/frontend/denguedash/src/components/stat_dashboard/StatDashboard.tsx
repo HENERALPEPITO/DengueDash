@@ -1,7 +1,7 @@
 "use client";
 
 import ChartHeader from "./ChartHeader";
-import { BarangayData } from "@/interfaces/map/map.interface";
+import { LocationData } from "@/interfaces/map/map.interface";
 import fetchService from "@/services/fetch.service";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ComboChart from "@components/charts/ComboChart";
@@ -47,7 +47,7 @@ years.unshift("All");
 export default function StatDashboard() {
   const [caseData, setCaseData] = useState<CurrentCaseCount | null>(null);
   const [caseDeathsData, setCaseDeathData] = useState<ComboCountDeaths[]>([]);
-  const [barangayData, setBarangayData] = useState<BarangayData[]>([]);
+  const [mapData, setMapData] = useState<LocationData[]>([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
   // Popovers
@@ -58,25 +58,25 @@ export default function StatDashboard() {
 
   const topBarangays = useMemo(() => {
     const TOP_BARANGAYS_COUNT = 5;
-    const LABEL_KEY = "barangay";
+    const LABEL_KEY = "location";
     const VALUE_KEY = "case_count";
-    const sortedTopData = [...barangayData]
+    const sortedTopData = [...mapData]
       .sort((a, b) => b.case_count - a.case_count)
       .slice(0, TOP_BARANGAYS_COUNT);
 
     return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
-  }, [barangayData]);
+  }, [mapData]);
 
   const topBarangaysDeaths = useMemo(() => {
     const TOP_BARANGAYS_COUNT = 5;
-    const LABEL_KEY = "barangay";
+    const LABEL_KEY = "location";
     const VALUE_KEY = "death_count";
-    const sortedTopData = [...barangayData]
+    const sortedTopData = [...mapData]
       .sort((a, b) => b.death_count - a.death_count)
       .slice(0, TOP_BARANGAYS_COUNT);
 
     return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
-  }, [barangayData]);
+  }, [mapData]);
 
   // todo: add try catch
   const fetchQuickStat = async (year: number | null) => {
@@ -96,9 +96,16 @@ export default function StatDashboard() {
 
   // todo: add try catch
   const fetchBarangayData = async (year: number | null) => {
-    const response: BarangayData[] =
-      await fetchService.getDengueCountPerBarangay(year);
-    setBarangayData(response);
+    console.log(encodeURIComponent("ILOILO CITY (Capital)"));
+    const response: LocationData[] =
+      // todo: create an interface for the params
+      await fetchService.getDenguePublicLocationStats({
+        year: year,
+        city: encodeURIComponent("ILOILO CITY (Capital)"),
+        group_by: "barangay",
+      });
+    console.log(response);
+    setMapData(response);
     setDataLoaded(true);
   };
 
@@ -228,7 +235,7 @@ export default function StatDashboard() {
             {/* Choropleth Map */}
             <div className="border border-grey rounded-lg flex-1">
               <ChartHeader title={"Dengue Situation"} />
-              <ChoroplethMapWrapper dengueData={barangayData} />
+              <ChoroplethMapWrapper dengueData={mapData} />
             </div>
             {/* Right Side */}
             <div className="flex flex-col flex-1 gap-3">

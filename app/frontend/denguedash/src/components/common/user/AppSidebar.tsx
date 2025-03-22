@@ -197,7 +197,7 @@ export default function AppSidebar({
   const navMain: NavItem[] = isAdmin
     ? [
         ...adminNav,
-        ...(druType === "RESU" || druType === "PESU/CESU"
+        ...(druType === "RESU" || druType === "PESU" || druType === "CESU"
           ? [...manageDruNav]
           : []),
         analyticsNav,

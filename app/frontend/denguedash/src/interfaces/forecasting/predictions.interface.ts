@@ -12,7 +12,7 @@ interface PredictionData {
 
 export type ModelPredictions = PredictionData[];
 
-interface PredictionMetadata {
+export interface PredictionMetadata {
   model_window_size: number;
   prediction_generated_at: string;
 }

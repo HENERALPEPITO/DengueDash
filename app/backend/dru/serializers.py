@@ -50,7 +50,10 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
             "region",
             "surveillance_unit",
             "dru_name",
-            "address",
+            "addr_street",
+            "addr_barangay",
+            "addr_city",
+            "addr_province",
             "email",
             "contact_number",
             "dru_type",
@@ -65,9 +68,6 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
             surveillance_unit=surveillance_unit,
             dru_name=dru_name,
         ).exists():
-            # raise serializers.ValidationError(
-            #     {"success": False, "message": "DRU already exists"}
-            # )
             raise serializers.ValidationError({"dru_name": "DRU already exists"})
 
         return data
@@ -83,8 +83,13 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
 
 class DRUProfileSerializer(serializers.ModelSerializer):
     dru_type = serializers.StringRelatedField()
+    full_address = serializers.SerializerMethodField()
+
     created_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
     updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
+
+    def get_full_address(self, obj):
+        return f"{obj.addr_street}, {obj.addr_barangay}, {obj.addr_city}, {obj.addr_province}".strip()
 
     class Meta:
         model = DRU
@@ -93,7 +98,7 @@ class DRUProfileSerializer(serializers.ModelSerializer):
             "region",
             "surveillance_unit",
             "dru_name",
-            "address",
+            "full_address",
             "email",
             "contact_number",
             "dru_type",

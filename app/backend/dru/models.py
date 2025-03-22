@@ -29,8 +29,23 @@ class DRU(BaseModel):
         blank=False,
         null=False,
     )
-    address = models.TextField(
-        unique=True,
+    addr_street = models.CharField(
+        max_length=100,
+        blank=False,
+        null=False,
+    )
+    addr_barangay = models.CharField(
+        max_length=100,
+        blank=False,
+        null=False,
+    )
+    addr_city = models.CharField(
+        max_length=100,
+        blank=False,
+        null=False,
+    )
+    addr_province = models.CharField(
+        max_length=100,
         blank=False,
         null=False,
     )

@@ -6,7 +6,7 @@ const OPERATION = "POST";
 const DEFAULT_PARAMS = {};
 
 const submitForm = async (formData: any) => {
-  return axiosClient("case/create/", OPERATION, formData, DEFAULT_PARAMS);
+  return axiosClient("cases/create/", OPERATION, formData, DEFAULT_PARAMS);
 };
 
 const signUpUser = async (formData: SignUpUserInterface) => {

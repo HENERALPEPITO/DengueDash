@@ -22,8 +22,9 @@ from case.views.case_report_view import (
 )
 from case.views.case_count_view import (
     QuickStatisticsView,
-    BarangayCountView,
-    DengueCountDeathsView,
+    DenguePublicLocationStatView,
+    DengueAuthenticatedLocationStatView,
+    DengueDateStatView,
 )
 from dru.views import (
     RegisterDRUView,
@@ -34,7 +35,9 @@ from dru.views import (
     DeleteDRUView,
 )
 
-from weather.views import WeatherView
+from weather.views import (
+    WeatherView,
+)
 
 from lstm_prediction.views import LstmPredictionView
 
@@ -126,33 +129,38 @@ urlpatterns = [
         name="user-delete",
     ),
     path(
-        "case/create/",
+        "cases/create/",
         PatientCaseView.as_view(),
         name="create-case",
     ),
     path(
-        "dengue-case-reports/",
+        "cases/reports/",
         CaseReportView.as_view(),
         name="case-reports",
     ),
     path(
-        "dengue-case-reports/<int:case_id>/",
+        "cases/reports/<int:case_id>/",
         CaseDetailedView.as_view(),
         name="case-detailed",
     ),
     path(
-        "quick-stat/",
+        "cases/stat/",
         QuickStatisticsView.as_view(),
-        name="quick-stat/",
+        name="quick-stats",
     ),
     path(
-        "cases-per-barangay/",
-        BarangayCountView.as_view(),
-        name="cases-per-barangay",
+        "cases/stat/public/location/",
+        DenguePublicLocationStatView.as_view(),
+        name="cases-per-location-public",
     ),
     path(
-        "cases/deaths/",
-        DengueCountDeathsView.as_view(),
+        "cases/stat/auth/location/",
+        DengueAuthenticatedLocationStatView.as_view(),
+        name="cases-per-location-auth",
+    ),
+    path(
+        "cases/stat/by-date/",
+        DengueDateStatView.as_view(),
         name="cases-deaths",
     ),
     path(
@@ -162,7 +170,7 @@ urlpatterns = [
     ),
     # Delete
     path(
-        "case/delete/<int:case_id>/",
+        "cases/delete/<int:case_id>/",
         CaseDeleteView.as_view(),
         name="case-delete",
     ),

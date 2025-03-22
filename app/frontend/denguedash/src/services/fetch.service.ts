@@ -7,7 +7,7 @@ const DEFAULT_PARAMS = {};
 // Requests that do not need authentication
 const getQuickStat = async (year: number | null = null) => {
   return axiosClient(
-    "quick-stat/",
+    "cases/stat/",
     OPERATION,
     DEFAULT_DATA,
     year ? { year } : {},
@@ -15,19 +15,19 @@ const getQuickStat = async (year: number | null = null) => {
   );
 };
 
-const getDengueCountPerBarangay = async (year: number | null = null) => {
+const getDenguePublicLocationStats = async (params: Record<string, any>) => {
   return axiosClient(
-    "cases-per-barangay/",
+    "cases/stat/public/location",
     OPERATION,
     DEFAULT_DATA,
-    year ? { year } : {},
+    params.year ? { year: params.year } : {},
     false
   );
 };
 
 const getCasesDeaths = async (year: number | null = null) => {
   return axiosClient(
-    "cases/deaths/",
+    "cases/stat/by-date/",
     OPERATION,
     DEFAULT_DATA,
     year ? { year } : {},
@@ -46,8 +46,17 @@ const getDRUHierarchy = async () => {
 };
 
 // Requests that must need authentication
+const getDengueAuthLocationStats = async (params: Record<string, any>) => {
+  return axiosClient(
+    "cases/stat/auth/location",
+    OPERATION,
+    DEFAULT_DATA,
+    params
+  );
+};
+
 const getDengueReports = async (page: number, itemsPerPage: number = 8) => {
-  return axiosClient("dengue-case-reports/", OPERATION, DEFAULT_DATA, {
+  return axiosClient("cases/reports/", OPERATION, DEFAULT_DATA, {
     page,
     itemsPerPage,
   });
@@ -55,11 +64,15 @@ const getDengueReports = async (page: number, itemsPerPage: number = 8) => {
 
 const getCaseViewDetails = async (caseId: number) => {
   return axiosClient(
-    `dengue-case-reports/${caseId}/`,
+    `cases/reports/${caseId}/`,
     OPERATION,
     DEFAULT_DATA,
     DEFAULT_PARAMS
   );
+};
+
+const getWeatherData = async (params: Record<string, any>) => {
+  return axiosClient("weather/", OPERATION, DEFAULT_DATA, params);
 };
 
 // ADMIN
@@ -106,7 +119,8 @@ const getMyUserDetails = async () => {
 
 const fetchService = {
   getQuickStat,
-  getDengueCountPerBarangay,
+  getDenguePublicLocationStats,
+  getDengueAuthLocationStats,
   getCasesDeaths,
   getDengueReports,
   getCaseViewDetails,
@@ -118,6 +132,7 @@ const fetchService = {
   getDRUList,
   getDRUProfile,
   getDRUTypes,
+  getWeatherData,
 };
 
 export default fetchService;

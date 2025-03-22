@@ -13,7 +13,7 @@ export interface DRUProfileInterface {
   dru_name: string;
   email: string;
   contact_number: string;
-  address: string;
+  full_address: string;
   region: string;
   created_at: string;
   updated_at: string;
@@ -34,6 +34,10 @@ export interface RegisterDRUInterface {
   dru_name: string;
   email: string;
   contact_number: string;
-  address: string;
+  addr_street: string;
+  addr_barangay: string;
+  addr_city: string;
+  addr_province: string;
+  region: string;
   dru_type: number;
 }

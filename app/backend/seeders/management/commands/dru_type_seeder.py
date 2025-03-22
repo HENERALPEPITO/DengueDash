@@ -9,7 +9,8 @@ class Command(BaseCommand):
         dru_types = [
             "National",
             "RESU",
-            "PESU/CESU",
+            "PESU",
+            "CESU",
             "RHU",
             "CHO/MHO/PHO",
             "Government Hospital",
@@ -24,6 +25,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Successfully seederd DRU Types data",
+                "Successfully seeded DRU Types data",
             ),
         )
