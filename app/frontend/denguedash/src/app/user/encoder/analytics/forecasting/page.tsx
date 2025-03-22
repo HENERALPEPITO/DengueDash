@@ -142,7 +142,6 @@ export default function Dashboard() {
           group_by: "barangay",
         }
       );
-    console.log("Location", response);
     setCurrentWeekDengueData(response);
   };
 
@@ -158,7 +157,6 @@ export default function Dashboard() {
         week: 44,
       }
     );
-    console.log("Weather", response);
     setCurrentWeekWeatherData(response);
   };
 
@@ -186,10 +184,12 @@ export default function Dashboard() {
       <Separator className="mt-2" />
 
       <div className="container mx-auto py-2">
-        <div className="text-md text-muted-foreground mb-4 text-right">
-          Last updated :{" "}
-          {formatDateTime(predictionMetaData?.prediction_generated_at ?? "")}
-        </div>
+        {predictions ? (
+          <div className="text-md text-muted-foreground mb-4 text-right">
+            Last updated :{" "}
+            {formatDateTime(predictionMetaData?.prediction_generated_at ?? "")}
+          </div>
+        ) : null}
 
         {/* Prediction Button */}
         {!predictions && !isPredicting && (
