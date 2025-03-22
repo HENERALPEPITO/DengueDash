@@ -54,8 +54,8 @@ class RegisterDRUView(APIView):
                     # status=status.HTTP_403_FORBIDDEN,
                 )
 
-            request_user_dru_type = DRUType.objects.get(
-                dru_type=request.data.get("dru_type")
+            request_user_dru_type = str(
+                DRUType.objects.get(dru_type=request.data.get("dru_type"))
             )
 
             if (
@@ -179,7 +179,7 @@ class DRUHierarchyView(APIView):
 class DRUTypeView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request):
+    def get(self, _):
         dru_types = DRUType.objects.exclude(
             Q(dru_classification="National")
             | Q(dru_classification="RESU")
