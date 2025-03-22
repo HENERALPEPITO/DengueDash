@@ -67,7 +67,6 @@ class RegisterDRUView(APIView):
                 "success": False,
                 "message": "You are not authorized to perform this action",
             },
-            status=status.HTTP_403_FORBIDDEN,
         )
 
     def _validate_dru_registration(self, user, request_data):
@@ -83,12 +82,10 @@ class RegisterDRUView(APIView):
             if request_user_dru_type not in ["PESU", "CESU"]:
                 return JsonResponse(
                     {"success": False, "message": "Invalid DRU Type"},
-                    status=status.HTTP_400_BAD_REQUEST,
                 )
             if user.dru.region != request_user_region:
                 return JsonResponse(
                     {"success": False, "message": "Invalid Region"},
-                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
         # Validation for PESU and CESU
@@ -96,19 +93,16 @@ class RegisterDRUView(APIView):
             if request_user_dru_type in self.ALLOWED_DRU_TYPES:
                 return JsonResponse(
                     {"success": False, "message": "Invalid DRU Type"},
-                    status=status.HTTP_400_BAD_REQUEST,
                 )
             if current_user_dru_type == "CESU":
                 if user.dru.addr_city != request_data.get("addr_city"):
                     return JsonResponse(
                         {"success": False, "message": "Invalid City"},
-                        status=status.HTTP_400_BAD_REQUEST,
                     )
             elif current_user_dru_type == "PESU":
                 if user.dru.addr_province != request_data.get("addr_province"):
                     return JsonResponse(
                         {"success": False, "message": "Invalid Province"},
-                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
         return None
@@ -121,7 +115,6 @@ class RegisterDRUView(APIView):
         if not serializer.is_valid():
             return JsonResponse(
                 {"success": False, "message": serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
@@ -142,12 +135,10 @@ class RegisterDRUView(APIView):
         except Exception as e:
             return JsonResponse(
                 {"success": False, "message": f"User creation failed: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
         return JsonResponse(
             {"success": True, "message": "DRU successfully registered"},
-            status=status.HTTP_201_CREATED,
         )
 
 
@@ -252,7 +243,6 @@ class DRUProfileView(APIView):
                     "success": False,
                     "message": "DRU not found",
                 },
-                status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = DRUProfileSerializer(dru)
@@ -271,7 +261,6 @@ class DeleteDRUView(APIView):
                     "success": False,
                     "message": "You are not authorized to perform this action",
                 },
-                status=status.HTTP_403_FORBIDDEN,
             )
 
         is_superuser = current_user.is_superuser
@@ -283,7 +272,6 @@ class DeleteDRUView(APIView):
                     "success": False,
                     "message": "DRU not found",
                 },
-                status=status.HTTP_404_NOT_FOUND,
             )
 
         if not is_superuser:
@@ -296,7 +284,6 @@ class DeleteDRUView(APIView):
                         "success": False,
                         "message": "You are not authorized to perform this action",
                     },
-                    status=status.HTTP_403_FORBIDDEN,
                 )
 
             # For Regional DRUs
@@ -317,7 +304,6 @@ class DeleteDRUView(APIView):
                             "success": False,
                             "message": "Invalid Action",
                         },
-                        status=status.HTTP_400_BAD_REQUEST,
                     )
             elif current_user_dru_type == "PESU" or current_user_dru_type == "CESU":
                 if (
@@ -329,7 +315,6 @@ class DeleteDRUView(APIView):
                             "success": False,
                             "message": "Invalid Action",
                         },
-                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
         dru_to_delete.delete()
