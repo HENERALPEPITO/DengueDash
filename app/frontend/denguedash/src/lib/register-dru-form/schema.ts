@@ -4,9 +4,11 @@ export const registerDRUSchema = z.object({
   dru_name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  address: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
+  addr_street: z.string().min(1, "Street is required"),
+  addr_barangay: z.string().min(1, "Barangay is required"),
+  addr_city: z.string().min(1, "City is required"),
+  addr_province: z.string().min(1, "Province is required"),
+  region: z.string().min(1, "Region is required"),
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
