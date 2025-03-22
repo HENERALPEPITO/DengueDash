@@ -104,7 +104,7 @@ class Command(BaseCommand):
                 "addr_city": "ILOILO CITY (Capital)",
                 "addr_province": "Iloilo",
                 "type": DRUType.objects.get(id=8),
-                "unit": "Iloilo City",
+                "unit": "Iloilo CESU",
                 "region": "Region VI (Western Visayas)",
                 "email": "saintpaul@gmail.com",
                 "contact_number": "09123456784",
