@@ -7,7 +7,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
-from dru.serializer import (
+from dru.serializers import (
     RegisterDRUSerializer,
     DRUListSerializer,
     DRUProfileSerializer,
@@ -22,111 +22,132 @@ from api.pagination import APIPagination
 User = get_user_model()
 
 
+from rest_framework.views import APIView
+from rest_framework import permissions, status
+from django.http import JsonResponse
+from django.db import transaction
+from .models import (
+    DRU,
+    DRUType,
+)
+from .serializers import RegisterDRUSerializer
+
+
 class RegisterDRUView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
+    # Constants
+    ALLOWED_DRU_TYPES = ["National", "RESU", "PESU", "CESU"]
+
     def post(self, request):
         current_user = request.user
-        if not current_user.is_admin:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "You are not authorized to perform this action",
-                }
-            )
 
-        is_superuser = current_user.is_superuser
-        if not is_superuser:
-            current_user_dru_type = str(current_user.dru.dru_type)
-            ALLOWED_DRU_TYPES = [
-                "National",
-                "RESU",
-                "PESU",
-                "CESU",
-            ]
-            if current_user_dru_type not in ALLOWED_DRU_TYPES:
-                return JsonResponse(
-                    {
-                        "success": False,
-                        "message": "You are not authorized to perform this action",
-                    },
-                    # todo: might bring this back; must update frontend
-                    # status=status.HTTP_403_FORBIDDEN,
-                )
+        # Authorization check
+        if not self._is_user_authorized(current_user):
+            return self._unauthorized_response()
 
-            request_user_dru_type = str(
-                DRUType.objects.get(dru_type=request.data.get("dru_type"))
-            )
+        # Validation check
+        validation_error = self._validate_dru_registration(current_user, request.data)
+        if validation_error:
+            return validation_error
 
-            if (
-                current_user_dru_type == "RESU"
-                and request_user_dru_type != "PESU"
-                and request_user_dru_type != "CESU"
-            ):
-                return JsonResponse(
-                    {
-                        "success": False,
-                        "message": "Invalid Action",
-                    },
-                    # todo: might bring this back; must update frontend
-                    # status=status.HTTP_400_BAD_REQUEST
-                )
-            elif (
-                current_user_dru_type == "PESU" or current_user_dru_type == "CESU"
-            ) and request_user_dru_type in ALLOWED_DRU_TYPES:
-                return JsonResponse(
-                    {
-                        "success": False,
-                        "message": "Invalid Action",
-                    },
-                    # todo: might bring this back; must update frontend
-                    # status=status.HTTP_400_BAD_REQUEST,
-                )
+        # Create DRU and associated user
+        return self._create_dru_and_user(request)
 
-        # Create DRU
-        serializer = RegisterDRUSerializer(
-            data=request.data,
-            context={"request": request},
-        )
-        if serializer.is_valid():
-            try:
-                with transaction.atomic():
-                    new_dru = serializer.save()
-                    User.objects.create_user(
-                        email=new_dru.email,
-                        # Todo: change password to a random password and email the user about the account details
-                        password="testpassword",
-                        first_name=new_dru.dru_name,
-                        middle_name="",
-                        last_name="",
-                        sex="N/A",
-                        is_admin=True,
-                        is_verified=True,
-                        is_legacy=True,
-                        dru=new_dru,
-                    )
-            except Exception as e:
-                return JsonResponse(
-                    {"success": False, "message": f"User creation failed: {str(e)}"},
-                    # todo: might bring this back; must update frontend
-                    # status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+    def _is_user_authorized(self, user):
+        """Check if the user is authorized to register a DRU."""
+        if user.is_admin or user.is_superuser:
+            return True
+        return str(user.dru.dru_type) in self.ALLOWED_DRU_TYPES
 
-            return JsonResponse(
-                {
-                    "success": True,
-                    "message": "DRU successfully registered",
-                },
-                status=status.HTTP_201_CREATED,
-            )
-
+    def _unauthorized_response(self):
+        """Return a standardized unauthorized response."""
         return JsonResponse(
             {
                 "success": False,
-                "message": serializer.errors,
+                "message": "You are not authorized to perform this action",
             },
-            # todo: might bring this back; must update frontend
-            # status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    def _validate_dru_registration(self, user, request_data):
+        """Validate DRU type and region based on the user's DRU type."""
+        current_user_dru_type = str(user.dru.dru_type)
+        request_user_dru_type = str(
+            DRUType.objects.get(id=request_data.get("dru_type"))
+        )
+        request_user_region = request_data.get("region")
+
+        # Validation for RESU
+        if current_user_dru_type == "RESU":
+            if request_user_dru_type not in ["PESU", "CESU"]:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid DRU Type"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if user.dru.region != request_user_region:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid Region"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Validation for PESU and CESU
+        elif current_user_dru_type in ["PESU", "CESU"]:
+            if request_user_dru_type in self.ALLOWED_DRU_TYPES:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid DRU Type"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if current_user_dru_type == "CESU":
+                if user.dru.addr_city != request_data.get("addr_city"):
+                    return JsonResponse(
+                        {"success": False, "message": "Invalid City"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            elif current_user_dru_type == "PESU":
+                if user.dru.addr_province != request_data.get("addr_province"):
+                    return JsonResponse(
+                        {"success": False, "message": "Invalid Province"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+        return None
+
+    def _create_dru_and_user(self, request):
+        """Create a new DRU and associated user."""
+        serializer = RegisterDRUSerializer(
+            data=request.data, context={"request": request}
+        )
+        if not serializer.is_valid():
+            return JsonResponse(
+                {"success": False, "message": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            with transaction.atomic():
+                new_dru = serializer.save()
+                User.objects.create_user(
+                    email=new_dru.email,
+                    password="testpassword",  # TODO: Generate a random password and email it
+                    first_name=new_dru.dru_name,
+                    middle_name="",
+                    last_name="",
+                    sex="N/A",
+                    is_admin=True,
+                    is_verified=True,
+                    is_legacy=True,
+                    dru=new_dru,
+                )
+        except Exception as e:
+            return JsonResponse(
+                {"success": False, "message": f"User creation failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return JsonResponse(
+            {"success": True, "message": "DRU successfully registered"},
+            status=status.HTTP_201_CREATED,
         )
 
 

@@ -68,9 +68,6 @@ class RegisterDRUSerializer(serializers.ModelSerializer):
             surveillance_unit=surveillance_unit,
             dru_name=dru_name,
         ).exists():
-            # raise serializers.ValidationError(
-            #     {"success": False, "message": "DRU already exists"}
-            # )
             raise serializers.ValidationError({"dru_name": "DRU already exists"})
 
         return data
