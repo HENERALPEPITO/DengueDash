@@ -187,7 +187,7 @@ class LstmPredictionView(APIView):
                         "metadata": {
                             "model_window_size": self.window_size,
                             "prediction_generated_at": datetime.now().strftime(
-                                "%Y-%m-%d %H:%M:%S"
+                                "%Y-%m-%d-%H-%M-%S"
                             ),
                         },
                     }
