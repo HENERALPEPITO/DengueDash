@@ -248,9 +248,11 @@ class DengueAuthenticatedLocationStatView(BaseLocationStatView):
         dru_type = str(user.dru.dru_type)
         print(dru_type)
         if dru_type == "RESU":
-            cases = cases.filter(patient__addr_region=user.dru.region)
+            cases = cases.filter(patient__interviewer__dru__region=user.dru.region)
         elif dru_type == "PESU":
-            cases = cases.filter(patient__addr_province=user.dru.addr_province)
+            cases = cases.filter(
+                patient__interviewer_dru__addr_province=user.dru.addr_province
+            )
         elif dru_type == "CESU":
-            cases = cases.filter(patient__addr_city=user.dru.addr_city)
+            cases = cases.filter(patient__interviewer_dru__addr_city=user.dru.addr_city)
         return cases
