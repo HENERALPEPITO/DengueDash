@@ -25,12 +25,12 @@ const getDenguePublicLocationStats = async (params: Record<string, any>) => {
   );
 };
 
-const getCasesDeaths = async (year: number | null = null) => {
+const getCasesDeaths = async (year: number | null = null, location: string) => {
   return axiosClient(
     "cases/stat/by-date/",
     OPERATION,
     DEFAULT_DATA,
-    year ? { year } : {},
+    year ? { year, location } : { location },
     false
   );
 };
@@ -72,7 +72,7 @@ const getCaseViewDetails = async (caseId: number) => {
 };
 
 const getWeatherData = async (params: Record<string, any>) => {
-  return axiosClient("weather/", OPERATION, DEFAULT_DATA, params);
+  return axiosClient("weather/get/", OPERATION, DEFAULT_DATA, params);
 };
 
 // ADMIN

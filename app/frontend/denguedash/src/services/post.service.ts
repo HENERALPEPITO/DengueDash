@@ -48,7 +48,12 @@ const predictCases = async () => {
       },
     ],
   };
-  return axiosClient("predict/", OPERATION, futureWeather, DEFAULT_PARAMS);
+  return axiosClient(
+    "forecasting/predict/",
+    OPERATION,
+    futureWeather,
+    DEFAULT_PARAMS
+  );
 };
 
 const postService = { submitForm, predictCases, signUpUser, registerDRU };

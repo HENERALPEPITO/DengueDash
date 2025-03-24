@@ -85,7 +85,7 @@ export const axiosClient = async (
 
 const login = async (email: string, password: string) => {
   try {
-    const response = await axiosProtected.post("login/", {
+    const response = await axiosProtected.post("auth/login/", {
       email: email,
       password: password,
     });
