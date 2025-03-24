@@ -79,15 +79,18 @@ export default function StatDashboard() {
   }, [mapData]);
 
   // todo: add try catch
-  const fetchQuickStat = async (year: number | null) => {
+  const fetchQuickStat = async (year: number | undefined) => {
     const response: CurrentCaseCount = await fetchService.getQuickStat(year);
     setCaseData(response);
   };
 
-  const fetchDengueCountDeaths = async (year: number | null) => {
+  const fetchDengueCountDeaths = async (year: number | undefined) => {
+    // todo: make the location dynamic
     try {
-      const response: ComboCountDeaths[] =
-        await fetchService.getCasesDeaths(year);
+      const response: ComboCountDeaths[] = await fetchService.getCasesDeaths({
+        year: year,
+        city: "ILOILO CITY (Capital)",
+      });
       setCaseDeathData(response);
     } catch (error) {
       console.error("Failed to fetch dengue count deaths:", error);
@@ -95,22 +98,20 @@ export default function StatDashboard() {
   };
 
   // todo: add try catch
-  const fetchBarangayData = async (year: number | null) => {
-    console.log(encodeURIComponent("ILOILO CITY (Capital)"));
+  const fetchBarangayData = async (year: number | undefined) => {
     const response: LocationData[] =
       // todo: create an interface for the params
       await fetchService.getDenguePublicLocationStats({
         year: year,
-        city: encodeURIComponent("ILOILO CITY (Capital)"),
+        city: "ILOILO CITY (Capital)",
         group_by: "barangay",
       });
-    console.log(response);
     setMapData(response);
     setDataLoaded(true);
   };
 
   const fetchAllData = useCallback((option: string) => {
-    const year = option == "All" ? null : parseInt(option);
+    const year = option == "All" ? undefined : parseInt(option);
     fetchQuickStat(year);
     fetchDengueCountDeaths(year);
     fetchBarangayData(year);

@@ -4,6 +4,27 @@ const OPERATION = "GET";
 const DEFAULT_DATA = null;
 const DEFAULT_PARAMS = {};
 
+type FetchLocationStatsParams = {
+  year?: number;
+  month?: number;
+  week?: number;
+  date?: string;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+  group_by?: string;
+};
+
+type FetchDateStatParams = {
+  year?: number | null;
+  last_weeks?: number;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+};
+
 // Requests that do not need authentication
 const getQuickStat = async (year: number | null = null) => {
   return axiosClient(
@@ -15,22 +36,24 @@ const getQuickStat = async (year: number | null = null) => {
   );
 };
 
-const getDenguePublicLocationStats = async (params: Record<string, any>) => {
+const getDenguePublicLocationStats = async (
+  params: FetchLocationStatsParams
+) => {
   return axiosClient(
     "cases/stat/public/location",
     OPERATION,
     DEFAULT_DATA,
-    params.year ? { year: params.year } : {},
+    params,
     false
   );
 };
 
-const getCasesDeaths = async (year: number | null = null, location: string) => {
+const getCasesDeaths = async (params: FetchDateStatParams) => {
   return axiosClient(
     "cases/stat/by-date/",
     OPERATION,
     DEFAULT_DATA,
-    year ? { year, location } : { location },
+    params,
     false
   );
 };
