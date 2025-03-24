@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "dru",
     "weather",
     "user",
-    "lstm_prediction",
+    "forecasting",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
