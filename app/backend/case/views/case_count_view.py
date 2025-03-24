@@ -88,15 +88,7 @@ class QuickStatisticsView(APIView):
         return Response(serializer.data)
 
 
-from django.http import JsonResponse
-from django.db.models import Count, Q
-from datetime import datetime, date, timedelta
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import permissions
-
-
-class BaseDengueStatView(APIView):
+class BaseDengueDateStatView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def __init__(self):
@@ -127,21 +119,7 @@ class BaseDengueStatView(APIView):
             self.label = "year"
         return cases
 
-    def validate_location_params(self, request):
-        if not any(request.query_params.get(k) for k in self.LOCATION_MAPPING):
-            return JsonResponse(
-                {
-                    "status": False,
-                    "message": f"At least one of the following location parameters is required: {', '.join(self.LOCATION_MAPPING.keys())}",
-                },
-                status=400,
-            )
-        return None
-
     def filter_by_location(self, request, cases):
-        if error_response := self.validate_location_params(request):
-            return error_response
-
         for param, db_field in self.LOCATION_MAPPING.items():
             if value := request.query_params.get(param):
                 cases = cases.filter(**{db_field: value})
@@ -150,13 +128,8 @@ class BaseDengueStatView(APIView):
     def get_data(self, request):
         cases = Case.objects.all()
 
-        # Location filtering (with early error return)
-        cases = self.filter_by_location(request, cases)
-        if isinstance(cases, JsonResponse):
-            return cases
-
-        # Date filtering
         cases = self.filter_by_date(request, cases)
+        cases = self.filter_by_location(request, cases)
 
         # Single query for both cases and deaths
         stats = (
@@ -189,7 +162,7 @@ class BaseDengueStatView(APIView):
         return Response(serializer.data)
 
 
-class DengueDateStatView(BaseDengueStatView):
+class DengueDateStatView(BaseDengueDateStatView):
     permission_classes = (permissions.AllowAny,)
 
 
