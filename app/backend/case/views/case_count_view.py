@@ -1,8 +1,9 @@
 from django.db.models import Count, Q
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from case.models import Case
 from case.serializers.case_statistics_serializers import (
     QuickStatisticsSerializer,
@@ -87,56 +88,171 @@ class QuickStatisticsView(APIView):
         return Response(serializer.data)
 
 
-class DengueDateStatView(APIView):
-    # todo: filter by surveillance unit/municipality
+from django.http import JsonResponse
+from django.db.models import Count, Q
+from datetime import datetime, date, timedelta
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import permissions
+
+
+class BaseDengueStatView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def aggregate_data(self, date_field, filter_criteria, label):
-        """Helper function to aggregate cases and deaths."""
-        cases = (
-            Case.objects.filter(**filter_criteria)
-            .values(date_field)
-            .annotate(case_count=Count("case_id"))
-            .order_by(date_field)
-        )
+    def __init__(self):
+        self.group_by = None
+        self.label = None
+        self.LOCATION_MAPPING = {
+            "region": "patient__addr_region",
+            "province": "patient__addr_province",
+            "city": "patient__addr_city",
+            "barangay": "patient__addr_barangay",
+        }
 
-        deaths = (
-            Case.objects.filter(**filter_criteria)
-            .values(date_field)
-            .annotate(death_count=Count("case_id", filter=Q(outcome="D")))
-            .order_by(date_field)
-        )
+    def filter_by_date(self, request, cases):
+        if year := request.query_params.get("year"):
+            cases = cases.filter(date_con__year=year)
+            self.group_by = "date_con__week"
+            self.label = "week"
+        elif last_weeks := request.query_params.get("last_weeks"):
+            last_date_in_db = Case.objects.latest("date_con").date_con.date()
+            start_date = last_date_in_db - timedelta(weeks=int(last_weeks))
+            cases = cases.filter(date_con__gte=start_date)
+            self.group_by = "date_con__week"
+            self.label = "week"
+        else:
+            now = datetime.now()
+            cases = cases.filter(date_con__year__lte=now.year)
+            self.group_by = "date_con__year"
+            self.label = "year"
+        return cases
 
-        # Convert deaths to a dictionary for easy lookup
-        death_dict = {item[date_field]: item["death_count"] for item in deaths}
+    def validate_location_params(self, request):
+        if not any(request.query_params.get(k) for k in self.LOCATION_MAPPING):
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": f"At least one of the following location parameters is required: {', '.join(self.LOCATION_MAPPING.keys())}",
+                },
+                status=400,
+            )
+        return None
+
+    def filter_by_location(self, request, cases):
+        if error_response := self.validate_location_params(request):
+            return error_response
+
+        for param, db_field in self.LOCATION_MAPPING.items():
+            if value := request.query_params.get(param):
+                cases = cases.filter(**{db_field: value})
+        return cases
+
+    def get_data(self, request):
+        cases = Case.objects.all()
+
+        # Location filtering (with early error return)
+        cases = self.filter_by_location(request, cases)
+        if isinstance(cases, JsonResponse):
+            return cases
+
+        # Date filtering
+        cases = self.filter_by_date(request, cases)
+
+        # Single query for both cases and deaths
+        stats = (
+            cases.values(self.group_by)
+            .annotate(
+                case_count=Count("case_id"),
+                death_count=Count("case_id", filter=Q(outcome="D")),
+            )
+            .order_by(self.group_by)
+        )
 
         return [
             {
-                # Output year if label is year, else output Week <week_number>
                 "label": (
-                    f"{label.capitalize()} {item[date_field]}"
-                    if label == "week"
-                    else item[date_field]
+                    f"{self.label.capitalize()} {item[self.group_by]}"
+                    if self.label == "week"
+                    else item[self.group_by]
                 ),
                 "case_count": item["case_count"],
-                "death_count": death_dict.get(item[date_field], 0),
+                "death_count": item["death_count"],
             }
-            for item in cases
+            for item in stats
         ]
 
-    def get(self, request, *args, **kwargs):
-        if year := request.query_params.get("year"):
-            # Weekly aggregation for a specific year
-            filter_criteria = {"date_con__year": year}
-            data = self.aggregate_data("date_con__week", filter_criteria, label="week")
-        else:
-            # Yearly aggregation from START_YEAR onwards
-            START_YEAR = 2011
-            filter_criteria = {"date_con__year__gte": START_YEAR}
-            data = self.aggregate_data("date_con__year", filter_criteria, label="year")
-
+    def get(self, request):
+        data = self.get_data(request)
+        if isinstance(data, JsonResponse):
+            return data
         serializer = DateStatSerializer(data, many=True)
         return Response(serializer.data)
+
+
+class DengueDateStatView(BaseDengueStatView):
+    permission_classes = (permissions.AllowAny,)
+
+
+# class DengueDateStatView(APIView):
+#     permission_classes = (permissions.AllowAny,)
+
+#     def aggregate_data(self, date_field, filter_criteria, label):
+#         """Helper function to aggregate cases and deaths."""
+#         cases = (
+#             Case.objects.filter(**filter_criteria)
+#             .values(date_field)
+#             .annotate(case_count=Count("case_id"))
+#             .order_by(date_field)
+#         )
+
+#         deaths = (
+#             Case.objects.filter(**filter_criteria)
+#             .values(date_field)
+#             .annotate(death_count=Count("case_id", filter=Q(outcome="D")))
+#             .order_by(date_field)
+#         )
+
+#         # Convert deaths to a dictionary for easy lookup
+#         death_dict = {item[date_field]: item["death_count"] for item in deaths}
+
+#         return [
+#             {
+#                 # Output year if label is year, else output Week <week_number>
+#                 "label": (
+#                     f"{label.capitalize()} {item[date_field]}"
+#                     if label == "week"
+#                     else item[date_field]
+#                 ),
+#                 "case_count": item["case_count"],
+#                 "death_count": death_dict.get(item[date_field], 0),
+#             }
+#             for item in cases
+#         ]
+
+#     def get(self, request, *args, **kwargs):
+#         if not request.query_params.get("location"):
+#             return JsonResponse(
+#                 {
+#                     "status": False,
+#                     "message": "Location is required",
+#                 }
+#             )
+#         else:
+#             location = request.query_params.get("location")
+#             # todo: implement location here
+#             # filter_criteria =
+#         if year := request.query_params.get("year"):
+#             # Weekly aggregation for a specific year
+#             filter_criteria = {"date_con__year": year}
+#             data = self.aggregate_data("date_con__week", filter_criteria, label="week")
+#         else:
+#             # Yearly aggregation from the start of the database
+#             now = datetime.now()
+#             filter_criteria = {"date_con__year__lte": now.year}
+#             data = self.aggregate_data("date_con__year", filter_criteria, label="year")
+
+#         serializer = DateStatSerializer(data, many=True)
+#         return Response(serializer.data)
 
 
 class BaseLocationStatView(APIView):
