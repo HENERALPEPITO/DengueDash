@@ -59,6 +59,12 @@ export const axiosClient = async (
     const client = useAuth ? axiosProtected : axiosOpen;
     const config = { params };
 
+    // URL Debugger
+    // console.log(
+    //   "Request URL:",
+    //   `${client.defaults.baseURL}${endpoint}?${new URLSearchParams(params)}`
+    // );
+
     let response;
     switch (method) {
       case "GET":
