@@ -59,6 +59,7 @@ export const axiosClient = async (
     const client = useAuth ? axiosProtected : axiosOpen;
     const config = { params };
 
+    // todo: delete this
     // URL Debugger
     // console.log(
     //   "Request URL:",
