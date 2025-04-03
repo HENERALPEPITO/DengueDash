@@ -1,16 +1,16 @@
 "use client";
 
-import { ComboCountDeaths } from "@interfaces/dashboard/dashboard.interface";
 import fetchService from "@/services/fetch.service";
 import { useEffect, useState, useRef } from "react";
 import Chart, { ChartOptions, ChartData } from "chart.js/auto";
+import { ByDateInterface } from "@/interfaces/stat/stat.interfaces";
 
 type DengueCountDeathsProps = {
   height: string;
 };
 
 export default function DengueCountDeaths({ height }: DengueCountDeathsProps) {
-  const [data, setData] = useState<ComboCountDeaths[]>([]);
+  const [data, setData] = useState<ByDateInterface[]>([]);
 
   const chartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstance = useRef<Chart | null>(null);
@@ -18,7 +18,7 @@ export default function DengueCountDeaths({ height }: DengueCountDeathsProps) {
   useEffect(() => {
     const fetchDengueCountDeaths = async () => {
       try {
-        const response: ComboCountDeaths[] =
+        const response: ByDateInterface[] =
           await fetchService.getYearlyDengueCount();
         setData(response);
       } catch (error) {

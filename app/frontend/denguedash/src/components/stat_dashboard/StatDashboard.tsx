@@ -1,16 +1,11 @@
 "use client";
 
 import ChartHeader from "./ChartHeader";
-import { LocationData } from "@/interfaces/map/map.interface";
 import fetchService from "@/services/fetch.service";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ComboChart from "@components/charts/ComboChart";
 import BarChart from "@components/charts/BarChart";
 import StatCard from "./StatCard";
-import {
-  ComboCountDeaths,
-  CurrentCaseCount,
-} from "@/interfaces/dashboard/dashboard.interface";
 import ChoroplethMapWrapper from "../map/ChoroplethMapWrapper";
 import { Separator } from "@/shadcn/components/ui/separator";
 import {
@@ -26,6 +21,11 @@ import { Button } from "@/shadcn/components/ui/button";
 import { Label } from "@/shadcn/components/ui/label";
 import CustomPopover from "../common/CustomPopover";
 import { transformData } from "@/lib/utils/data-transormation.util";
+import {
+  ByDateInterface,
+  ByLocationInterface,
+  CurrentCaseCount,
+} from "@/interfaces/stat/stat.interfaces";
 
 const locations = [
   {
@@ -46,8 +46,8 @@ years.unshift("All");
 
 export default function StatDashboard() {
   const [caseData, setCaseData] = useState<CurrentCaseCount | null>(null);
-  const [caseDeathsData, setCaseDeathData] = useState<ComboCountDeaths[]>([]);
-  const [mapData, setMapData] = useState<LocationData[]>([]);
+  const [caseDeathsData, setCaseDeathData] = useState<ByDateInterface[]>([]);
+  const [mapData, setMapData] = useState<ByLocationInterface[]>([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
   // Popovers
@@ -87,10 +87,12 @@ export default function StatDashboard() {
   const fetchDengueCountDeaths = async (year: number | undefined) => {
     // todo: make the location dynamic
     try {
-      const response: ComboCountDeaths[] = await fetchService.getCasesDeaths({
-        year: year,
-        city: "ILOILO CITY (Capital)",
-      });
+      // todo: if user is authenticated, use getAuthCasesDeaths
+      const response: ByDateInterface[] =
+        await fetchService.getDenguePublicByDateStats({
+          year: year,
+          city: "ILOILO CITY (Capital)",
+        });
       setCaseDeathData(response);
     } catch (error) {
       console.error("Failed to fetch dengue count deaths:", error);
@@ -99,7 +101,7 @@ export default function StatDashboard() {
 
   // todo: add try catch
   const fetchBarangayData = async (year: number | undefined) => {
-    const response: LocationData[] =
+    const response: ByLocationInterface[] =
       // todo: create an interface for the params
       await fetchService.getDenguePublicLocationStats({
         year: year,

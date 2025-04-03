@@ -1,5 +1,6 @@
 "use client";
 
+import { ByDateInterface } from "@/interfaces/stat/stat.interfaces";
 import {
   Bar,
   Line,
@@ -11,10 +12,9 @@ import {
   ResponsiveContainer,
   ComposedChart,
 } from "recharts";
-import { ComboCountDeaths } from "@interfaces/dashboard/dashboard.interface";
 
 type ComboChartProps = {
-  data: ComboCountDeaths[];
+  data: ByDateInterface[];
 };
 
 export default function ComboChart({ data }: ComboChartProps) {
