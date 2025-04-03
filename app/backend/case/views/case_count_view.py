@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
-from datetime import date, datetime, timedelta
+from rest_framework.exceptions import ValidationError
+from datetime import datetime, timedelta
 from case.models import Case
 from case.serializers.case_statistics_serializers import (
     QuickStatisticsSerializer,
@@ -89,8 +90,6 @@ class QuickStatisticsView(APIView):
 
 
 class BaseDengueDateStatView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
     def __init__(self):
         self.group_by = None
         self.label = None
@@ -106,9 +105,9 @@ class BaseDengueDateStatView(APIView):
             cases = cases.filter(date_con__year=year)
             self.group_by = "date_con__week"
             self.label = "week"
-        elif last_weeks := request.query_params.get("last_weeks"):
-            last_date_in_db = Case.objects.latest("date_con").date_con.date()
-            start_date = last_date_in_db - timedelta(weeks=int(last_weeks))
+        elif recent_weeks := request.query_params.get("recent_weeks"):
+            last_date_in_db = Case.objects.latest("date_con").date_con
+            start_date = last_date_in_db - timedelta(weeks=int(recent_weeks))
             cases = cases.filter(date_con__gte=start_date)
             self.group_by = "date_con__week"
             self.label = "week"
@@ -162,70 +161,24 @@ class BaseDengueDateStatView(APIView):
         return Response(serializer.data)
 
 
-class DengueDateStatView(BaseDengueDateStatView):
+class DenguePublicDateStatView(BaseDengueDateStatView):
     permission_classes = (permissions.AllowAny,)
 
 
-# class DengueDateStatView(APIView):
-#     permission_classes = (permissions.AllowAny,)
+class DengueAuthenticatedDateStatView(BaseDengueDateStatView):
+    permission_classes = (permissions.IsAuthenticated,)
 
-#     def aggregate_data(self, date_field, filter_criteria, label):
-#         """Helper function to aggregate cases and deaths."""
-#         cases = (
-#             Case.objects.filter(**filter_criteria)
-#             .values(date_field)
-#             .annotate(case_count=Count("case_id"))
-#             .order_by(date_field)
-#         )
-
-#         deaths = (
-#             Case.objects.filter(**filter_criteria)
-#             .values(date_field)
-#             .annotate(death_count=Count("case_id", filter=Q(outcome="D")))
-#             .order_by(date_field)
-#         )
-
-#         # Convert deaths to a dictionary for easy lookup
-#         death_dict = {item[date_field]: item["death_count"] for item in deaths}
-
-#         return [
-#             {
-#                 # Output year if label is year, else output Week <week_number>
-#                 "label": (
-#                     f"{label.capitalize()} {item[date_field]}"
-#                     if label == "week"
-#                     else item[date_field]
-#                 ),
-#                 "case_count": item["case_count"],
-#                 "death_count": death_dict.get(item[date_field], 0),
-#             }
-#             for item in cases
-#         ]
-
-#     def get(self, request, *args, **kwargs):
-#         if not request.query_params.get("location"):
-#             return JsonResponse(
-#                 {
-#                     "status": False,
-#                     "message": "Location is required",
-#                 }
-#             )
-#         else:
-#             location = request.query_params.get("location")
-#             # todo: implement location here
-#             # filter_criteria =
-#         if year := request.query_params.get("year"):
-#             # Weekly aggregation for a specific year
-#             filter_criteria = {"date_con__year": year}
-#             data = self.aggregate_data("date_con__week", filter_criteria, label="week")
-#         else:
-#             # Yearly aggregation from the start of the database
-#             now = datetime.now()
-#             filter_criteria = {"date_con__year__lte": now.year}
-#             data = self.aggregate_data("date_con__year", filter_criteria, label="year")
-
-#         serializer = DateStatSerializer(data, many=True)
-#         return Response(serializer.data)
+    def filter_by_location(self, request, cases):
+        # Override to filter by the authenticated user's location
+        user = request.user
+        dru_type = str(user.dru.dru_type)
+        if dru_type == "RESU":
+            cases = cases.filter(interviewer__dru__region=user.dru.region)
+        elif dru_type == "PESU":
+            cases = cases.filter(interviewer__dru__addr_province=user.dru.addr_province)
+        elif dru_type == "CESU":
+            cases = cases.filter(interviewer__dru__addr_city=user.dru.addr_city)
+        return cases
 
 
 class BaseLocationStatView(APIView):
@@ -246,6 +199,16 @@ class BaseLocationStatView(APIView):
         By default, apply location filters from the query parameters.
         This method will be overridden in the authenticated view.
         """
+        location_params = ["region", "province", "city", "barangay"]
+        has_location_filter = any(
+            param in request.query_params for param in location_params
+        )
+
+        if not has_location_filter:
+            raise ValidationError(
+                "At least one location filter must be provided (region, province, city, or barangay)"
+            )
+
         if region := request.query_params.get("region"):
             cases = cases.filter(patient__addr_region=region)
         if province := request.query_params.get("province"):
@@ -336,11 +299,9 @@ class DengueAuthenticatedLocationStatView(BaseLocationStatView):
         user = request.user
         dru_type = str(user.dru.dru_type)
         if dru_type == "RESU":
-            cases = cases.filter(patient__interviewer__dru__region=user.dru.region)
+            cases = cases.filter(interviewer__dru__region=user.dru.region)
         elif dru_type == "PESU":
-            cases = cases.filter(
-                patient__interviewer_dru__addr_province=user.dru.addr_province
-            )
+            cases = cases.filter(interviewer__dru__addr_province=user.dru.addr_province)
         elif dru_type == "CESU":
-            cases = cases.filter(patient__interviewer_dru__addr_city=user.dru.addr_city)
+            cases = cases.filter(interviewer__dru__addr_city=user.dru.addr_city)
         return cases
