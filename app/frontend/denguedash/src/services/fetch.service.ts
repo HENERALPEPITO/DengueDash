@@ -18,7 +18,7 @@ type FetchLocationStatsParams = {
 
 type FetchDateStatParams = {
   year?: number | null;
-  last_weeks?: number;
+  recent_weeks?: number;
   region?: string;
   province?: string;
   city?: string;
@@ -48,9 +48,9 @@ const getDenguePublicLocationStats = async (
   );
 };
 
-const getCasesDeaths = async (params: FetchDateStatParams) => {
+const getDenguePublicByDateStats = async (params: FetchDateStatParams) => {
   return axiosClient(
-    "cases/stat/by-date/",
+    "cases/stat/public/date/",
     OPERATION,
     DEFAULT_DATA,
     params,
@@ -69,6 +69,16 @@ const getDRUHierarchy = async () => {
 };
 
 // Requests that must need authentication
+const getDengueAuthByDateStats = async (params: FetchDateStatParams) => {
+  return axiosClient(
+    "cases/stat/auth/date/",
+    OPERATION,
+    DEFAULT_DATA,
+    params,
+    false
+  );
+};
+
 const getDengueAuthLocationStats = async (params: Record<string, any>) => {
   return axiosClient(
     "cases/stat/auth/location",
@@ -144,7 +154,8 @@ const fetchService = {
   getQuickStat,
   getDenguePublicLocationStats,
   getDengueAuthLocationStats,
-  getCasesDeaths,
+  getDenguePublicByDateStats,
+  getDengueAuthByDateStats,
   getDengueReports,
   getCaseViewDetails,
   getDRUHierarchy,

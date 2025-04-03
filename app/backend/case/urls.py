@@ -5,7 +5,8 @@ from .views.case_count_view import (
     QuickStatisticsView,
     DenguePublicLocationStatView,
     DengueAuthenticatedLocationStatView,
-    DengueDateStatView,
+    DenguePublicDateStatView,
+    DengueAuthenticatedDateStatView,
 )
 
 urlpatterns = [
@@ -25,5 +26,14 @@ urlpatterns = [
         DengueAuthenticatedLocationStatView.as_view(),
         name="case-stat-auth-location",
     ),
-    path("stat/by-date/", DengueDateStatView.as_view(), name="case-stat-by-date"),
+    path(
+        "stat/public/date/",
+        DenguePublicDateStatView.as_view(),
+        name="case-stat-by-date",
+    ),
+    path(
+        "stat/auth/date/",
+        DengueAuthenticatedDateStatView.as_view(),
+        name="case-stat-auth-by-date",
+    ),
 ]
