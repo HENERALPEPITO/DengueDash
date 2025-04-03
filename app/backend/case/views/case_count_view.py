@@ -335,7 +335,6 @@ class DengueAuthenticatedLocationStatView(BaseLocationStatView):
         # Override to filter by the authenticated user's location
         user = request.user
         dru_type = str(user.dru.dru_type)
-        print(dru_type)
         if dru_type == "RESU":
             cases = cases.filter(patient__interviewer__dru__region=user.dru.region)
         elif dru_type == "PESU":
