@@ -70,13 +70,7 @@ const getDRUHierarchy = async () => {
 
 // Requests that must need authentication
 const getDengueAuthByDateStats = async (params: FetchDateStatParams) => {
-  return axiosClient(
-    "cases/stat/auth/date/",
-    OPERATION,
-    DEFAULT_DATA,
-    params,
-    false
-  );
+  return axiosClient("cases/stat/auth/date/", OPERATION, DEFAULT_DATA, params);
 };
 
 const getDengueAuthLocationStats = async (params: Record<string, any>) => {
