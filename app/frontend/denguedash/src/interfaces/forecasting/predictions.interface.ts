@@ -6,7 +6,7 @@ interface ConfidenceInterval {
 interface PredictionData {
   confidence_interval: ConfidenceInterval;
   date: string;
-  predicited_cases: number;
+  predicted_cases: number;
   week: number;
 }
 

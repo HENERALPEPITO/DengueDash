@@ -9,6 +9,7 @@ import os
 import math
 from datetime import datetime, timedelta
 from .serializers import PredictionRequestSerializer
+from case.models import Case
 from case.views.case_report_view import fetch_cases_for_week
 from weather.models import Weather
 
@@ -51,6 +52,10 @@ class LstmPredictionView(APIView):
         min_val, max_val = self.feature_ranges[feature]
         return normalized_value * (max_val - min_val) + min_val
 
+    def get_latest_week_number(self):
+        cases = Case.objects.latest("date_con").date_con
+        return cases.isocalendar().week
+
     # Generates predictions for the next n weeks using the model
     def predict_next_n_weeks(
         self,
@@ -60,6 +65,7 @@ class LstmPredictionView(APIView):
     ):
         predictions = []
         current_sequence = initial_sequence.copy()
+        current_week_number = self.get_latest_week_number()
 
         # Loop through each week and predict
         for week in range(n_weeks):
@@ -98,12 +104,7 @@ class LstmPredictionView(APIView):
             # Store the prediction with a confidence interval
             predictions.append(
                 {
-                    "week": week + 1,
-                    # "predicted_cases": round(float(denormalized_prediction), 2),
-                    # "confidence_interval": {
-                    #     "lower": round(float(denormalized_prediction * 0.9), 2),
-                    #     "upper": round(float(denormalized_prediction * 1.1), 2),
-                    # },
+                    "week": current_week_number + week + 1,
                     "predicted_cases": math.ceil(float(denormalized_prediction)),
                     "confidence_interval": {
                         "lower": math.ceil(float(denormalized_prediction * 0.9)),
@@ -170,7 +171,14 @@ class LstmPredictionView(APIView):
 
                 # Get predictions for the next 8 weeks
                 predictions = self.predict_next_n_weeks(
-                    initial_sequence, future_weather, n_weeks=self.window_size
+                    initial_sequence,
+                    future_weather,
+                    # Using the current plan for weatheropenai,
+                    # the maximum forecasted weather data is 16 days
+                    # However, the optimized version is to use
+                    # the window size of 5 weeks
+                    n_weeks=2,
+                    # n_weeks=self.window_size,
                 )
 
                 # Calculate prediction dates

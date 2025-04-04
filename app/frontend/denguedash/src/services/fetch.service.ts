@@ -4,6 +4,27 @@ const OPERATION = "GET";
 const DEFAULT_DATA = null;
 const DEFAULT_PARAMS = {};
 
+type FetchLocationStatsParams = {
+  year?: number;
+  month?: number;
+  week?: number;
+  date?: string;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+  group_by?: string;
+};
+
+type FetchDateStatParams = {
+  year?: number | null;
+  recent_weeks?: number;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+};
+
 // Requests that do not need authentication
 const getQuickStat = async (year: number | null = null) => {
   return axiosClient(
@@ -15,22 +36,24 @@ const getQuickStat = async (year: number | null = null) => {
   );
 };
 
-const getDenguePublicLocationStats = async (params: Record<string, any>) => {
+const getDenguePublicLocationStats = async (
+  params: FetchLocationStatsParams
+) => {
   return axiosClient(
     "cases/stat/public/location",
     OPERATION,
     DEFAULT_DATA,
-    params.year ? { year: params.year } : {},
+    params,
     false
   );
 };
 
-const getCasesDeaths = async (year: number | null = null) => {
+const getDenguePublicByDateStats = async (params: FetchDateStatParams) => {
   return axiosClient(
-    "cases/stat/by-date/",
+    "cases/stat/public/date/",
     OPERATION,
     DEFAULT_DATA,
-    year ? { year } : {},
+    params,
     false
   );
 };
@@ -46,6 +69,10 @@ const getDRUHierarchy = async () => {
 };
 
 // Requests that must need authentication
+const getDengueAuthByDateStats = async (params: FetchDateStatParams) => {
+  return axiosClient("cases/stat/auth/date/", OPERATION, DEFAULT_DATA, params);
+};
+
 const getDengueAuthLocationStats = async (params: Record<string, any>) => {
   return axiosClient(
     "cases/stat/auth/location",
@@ -72,7 +99,7 @@ const getCaseViewDetails = async (caseId: number) => {
 };
 
 const getWeatherData = async (params: Record<string, any>) => {
-  return axiosClient("weather/", OPERATION, DEFAULT_DATA, params);
+  return axiosClient("weather/get/", OPERATION, DEFAULT_DATA, params);
 };
 
 // ADMIN
@@ -121,7 +148,8 @@ const fetchService = {
   getQuickStat,
   getDenguePublicLocationStats,
   getDengueAuthLocationStats,
-  getCasesDeaths,
+  getDenguePublicByDateStats,
+  getDengueAuthByDateStats,
   getDengueReports,
   getCaseViewDetails,
   getDRUHierarchy,

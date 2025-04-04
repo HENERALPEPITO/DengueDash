@@ -8,7 +8,6 @@ import {
   ModelPredictions,
   PredictionMetadata,
 } from "@/interfaces/forecasting/predictions.interface";
-import BarChart from "@/components/charts/BarChart";
 import { Separator } from "@/shadcn/components/ui/separator";
 import {
   Card,
@@ -42,11 +41,12 @@ import {
   BarChartHorizontal,
 } from "lucide-react";
 import { Skeleton } from "@shadcn/components/ui/skeleton";
-import { transformData } from "@/lib/utils/data-transormation.util";
+// import { transformData } from "@/lib/utils/data-transormation.util";
 import { formatDateTime } from "@/lib/utils/format-datetime.util";
 import fetchService from "@/services/fetch.service";
-import { LocationData } from "@/interfaces/map/map.interface";
 import { WeatherInterface } from "@/interfaces/common/weather.interface";
+import { ByLocationInterface } from "@/interfaces/stat/stat.interfaces";
+import TrendAndPredictionLineChart from "@/components/forecasting/encoder/cases-line-chart";
 
 // todo: use weather data from openweatherapi
 const futureWeather = {
@@ -79,9 +79,9 @@ const futureWeather = {
   ],
 };
 
-export default function Dashboard() {
+export default function EncoderForecastingDashboard() {
   const [currentWeekDengueData, setCurrentWeekDengueData] = useState<
-    LocationData[]
+    ByLocationInterface[]
   >([]);
   const [currentWeekWeatherData, setCurrentWeekWeatherData] = useState<
     WeatherInterface[]
@@ -89,7 +89,7 @@ export default function Dashboard() {
   const [isPredicting, setIsPredicting] = useState(false);
   const [predictionMetaData, setPredictionMetaData] =
     useState<PredictionMetadata | null>(null);
-  const [predictions, setPredictions] = useState<ModelPredictions | null>(null);
+  const [predictions, setPredictions] = useState<ModelPredictions>([]);
 
   // todo: use this in the future to fetch real data
   // const getWeekNumber = (date: Date): number => {
@@ -101,7 +101,7 @@ export default function Dashboard() {
   const thisWeekCases: number = useMemo(() => {
     return (
       currentWeekDengueData?.reduce(
-        (total: number, curr: LocationData) => total + curr.case_count,
+        (total: number, curr: ByLocationInterface) => total + curr.case_count,
         0
       ) ?? 0
     );
@@ -117,15 +117,14 @@ export default function Dashboard() {
 
   const handlePredict = async () => {
     setIsPredicting(true);
-    const predictions: ModelPredictionResponse =
-      await postService.predictCases();
-    setPredictions(predictions.predictions);
-    setPredictionMetaData(predictions.metadata);
+    const response: ModelPredictionResponse = await postService.predictCases();
+    setPredictions(response.predictions);
+    setPredictionMetaData(response.metadata);
     setIsPredicting(false);
   };
 
   const fetchCurrentWeekDengueData = async () => {
-    const response: LocationData[] =
+    const response: ByLocationInterface[] =
       await fetchService.getDengueAuthLocationStats(
         // todo: when deployed use the current data
         // todo: for now let's get the last fetched data
@@ -184,7 +183,13 @@ export default function Dashboard() {
       <Separator className="mt-2" />
 
       <div className="container mx-auto py-2">
-        {predictions ? (
+        {/* {predictions ? (
+          <div className="text-md text-muted-foreground mb-4 text-right">
+            Last updated :{" "}
+            {formatDateTime(predictionMetaData?.prediction_generated_at ?? "")}
+          </div>
+        ) : null} */}
+        {predictions.length > 0 ? (
           <div className="text-md text-muted-foreground mb-4 text-right">
             Last updated :{" "}
             {formatDateTime(predictionMetaData?.prediction_generated_at ?? "")}
@@ -192,7 +197,7 @@ export default function Dashboard() {
         ) : null}
 
         {/* Prediction Button */}
-        {!predictions && !isPredicting && (
+        {predictions.length == 0 && !isPredicting && (
           <Card className="mb-6">
             <CardContent className="pt-6">
               <div className="flex flex-col items-center justify-center p-6">
@@ -259,7 +264,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {predictions ? (
+          {predictions.length > 0 ? (
             <>
               <Card>
                 <CardHeader className="pb-2">
@@ -277,10 +282,10 @@ export default function Dashboard() {
                       Predicted Cases
                     </div>
                     <Badge
-                      className={`mt-4 ${getRiskLevel(predictions[0].predicited_cases).color}`}
+                      className={`mt-4 ${getRiskLevel(predictions[0].predicted_cases).color}`}
                     >
                       {getRiskLevel(
-                        predictions[0].predicited_cases
+                        predictions[0].predicted_cases
                       ).level.toUpperCase()}{" "}
                       RISK
                     </Badge>
@@ -304,10 +309,10 @@ export default function Dashboard() {
                       Predicted Cases
                     </div>
                     <Badge
-                      className={`mt-4 ${getRiskLevel(predictions[1].predicited_cases).color}`}
+                      className={`mt-4 ${getRiskLevel(predictions[1].predicted_cases).color}`}
                     >
                       {getRiskLevel(
-                        predictions[1].predicited_cases
+                        predictions[1].predicted_cases
                       ).level.toUpperCase()}{" "}
                       RISK
                     </Badge>
@@ -361,21 +366,12 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle>Dengue Cases Trend & Prediction</CardTitle>
             <CardDescription>
-              Historical data {predictions ? "and 2-week forecast" : ""}
+              Last 4 weeks historical data{" "}
+              {predictions.length > 0 ? "and 2-week forecast" : ""}
             </CardDescription>
           </CardHeader>
-          <CardContent className="h-[450px] relative">
-            {/* This would be a real chart in a production app */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {predictions ? (
-                <BarChart
-                  cardHeight="400px"
-                  data={transformData(predictions, "date", "predicted_cases")}
-                  yLabel="Cases"
-                  barColor="#3182CE"
-                />
-              ) : null}
-            </div>
+          <CardContent>
+            <TrendAndPredictionLineChart forecastedData={predictions} />
           </CardContent>
         </Card>
 
@@ -432,7 +428,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {predictions ? (
+          {predictions.length > 0 ? (
             <Card>
               <CardHeader>
                 <CardTitle>Forecasted Weather Variables</CardTitle>
@@ -655,15 +651,6 @@ export default function Dashboard() {
             </AlertDescription>
           </Alert>
         </div>
-
-        {/* Floating prediction button when scrolled down */}
-        {!predictions && !isPredicting && (
-          <div className="fixed bottom-6 right-6">
-            <Button size="lg" onClick={handlePredict} className="shadow-lg">
-              Generate Predictions
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

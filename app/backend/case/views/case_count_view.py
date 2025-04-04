@@ -1,8 +1,10 @@
 from django.db.models import Count, Q
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
-from datetime import datetime
+from rest_framework.exceptions import ValidationError
+from datetime import datetime, timedelta
 from case.models import Case
 from case.serializers.case_statistics_serializers import (
     QuickStatisticsSerializer,
@@ -87,56 +89,96 @@ class QuickStatisticsView(APIView):
         return Response(serializer.data)
 
 
-class DengueDateStatView(APIView):
-    # todo: filter by surveillance unit/municipality
-    permission_classes = (permissions.AllowAny,)
+class BaseDengueDateStatView(APIView):
+    def __init__(self):
+        self.group_by = None
+        self.label = None
+        self.LOCATION_MAPPING = {
+            "region": "patient__addr_region",
+            "province": "patient__addr_province",
+            "city": "patient__addr_city",
+            "barangay": "patient__addr_barangay",
+        }
 
-    def aggregate_data(self, date_field, filter_criteria, label):
-        """Helper function to aggregate cases and deaths."""
-        cases = (
-            Case.objects.filter(**filter_criteria)
-            .values(date_field)
-            .annotate(case_count=Count("case_id"))
-            .order_by(date_field)
+    def filter_by_date(self, request, cases):
+        if year := request.query_params.get("year"):
+            cases = cases.filter(date_con__year=year)
+            self.group_by = "date_con__week"
+            self.label = "week"
+        elif recent_weeks := request.query_params.get("recent_weeks"):
+            last_date_in_db = Case.objects.latest("date_con").date_con
+            start_date = last_date_in_db - timedelta(weeks=int(recent_weeks))
+            cases = cases.filter(date_con__gte=start_date)
+            self.group_by = "date_con__week"
+            self.label = "week"
+        else:
+            now = datetime.now()
+            cases = cases.filter(date_con__year__lte=now.year)
+            self.group_by = "date_con__year"
+            self.label = "year"
+        return cases
+
+    def filter_by_location(self, request, cases):
+        for param, db_field in self.LOCATION_MAPPING.items():
+            if value := request.query_params.get(param):
+                cases = cases.filter(**{db_field: value})
+        return cases
+
+    def get_data(self, request):
+        cases = Case.objects.all()
+
+        cases = self.filter_by_date(request, cases)
+        cases = self.filter_by_location(request, cases)
+
+        # Single query for both cases and deaths
+        stats = (
+            cases.values(self.group_by)
+            .annotate(
+                case_count=Count("case_id"),
+                death_count=Count("case_id", filter=Q(outcome="D")),
+            )
+            .order_by(self.group_by)
         )
-
-        deaths = (
-            Case.objects.filter(**filter_criteria)
-            .values(date_field)
-            .annotate(death_count=Count("case_id", filter=Q(outcome="D")))
-            .order_by(date_field)
-        )
-
-        # Convert deaths to a dictionary for easy lookup
-        death_dict = {item[date_field]: item["death_count"] for item in deaths}
 
         return [
             {
-                # Output year if label is year, else output Week <week_number>
                 "label": (
-                    f"{label.capitalize()} {item[date_field]}"
-                    if label == "week"
-                    else item[date_field]
+                    f"{self.label.capitalize()} {item[self.group_by]}"
+                    if self.label == "week"
+                    else item[self.group_by]
                 ),
                 "case_count": item["case_count"],
-                "death_count": death_dict.get(item[date_field], 0),
+                "death_count": item["death_count"],
             }
-            for item in cases
+            for item in stats
         ]
 
-    def get(self, request, *args, **kwargs):
-        if year := request.query_params.get("year"):
-            # Weekly aggregation for a specific year
-            filter_criteria = {"date_con__year": year}
-            data = self.aggregate_data("date_con__week", filter_criteria, label="week")
-        else:
-            # Yearly aggregation from START_YEAR onwards
-            START_YEAR = 2011
-            filter_criteria = {"date_con__year__gte": START_YEAR}
-            data = self.aggregate_data("date_con__year", filter_criteria, label="year")
-
+    def get(self, request):
+        data = self.get_data(request)
+        if isinstance(data, JsonResponse):
+            return data
         serializer = DateStatSerializer(data, many=True)
         return Response(serializer.data)
+
+
+class DenguePublicDateStatView(BaseDengueDateStatView):
+    permission_classes = (permissions.AllowAny,)
+
+
+class DengueAuthenticatedDateStatView(BaseDengueDateStatView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def filter_by_location(self, request, cases):
+        # Override to filter by the authenticated user's location
+        user = request.user
+        dru_type = str(user.dru.dru_type)
+        if dru_type == "RESU":
+            cases = cases.filter(interviewer__dru__region=user.dru.region)
+        elif dru_type == "PESU":
+            cases = cases.filter(interviewer__dru__addr_province=user.dru.addr_province)
+        elif dru_type == "CESU":
+            cases = cases.filter(interviewer__dru__addr_city=user.dru.addr_city)
+        return cases
 
 
 class BaseLocationStatView(APIView):
@@ -157,6 +199,16 @@ class BaseLocationStatView(APIView):
         By default, apply location filters from the query parameters.
         This method will be overridden in the authenticated view.
         """
+        location_params = ["region", "province", "city", "barangay"]
+        has_location_filter = any(
+            param in request.query_params for param in location_params
+        )
+
+        if not has_location_filter:
+            raise ValidationError(
+                "At least one location filter must be provided (region, province, city, or barangay)"
+            )
+
         if region := request.query_params.get("region"):
             cases = cases.filter(patient__addr_region=region)
         if province := request.query_params.get("province"):
@@ -246,13 +298,10 @@ class DengueAuthenticatedLocationStatView(BaseLocationStatView):
         # Override to filter by the authenticated user's location
         user = request.user
         dru_type = str(user.dru.dru_type)
-        print(dru_type)
         if dru_type == "RESU":
-            cases = cases.filter(patient__interviewer__dru__region=user.dru.region)
+            cases = cases.filter(interviewer__dru__region=user.dru.region)
         elif dru_type == "PESU":
-            cases = cases.filter(
-                patient__interviewer_dru__addr_province=user.dru.addr_province
-            )
+            cases = cases.filter(interviewer__dru__addr_province=user.dru.addr_province)
         elif dru_type == "CESU":
-            cases = cases.filter(patient__interviewer_dru__addr_city=user.dru.addr_city)
+            cases = cases.filter(interviewer__dru__addr_city=user.dru.addr_city)
         return cases

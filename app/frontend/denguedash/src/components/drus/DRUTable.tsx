@@ -24,7 +24,7 @@ import Link from "next/link";
 export default function DRUTable() {
   const [drus, setDrus] = useState<BriefDRUDetails[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
 

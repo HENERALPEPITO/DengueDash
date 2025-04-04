@@ -59,6 +59,13 @@ export const axiosClient = async (
     const client = useAuth ? axiosProtected : axiosOpen;
     const config = { params };
 
+    // todo: delete this
+    // URL Debugger
+    // console.log(
+    //   "Request URL:",
+    //   `${client.defaults.baseURL}${endpoint}?${new URLSearchParams(params)}`
+    // );
+
     let response;
     switch (method) {
       case "GET":
@@ -85,7 +92,7 @@ export const axiosClient = async (
 
 const login = async (email: string, password: string) => {
   try {
-    const response = await axiosProtected.post("login/", {
+    const response = await axiosProtected.post("auth/login/", {
       email: email,
       password: password,
     });

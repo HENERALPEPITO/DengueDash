@@ -44,7 +44,7 @@ export const generateNewAccessToken = async (
 ): Promise<string | null> => {
   try {
     const response = await fetch(
-      process.env.NEXT_PUBLIC_DJANGO_URL + "token/refresh/",
+      process.env.NEXT_PUBLIC_DJANGO_URL + "auth/token/refresh/",
       {
         method: "POST",
         headers: {

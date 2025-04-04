@@ -4,7 +4,7 @@ import { MapContainer, GeoJSON } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import { Layer, LeafletEventHandlerFn } from "leaflet";
 import geoJsonData from "@assets/geojsons/iloilo_barangays_random.json";
-import { LocationData } from "@/interfaces/map/map.interface";
+import { ByLocationInterface } from "@/interfaces/stat/stat.interfaces";
 
 interface GeoJSONFeature {
   properties: {
@@ -14,7 +14,7 @@ interface GeoJSONFeature {
 }
 
 export type ChoroplethMapProps = {
-  dengueData: LocationData[];
+  dengueData: ByLocationInterface[];
 };
 
 export default function ChoroplethMap({ dengueData }: ChoroplethMapProps) {
