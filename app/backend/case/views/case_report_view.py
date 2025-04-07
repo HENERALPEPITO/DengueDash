@@ -14,10 +14,11 @@ from django.http import JsonResponse
 def fetch_cases_for_week(start_date):
     end_date = start_date + timedelta(days=6)
     cases = Case.objects.filter(
-        clncl_class="W" or "S",
+        clncl_class__in=["W", "S"],
         date_con__gte=start_date,
         date_con__lte=end_date,
     ).count()
+    print(f"Cases from {start_date} to {end_date}: {cases}")
     return cases
 
 
