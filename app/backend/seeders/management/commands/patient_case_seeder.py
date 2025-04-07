@@ -248,14 +248,14 @@ class Command(BaseCommand):
                     date_con = start_day + timedelta(days=random_day)
                     is_admt = random.choice([True, False])
                     date_onset = date_con - timedelta(days=random.randint(1, 20))
-                    clncl_class = random.choice(["N", "W", "S"])
+                    clncl_class = random.choice(["W", "S"])
                     ns1_result = random.choice(["P", "N", "E", "PR"])
                     date_ns1 = (
                         None
                         if ns1_result == "PR"
                         else date_onset + timedelta(days=random.randint(1, 5))
                     )
-                    igg_elisa = random.choice(["P", "N", "E", "PR"])
+                    igg_elisa = random.choice(["P", "E", "PR"])
                     date_igg_elisa = (
                         None
                         if igg_elisa == "PR"
