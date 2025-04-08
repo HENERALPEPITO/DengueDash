@@ -18,7 +18,6 @@ def fetch_cases_for_week(start_date):
         date_con__gte=start_date,
         date_con__lte=end_date,
     ).count()
-    print(f"Cases from {start_date} to {end_date}: {cases}")
     return cases
 
 
