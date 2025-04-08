@@ -23,13 +23,11 @@ from case.views.case_report_view import fetch_cases_for_week
 from weather.models import Weather
 import shutil
 import json
-
-# Test
-import csv
+from django.http import JsonResponse
 
 
 class LstmTrainingView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     def __init__(self):
         super().__init__()
@@ -37,169 +35,154 @@ class LstmTrainingView(APIView):
         self.model_path = os.path.join(self.model_dir, "dengue_lstm_model.h5")
         self.metadata_path = os.path.join(self.model_dir, "model_metadata.json")
 
-        # Feature ranges
-        self.feature_ranges = {
-            "Rainfall": (0, 100),
-            "MaxTemperature": (20, 40),
-            "Humidity": (0, 100),
-            "Cases": (0, 1000),
-        }
-
         # Ensure directory exists
         os.makedirs(self.model_dir, exist_ok=True)
 
-    def normalize_value(self, value, feature):
-        """Normalize a value using the feature's min-max range"""
-        min_val, max_val = self.feature_ranges[feature]
-        return (value - min_val) / (max_val - min_val)
+        # Metdadata
+        self.dataset_length = 0
 
-    def create_sequences(self, data, window_size):
-        """Create sequences for LSTM training"""
-        X, y = [], []
-        for i in range(window_size, len(data)):
-            X.append(data[i - window_size : i])
-            y.append(data[i][3])  # Cases is at index 3
-        return np.array(X), np.array(y)
+        self.scaler_features = MinMaxScaler()
+        self.scaler_target = MinMaxScaler()
 
-    def fetch_training_data(self):
-        """Fetch case and weather data from the database"""
-        # Get all weather records ordered by date
+        self.normalized_data = None
+        self.normalized_target = None
+        self.results = {}
+
+    def get_features_target(self):
+        # todo: base the end_date to the last date_con in cases
         weather_records = Weather.objects.all().order_by("start_day")
 
-        # Prepare dataset
-        dataset = []
-
-        # Debugging Purposes:
-        filename = "output.csv"
-        data = [["Rainfall", "MaxTemperature", "Humidity", "Cases"]]
+        features_dataset = []
+        target_dataset = []
 
         for weather in weather_records:
-            # Get cases for this week
             cases_for_week = fetch_cases_for_week(weather.start_day)
 
-            # Debugging Purposes:
-            data.append(
+            features_dataset.append(
                 [
                     weather.weekly_rainfall,
                     weather.weekly_temperature,
                     weather.weekly_humidity,
-                    cases_for_week,
                 ]
             )
 
-            # Add normalized data point
-            dataset.append(
-                [
-                    self.normalize_value(weather.weekly_rainfall, "Rainfall"),
-                    self.normalize_value(weather.weekly_temperature, "MaxTemperature"),
-                    self.normalize_value(weather.weekly_humidity, "Humidity"),
-                    self.normalize_value(cases_for_week, "Cases"),
-                ]
-            )
+            target_dataset.append(cases_for_week)
 
-        # Debugging Purposes:
-        with open(filename, "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerows(data)
-        print(f"Data written to {filename}")
+        # For Metdata
+        self.dataset_length = len(features_dataset)
 
-        return np.array(dataset)
+        return np.array(features_dataset), np.array(target_dataset)
 
-    def get_cases_for_week(self, week_start_date):
-        """Get total cases for a specific week"""
-        week_end_date = week_start_date + timedelta(days=6)
-        cases = Case.objects.filter(
-            date_con__gte=week_start_date, date_con__lte=week_end_date
-        ).count()
-        return cases
+    def normalize_data(self):
+        features, target = self.get_features_target()
 
-    def train_model_with_validation(self, window_size=5, validation_split=0.2):
-        """Train the LSTM model with current data and save to a temporary location"""
-        # Generate a temporary file path for the new model
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        temp_model_path = os.path.join(self.model_dir, f"temp_model_{timestamp}.h5")
-        temp_metadata_path = os.path.join(
-            self.model_dir, f"temp_metadata_{timestamp}.json"
+        normalized_features = self.scaler_features.fit_transform(features)
+        self.normalized_target = self.scaler_target.fit_transform(target.reshape(-1, 1))
+
+        self.normalized_data = pd.DataFrame(
+            normalized_features,
+            columns=["Rainfall", "Temperature", "Humidity"],
+        )
+        self.normalized_data["Cases"] = self.normalized_target
+
+    def create_sequences(
+        self,
+        data,
+        target,
+        window_size,
+    ):
+        X, y = [], []
+        for i in range(window_size, len(data)):
+            X.append(data[i - window_size : i])
+            y.append(target[i])
+        return np.array(X), np.array(y)
+
+    def train_model_with_validation(
+        self,
+        window_size=5,
+        validation_split=0.2,
+    ):
+        # Fetch and normalize data
+        self.normalize_data()
+
+        X, y = self.create_sequences(
+            self.normalized_data.values,
+            self.normalized_target,
+            window_size,
         )
 
-        # Fetch and prepare data
-        dataset = self.fetch_training_data()
+        split_index = int(len(X) * (1 - validation_split))
+        X_train, X_test = X[:split_index], X[split_index:]
+        y_train, y_test = y[:split_index], y[split_index:]
 
-        if len(dataset) < window_size + 10:  # Need enough data for training
-            return {
-                "success": False,
-                "error": f"Insufficient data for training. Need at least {window_size + 10} weeks of data.",
-            }
-
-        # Create sequences
-        X, y = self.create_sequences(dataset, window_size)
-
-        # Split into training and validation sets
-        split_idx = int(len(X) * (1 - validation_split))
-        X_train, X_val = X[:split_idx], X[split_idx:]
-        y_train, y_val = y[:split_idx], y[split_idx:]
-
-        # Define model architecture
         model = Sequential()
-        model.add(Input(shape=(window_size, 4)))  # 4 features
+        # Input Layer
+        model.add(Input(shape=(X_train.shape[1], X_train.shape[2])))
         model.add(LSTM(64, activation="relu"))
+        # Output Layer
         model.add(Dense(1))
 
-        # Compile model
-        optimizer = Adam(learning_rate=0.001)
+        # Compile the model with Adam optimizer and custom learning rate
+
+        learning_rate = 0.001
+        optimizer = Adam(learning_rate=learning_rate)
         model.compile(optimizer=optimizer, loss="mean_squared_error")
 
-        # Early stopping
+        # Early stopping callback
         early_stopping = EarlyStopping(
             monitor="val_loss", patience=5, restore_best_weights=True
         )
 
-        # Train model
+        # Train the model
         history = model.fit(
             X_train,
             y_train,
             epochs=100,
             batch_size=1,
-            validation_data=(X_val, y_val),
-            callbacks=[early_stopping],
+            validation_data=(X_test, y_test),
             verbose=1,
+            callbacks=[early_stopping],
         )
 
-        # Evaluate model
-        y_pred = model.predict(X_val)
+        # Predict on test set
+        y_pred = model.predict(X_test)
 
-        # Denormalize for metrics calculation
-        min_val, max_val = self.feature_ranges["Cases"]
-        y_val_denorm = y_val * (max_val - min_val) + min_val
-        y_pred_denorm = y_pred * (max_val - min_val) + min_val
+        # Rescale back to original dengue case values
+        predicted_actual_scale = self.scaler_target.inverse_transform(y_pred)
+        y_test_actual_scale = self.scaler_target.inverse_transform(y_test)
 
-        # Calculate metrics
-        mse = mean_squared_error(y_val_denorm, y_pred_denorm)
+        # Compute MSE and RMSE
+        mse = mean_squared_error(
+            y_test_actual_scale,
+            predicted_actual_scale,
+        )
         rmse = np.sqrt(mse)
-        mae = mean_absolute_error(y_val_denorm, y_pred_denorm)
-        r2 = r2_score(y_val_denorm, y_pred_denorm)
+        mae = mean_absolute_error(
+            y_test_actual_scale,
+            predicted_actual_scale,
+        )
+        r2 = r2_score(
+            y_test_actual_scale,
+            predicted_actual_scale,
+        )
 
         # Create metadata
         metadata = {
             "window_size": window_size,
             "last_trained": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "dataset_size": len(dataset),
+            "dataset_size": self.dataset_length,
             "metrics": {
                 "mse": float(mse),
                 "rmse": float(rmse),
                 "mae": float(mae),
                 "r2": float(r2),
             },
-            "feature_ranges": self.feature_ranges,
             "epochs_completed": len(history.history["loss"]),
         }
 
-        # Save model to temporary location first
-        model.save(temp_model_path)
-
-        # Save metadata to temporary location
-        with open(temp_metadata_path, "w") as f:
-            json.dump(metadata, f)
+        temp_model_path, temp_metadata_path = self.save_temp_model_metadata(
+            model, metadata
+        )
 
         return {
             "success": True,
@@ -210,6 +193,24 @@ class LstmTrainingView(APIView):
             "temp_model_path": temp_model_path,
             "temp_metadata_path": temp_metadata_path,
         }
+
+    def save_temp_model_metadata(
+        self,
+        model,
+        metadata,
+    ):
+        # Save model and metadata to temporary location
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        temp_model_path = os.path.join(self.model_dir, f"temp_model_{timestamp}.h5")
+        temp_metadata_path = os.path.join(
+            self.model_dir, f"temp_metadata_{timestamp}.json"
+        )
+        model.save(temp_model_path)
+
+        with open(temp_metadata_path, "w") as f:
+            json.dump(metadata, f)
+
+        return temp_model_path, temp_metadata_path
 
     def backup_existing_model(self):
         """Create a backup of the existing model if it exists"""
@@ -251,40 +252,39 @@ class LstmTrainingView(APIView):
         return True
 
     def post(self, request):
-        """API endpoint for training model"""
         try:
-            serializer = ModelTrainingSerializer(data=request.data)
+            serialier = ModelTrainingSerializer(data=request.data)
 
-            if not serializer.is_valid():
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not serialier.is_valid():
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": serialier.errors,
+                    }
+                )
 
-            # Get parameters from request
-            window_size = serializer.validated_data.get("window_size", 5)
-            validation_split = serializer.validated_data.get("validation_split", 0.2)
+            window_size = serialier.validated_data.get("window_size", 5)
+            validation_split = serialier.validated_data.get("validation_split", 0.2)
 
             # Only backup existing model if needed
             backup_info = self.backup_existing_model()
 
-            # Train new model to temporary location
+            # Train new model and save to temporary location
             training_result = self.train_model_with_validation(
-                window_size, validation_split
+                window_size,
+                validation_split,
             )
 
             if not training_result["success"]:
-                return Response(
+                return JsonResponse(
                     {
-                        "error": training_result["error"],
-                        "backup_info": (
-                            backup_info if backup_info["model_backed_up"] else None
-                        ),
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
+                        "success": False,
+                        "message": "Model training failed.",
+                    }
                 )
 
-            # Get model quality metrics
             metrics = training_result["metrics"]
 
-            # Get existing model metrics if available for comparison
             existing_model_metrics = None
             if os.path.exists(self.metadata_path):
                 with open(self.metadata_path, "r") as f:
@@ -335,8 +335,12 @@ class LstmTrainingView(APIView):
             return Response(response_data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
