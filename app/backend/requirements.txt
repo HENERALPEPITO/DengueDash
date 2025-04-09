@@ -6,3 +6,4 @@ djangorestframework-simplejwt
 Faker
 scikit-learn
 tensorflow[and-cuda]
+pandas

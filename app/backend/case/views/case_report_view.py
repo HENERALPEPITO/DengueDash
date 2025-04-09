@@ -11,14 +11,20 @@ from django.db.models import Case as DBCase, Value, When
 from django.http import JsonResponse
 
 
-def fetch_cases_for_week(start_date):
+def fetch_cases_for_week(start_date, location_filter=None):
     end_date = start_date + timedelta(days=6)
+    # Base queryset
     cases = Case.objects.filter(
-        clncl_class="W" or "S",
+        clncl_class__in=["W", "S"],
         date_con__gte=start_date,
         date_con__lte=end_date,
-    ).count()
-    return cases
+    )
+
+    # Apply location filter if provided
+    if location_filter:
+        cases = cases.filter(**location_filter)
+
+    return cases.count()
 
 
 def get_filter_criteria(user):
