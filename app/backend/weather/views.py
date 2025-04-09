@@ -21,8 +21,19 @@ class WeatherView(APIView):
             )
         return data
 
+    def filter_by_location(self, request, data):
+        user = request.user
+        dru_type = str(user.dru.dru_type)
+        if dru_type == "RESU":
+            return data.filter(location=user.dru.region)
+        elif dru_type == "PESU":
+            return data.filter(location=user.dru.addr_province)
+        elif dru_type != "National":
+            return data.filter(location=user.dru.addr_city)
+
     def get(self, request):
         weather = Weather.objects.all()
         weather = self.filter_by_date(request, weather)
+        weather = self.filter_by_location(request, weather)
         serializer = WeatherSerializer(weather, many=True)
         return Response(serializer.data)
