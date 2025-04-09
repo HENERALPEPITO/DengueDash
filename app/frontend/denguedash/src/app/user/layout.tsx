@@ -32,6 +32,8 @@ export default async function Layout({
   }
 
   return (
-    <LayoutComponents isAdmin={isAdmin} druType={druType} children={children} />
+    <LayoutComponents isAdmin={isAdmin} druType={druType}>
+      {children}
+    </LayoutComponents>
   );
 }
