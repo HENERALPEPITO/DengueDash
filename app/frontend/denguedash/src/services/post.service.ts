@@ -1,6 +1,7 @@
 import { SignUpUserInterface } from "@/interfaces/account/sign-up.interface";
 import { axiosClient } from "./auth.service";
 import { RegisterDRUInterface } from "@/interfaces/dru/dru.interface";
+import { TrainingConfig } from "@/interfaces/forecasting/training.interface";
 
 const OPERATION = "POST";
 const DEFAULT_PARAMS = {};
@@ -56,6 +57,16 @@ const predictCases = async () => {
   );
 };
 
-const postService = { submitForm, predictCases, signUpUser, registerDRU };
+const retrainModel = async (formData: TrainingConfig) => {
+  return axiosClient("forecasting/train/", OPERATION, formData, DEFAULT_PARAMS);
+};
+
+const postService = {
+  submitForm,
+  predictCases,
+  retrainModel,
+  signUpUser,
+  registerDRU,
+};
 
 export default postService;
