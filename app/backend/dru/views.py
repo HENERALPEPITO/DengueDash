@@ -34,17 +34,22 @@ from .serializers import RegisterDRUSerializer
 
 
 class RegisterDRUView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
-    # Constants
-    ALLOWED_DRU_TYPES = ["National", "RESU", "PESU", "CESU"]
+    def __init__(self):
+        self.ALLOWED_DRU_TYPES = [
+            "National",
+            "RESU",
+            "PESU",
+            "CESU",
+        ]
 
     def post(self, request):
         current_user = request.user
 
         # Authorization check
-        if not self._is_user_authorized(current_user):
-            return self._unauthorized_response()
+        # if not self._is_user_authorized(current_user):
+        #     return self._unauthorized_response()
 
         # Validation check
         validation_error = self._validate_dru_registration(current_user, request.data)
@@ -54,20 +59,20 @@ class RegisterDRUView(APIView):
         # Create DRU and associated user
         return self._create_dru_and_user(request)
 
-    def _is_user_authorized(self, user):
-        """Check if the user is authorized to register a DRU."""
-        if user.is_admin or user.is_superuser:
-            return True
-        return str(user.dru.dru_type) in self.ALLOWED_DRU_TYPES
+    # def _is_user_authorized(self, user):
+    #     """Check if the user is authorized to register a DRU."""
+    #     if user.is_admin or user.is_superuser:
+    #         return True
+    #     return str(user.dru.dru_type) in self.ALLOWED_DRU_TYPES
 
-    def _unauthorized_response(self):
-        """Return a standardized unauthorized response."""
-        return JsonResponse(
-            {
-                "success": False,
-                "message": "You are not authorized to perform this action",
-            },
-        )
+    # def _unauthorized_response(self):
+    #     """Return a standardized unauthorized response."""
+    #     return JsonResponse(
+    #         {
+    #             "success": False,
+    #             "message": "You are not authorized to perform this action",
+    #         },
+    #     )
 
     def _validate_dru_registration(self, user, request_data):
         """Validate DRU type and region based on the user's DRU type."""
@@ -255,13 +260,13 @@ class DeleteDRUView(APIView):
     def delete(self, request, dru_id):
         current_user = request.user
 
-        if not current_user.is_admin:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "You are not authorized to perform this action",
-                },
-            )
+        # if not current_user.is_admin:
+        #     return JsonResponse(
+        #         {
+        #             "success": False,
+        #             "message": "You are not authorized to perform this action",
+        #         },
+        #     )
 
         is_superuser = current_user.is_superuser
         dru_to_delete = DRU.objects.filter(id=dru_id).first()
