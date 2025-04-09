@@ -531,7 +531,7 @@ export default function EncoderForecastingDashboard() {
         </div>
 
         {/* Additional helpful components */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <Card>
             <CardHeader>
               <CardTitle>Location Risk Assessment</CardTitle>
@@ -574,27 +574,6 @@ export default function EncoderForecastingDashboard() {
               </ScrollArea>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Weather Impact Analysis</CardTitle>
-              <CardDescription>
-                How weather affects dengue transmission
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="h-[220px] relative">
-              {/* This would be a real chart in a production app */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-full h-full flex items-center justify-center bg-muted/20 rounded-md">
-                  {/* <BarChart className="h-16 w-16 text-muted-foreground" /> */}
-                  <span className="ml-2 text-muted-foreground">
-                    Correlation chart would render here
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           <Card>
             <CardHeader>
               <CardTitle>Prevention Measures</CardTitle>
