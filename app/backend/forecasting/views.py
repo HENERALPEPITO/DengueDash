@@ -25,11 +25,11 @@ from weather.models import Weather
 import shutil
 import json
 from django.http import JsonResponse
+from auth.permission import IsUserAdmin
 
 
 class LstmTrainingView(APIView):
-    # Todo: Authentication for PESU/CESU/RESU only
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
     def __init__(self):
         super().__init__()
@@ -48,17 +48,24 @@ class LstmTrainingView(APIView):
 
         self.normalized_data = None
         self.normalized_target = None
-        self.results = {}
+
+        self.location_filter = None
+        self.weather_filter = None
 
     def get_features_target(self):
         # todo: base the end_date to the last date_con in cases
-        weather_records = Weather.objects.all().order_by("start_day")
+        weather_records = Weather.objects.filter(
+            **self.weather_filter,
+        ).order_by("start_day")
 
         features_dataset = []
         target_dataset = []
 
         for weather in weather_records:
-            cases_for_week = fetch_cases_for_week(weather.start_day)
+            cases_for_week = fetch_cases_for_week(
+                weather.start_day,
+                self.location_filter,
+            )
 
             features_dataset.append(
                 [
@@ -284,6 +291,32 @@ class LstmTrainingView(APIView):
                     }
                 )
 
+            user = request.user
+            dru_type = str(user.dru.dru_type)
+            if dru_type == "RESU":
+                self.location_filter = {
+                    "interviewer__dru__region": str(user.dru.region)
+                }
+                self.weather_filter = {
+                    "location": str(user.dru.region),
+                }
+            elif dru_type in ["PESU", "CESU"]:
+                self.location_filter = {
+                    "interviewer__dru__surveillance_unit": str(
+                        user.dru.surveillance_unit
+                    )
+                }
+                if dru_type == "PESU":
+                    self.weather_filter = {
+                        "location": str(user.dru.addr_province),
+                    }
+                elif dru_type == "CESU":
+                    self.weather_filter = {
+                        "location": str(user.dru.addr_city),
+                    }
+            elif dru_type == "National":
+                self.location_filter = {}
+
             window_size = serialier.validated_data.get("window_size", 5)
             validation_split = serialier.validated_data.get("validation_split", 0.2)
 
@@ -366,8 +399,7 @@ class LstmTrainingView(APIView):
 
 
 class LstmPredictionView(APIView):
-    # Todo: Authentication for PESU/CESU/RESU only
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def __init__(self):
         self.model_dir = os.path.join(os.path.dirname(__file__), "ml-dl-models")
@@ -379,8 +411,10 @@ class LstmPredictionView(APIView):
         self.scaler_features = MinMaxScaler()
         self.scaler_target = MinMaxScaler()
 
-        # Test
         self.window_size = 5
+
+        self.location_filter = None
+        self.weather_filter = None
 
     def get_latest_week_number(self):
         cases = Case.objects.latest("date_con").date_con
@@ -448,9 +482,32 @@ class LstmPredictionView(APIView):
                     }
                 )
 
-            weather_last_n_weeks = Weather.objects.all().order_by("-start_day")[
-                : self.window_size
-            ]
+            user = request.user
+            dru_type = str(user.dru.dru_type)
+            if dru_type == "RESU":
+                self.location_filter = {
+                    "interviewer__dru__region": str(user.dru.region)
+                }
+            elif dru_type in ["PESU", "CESU"]:
+                self.location_filter = {
+                    "interviewer__dru__surveillance_unit": str(
+                        user.dru.surveillance_unit
+                    )
+                }
+                if dru_type == "PESU":
+                    self.weather_filter = {
+                        "location": str(user.dru.addr_province),
+                    }
+                elif dru_type == "CESU":
+                    self.weather_filter = {
+                        "location": str(user.dru.addr_city),
+                    }
+            elif dru_type == "National":
+                self.location_filter = {}
+
+            weather_last_n_weeks = Weather.objects.filter(
+                **self.weather_filter,
+            ).order_by("-start_day")[: self.window_size]
 
             # To mitigate negative indexing
             weather_last_n_weeks = list(reversed(weather_last_n_weeks))
@@ -459,7 +516,10 @@ class LstmPredictionView(APIView):
             target_last_n_weeks = np.empty((0, 1))
 
             for week in weather_last_n_weeks:
-                cases_for_week = fetch_cases_for_week(week.start_day)
+                cases_for_week = fetch_cases_for_week(
+                    week.start_day,
+                    self.location_filter,
+                )
 
                 # Append features
                 features_last_n_weeks = np.append(
