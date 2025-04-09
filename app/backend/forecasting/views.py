@@ -34,8 +34,8 @@ class LstmTrainingView(APIView):
     def __init__(self):
         super().__init__()
         self.model_dir = os.path.join(os.path.dirname(__file__), "ml-dl-models")
-        self.model_path = os.path.join(self.model_dir, "dengue_lstm_model.h5")
-        self.metadata_path = os.path.join(self.model_dir, "model_metadata.json")
+        self.model_path = None
+        self.metadata_path = None
 
         # Ensure directory exists
         os.makedirs(self.model_dir, exist_ok=True)
@@ -51,6 +51,50 @@ class LstmTrainingView(APIView):
 
         self.location_filter = None
         self.weather_filter = None
+
+        self.admin_location = None
+
+    def initialize_paths_filters(self, request):
+        user = request.user
+        dru_type = str(user.dru.dru_type)
+        if dru_type == "RESU":
+            self.location_filter = {"interviewer__dru__region": str(user.dru.region)}
+            self.weather_filter = {
+                "location": str(user.dru.region),
+            }
+            self.admin_location = str(user.dru.region).replace(" ", "_").lower()
+        elif dru_type in ["PESU", "CESU"]:
+            self.location_filter = {
+                "interviewer__dru__surveillance_unit": str(user.dru.surveillance_unit)
+            }
+            self.admin_location = (
+                str(user.dru.surveillance_unit)
+                .replace(
+                    " ",
+                    "_",
+                )
+                .lower()
+            )
+            if dru_type == "PESU":
+                self.weather_filter = {
+                    "location": str(user.dru.addr_province),
+                }
+            else:
+                self.weather_filter = {
+                    "location": str(user.dru.addr_city),
+                }
+        # todo: handle National data
+        # elif dru_type == "National":
+        #     self.location_filter = {}
+
+        self.model_path = os.path.join(
+            self.model_dir,
+            f"dengue_lstm_model_{self.admin_location}.keras",
+        )
+        self.metadata_path = os.path.join(
+            self.model_dir,
+            f"model_metadata_{self.admin_location}.json",
+        )
 
     def get_features_target(self):
         # todo: base the end_date to the last date_con in cases
@@ -229,9 +273,11 @@ class LstmTrainingView(APIView):
     ):
         # Save model and metadata to temporary location
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        temp_model_path = os.path.join(self.model_dir, f"temp_model_{timestamp}.h5")
+        temp_model_path = os.path.join(
+            self.model_dir, f"temp_model_{self.admin_location}_{timestamp}.keras"
+        )
         temp_metadata_path = os.path.join(
-            self.model_dir, f"temp_metadata_{timestamp}.json"
+            self.model_dir, f"temp_metadata_{self.admin_location}_{timestamp}.json"
         )
         model.save(temp_model_path)
 
@@ -247,10 +293,12 @@ class LstmTrainingView(APIView):
         if os.path.exists(self.model_path):
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_model_path = os.path.join(
-                self.model_dir, f"dengue_lstm_model_backup_{timestamp}.h5"
+                self.model_dir,
+                f"dengue_lstm_model_backup_{self.admin_location}_{timestamp}.keras",
             )
             backup_metadata_path = os.path.join(
-                self.model_dir, f"model_metadata_backup_{timestamp}.json"
+                self.model_dir,
+                f"model_metadata_backup_{self.admin_location}_{timestamp}.json",
             )
 
             # Copy model and metadata to backup
@@ -291,31 +339,7 @@ class LstmTrainingView(APIView):
                     }
                 )
 
-            user = request.user
-            dru_type = str(user.dru.dru_type)
-            if dru_type == "RESU":
-                self.location_filter = {
-                    "interviewer__dru__region": str(user.dru.region)
-                }
-                self.weather_filter = {
-                    "location": str(user.dru.region),
-                }
-            elif dru_type in ["PESU", "CESU"]:
-                self.location_filter = {
-                    "interviewer__dru__surveillance_unit": str(
-                        user.dru.surveillance_unit
-                    )
-                }
-                if dru_type == "PESU":
-                    self.weather_filter = {
-                        "location": str(user.dru.addr_province),
-                    }
-                elif dru_type == "CESU":
-                    self.weather_filter = {
-                        "location": str(user.dru.addr_city),
-                    }
-            elif dru_type == "National":
-                self.location_filter = {}
+            self.initialize_paths_filters(request)
 
             window_size = serialier.validated_data.get("window_size", 5)
             validation_split = serialier.validated_data.get("validation_split", 0.2)
@@ -403,10 +427,11 @@ class LstmPredictionView(APIView):
 
     def __init__(self):
         self.model_dir = os.path.join(os.path.dirname(__file__), "ml-dl-models")
-        self.model_path = os.path.join(self.model_dir, "dengue_lstm_model.h5")
-        self.metadata_path = os.path.join(self.model_dir, "model_metadata.json")
 
-        self.model = tf.keras.models.load_model(self.model_path)
+        self.model_path = None
+        self.metadata_path = None
+        self.user_location = None
+        self.model = None
 
         self.scaler_features = MinMaxScaler()
         self.scaler_target = MinMaxScaler()
@@ -419,6 +444,53 @@ class LstmPredictionView(APIView):
     def get_latest_week_number(self):
         cases = Case.objects.latest("date_con").date_con
         return cases.isocalendar().week
+
+    def initialize_paths_filters(self, request):
+        user = request.user
+        dru_type = str(user.dru.dru_type)
+        if dru_type == "RESU":
+            self.location_filter = {"interviewer__dru__region": str(user.dru.region)}
+            self.weather_filter = {
+                "location": str(user.dru.region),
+            }
+            self.user_location = str(user.dru.region).replace(" ", "_").lower()
+        elif dru_type != "National":
+            self.location_filter = {
+                "interviewer__dru__surveillance_unit": str(user.dru.surveillance_unit)
+            }
+            self.user_location = (
+                str(user.dru.surveillance_unit).replace(" ", "_").lower()
+            )
+            if dru_type == "PESU":
+                self.weather_filter = {
+                    "location": str(user.dru.addr_province),
+                }
+            else:
+                self.weather_filter = {
+                    "location": str(user.dru.addr_city),
+                }
+        # Todo: handle National data
+        # elif dru_type == "National":
+        #     self.location_filter = {}
+
+        self.model_path = os.path.join(
+            self.model_dir,
+            f"dengue_lstm_model_{self.user_location}.keras",
+        )
+        self.metadata_path = os.path.join(
+            self.model_dir,
+            f"model_metadata_{self.user_location}.json",
+        )
+        # Load the model
+        if os.path.exists(self.model_path):
+            self.model = tf.keras.models.load_model(self.model_path)
+        else:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Model not found.",
+                },
+            )
 
     def predict_n_weeks(
         self,
@@ -482,28 +554,7 @@ class LstmPredictionView(APIView):
                     }
                 )
 
-            user = request.user
-            dru_type = str(user.dru.dru_type)
-            if dru_type == "RESU":
-                self.location_filter = {
-                    "interviewer__dru__region": str(user.dru.region)
-                }
-            elif dru_type in ["PESU", "CESU"]:
-                self.location_filter = {
-                    "interviewer__dru__surveillance_unit": str(
-                        user.dru.surveillance_unit
-                    )
-                }
-                if dru_type == "PESU":
-                    self.weather_filter = {
-                        "location": str(user.dru.addr_province),
-                    }
-                elif dru_type == "CESU":
-                    self.weather_filter = {
-                        "location": str(user.dru.addr_city),
-                    }
-            elif dru_type == "National":
-                self.location_filter = {}
+            self.initialize_paths_filters(request)
 
             weather_last_n_weeks = Weather.objects.filter(
                 **self.weather_filter,
