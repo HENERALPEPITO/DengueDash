@@ -1,1 +1,1 @@
-{"window_size": 10, "last_trained": "2025-04-07 13:46:34", "dataset_size": 720, "metrics": {"mse": 292.39414305785846, "rmse": 17.099536340435037, "mae": 10.023640543642179, "r2": 0.8293805388484625}, "feature_ranges": {"Rainfall": [0, 100], "MaxTemperature": [20, 40], "Humidity": [0, 100], "Cases": [0, 1000]}, "epochs_completed": 25}
+{"window_size": 5, "last_trained": "2025-04-09 06:31:34", "dataset_size": 720, "metrics": {"mse": 297.25436640813444, "rmse": 17.241066278166628, "mae": 9.792227584165293, "r2": 0.8260161188979478}, "epochs_completed": 29}
