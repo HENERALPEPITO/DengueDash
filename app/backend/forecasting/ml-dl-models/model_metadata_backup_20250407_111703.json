@@ -1,1 +1,0 @@
-{"window_size": 5, "last_trained": "2025-04-07 11:15:15", "dataset_size": 720, "metrics": {"mse": 57.705585911948575, "rmse": 7.596419282263755, "mae": 4.236348240603726, "r2": 0.7102381488795172}, "feature_ranges": {"Rainfall": [0, 100], "MaxTemperature": [20, 40], "Humidity": [0, 100], "Cases": [0, 1000]}, "epochs_completed": 26}
