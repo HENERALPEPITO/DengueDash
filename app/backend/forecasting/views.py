@@ -10,9 +10,10 @@ from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import numpy as np
+import pandas as pd
 import os
 import math
-import pandas as pd
+import random
 from datetime import datetime, timedelta
 from .serializers import (
     PredictionRequestSerializer,
@@ -27,6 +28,7 @@ from django.http import JsonResponse
 
 
 class LstmTrainingView(APIView):
+    # Todo: Authentication for PESU/CESU/RESU only
     permission_classes = (permissions.AllowAny,)
 
     def __init__(self):
@@ -85,6 +87,15 @@ class LstmTrainingView(APIView):
         )
         self.normalized_data["Cases"] = self.normalized_target
 
+    def set_seeds(self, seed=42):
+        # Set seed for reproducibility
+        os.environ["PYTHONHASHSEED"] = str(seed)
+        random.seed(seed)
+        np.random.seed(seed)
+        tf.random.set_seed(seed)
+        os.environ["TF_DETERMINISTIC_OPS"] = "1"
+        os.environ["TF_CUDNN_DETERMINISTIC"] = "1"
+
     def create_sequences(
         self,
         data,
@@ -105,6 +116,8 @@ class LstmTrainingView(APIView):
         # Fetch and normalize data
         self.normalize_data()
 
+        self.set_seeds()
+
         X, y = self.create_sequences(
             self.normalized_data.values,
             self.normalized_target,
@@ -118,9 +131,17 @@ class LstmTrainingView(APIView):
         model = Sequential()
         # Input Layer
         model.add(Input(shape=(X_train.shape[1], X_train.shape[2])))
-        model.add(LSTM(64, activation="relu"))
-        # Output Layer
-        model.add(Dense(1))
+        model.add(
+            LSTM(
+                64,
+                activation="relu",
+                kernel_initializer=tf.keras.initializers.GlorotUniform(seed=42),
+                recurrent_initializer=tf.keras.initializers.Orthogonal(seed=42),
+            )
+        )
+        model.add(
+            Dense(1, kernel_initializer=tf.keras.initializers.GlorotUniform(seed=42))
+        )  # Output layer to predict dengue cases
 
         # Compile the model with Adam optimizer and custom learning rate
 
@@ -345,195 +366,182 @@ class LstmTrainingView(APIView):
 
 
 class LstmPredictionView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    # Todo: Authentication for PESU/CESU/RESU only
+    permission_classes = (permissions.AllowAny,)
 
     def __init__(self):
-        super().__init__()
+        self.model_dir = os.path.join(os.path.dirname(__file__), "ml-dl-models")
+        self.model_path = os.path.join(self.model_dir, "dengue_lstm_model.h5")
+        self.metadata_path = os.path.join(self.model_dir, "model_metadata.json")
 
-        # Load the model from the disk
-        model_path = os.path.join(
-            os.path.dirname(__file__), "ml-dl-models", "dengue_lstm_model.h5"
-        )
-        self.model = tf.keras.models.load_model(model_path)
+        self.model = tf.keras.models.load_model(self.model_path)
 
-        # Initialize scalers
-        self.feature_scaler = MinMaxScaler()
-        self.target_scaler = MinMaxScaler()
+        self.scaler_features = MinMaxScaler()
+        self.scaler_target = MinMaxScaler()
 
-        # Define feature ranges based on your training data
-        # Todo: Update with actual feature ranges
-        # Params: (max, min)
-        self.feature_ranges = {
-            "Rainfall": (0, 100),
-            "MaxTemperature": (20, 40),
-            "Humidity": (0, 100),
-            "Cases": (0, 1000),
-        }
-
-        self.window_size = 5  # Number of weeks to look back for predictions
-
-    # Normalizes the feature value based on the min-max range
-    def normalize_value(self, value, feature):
-        min_val, max_val = self.feature_ranges[feature]
-        return (value - min_val) / (max_val - min_val)
-
-    # Denormalizes the feature value based on the min-max range
-    def denormalize_value(self, normalized_value, feature):
-        min_val, max_val = self.feature_ranges[feature]
-        return normalized_value * (max_val - min_val) + min_val
+        # Test
+        self.window_size = 5
 
     def get_latest_week_number(self):
         cases = Case.objects.latest("date_con").date_con
         return cases.isocalendar().week
 
-    # Generates predictions for the next n weeks using the model
-    def predict_next_n_weeks(
+    def predict_n_weeks(
         self,
-        initial_sequence,
+        previous_data,
         future_weather,
-        n_weeks=5,
     ):
+        """
+        Predict dengue cases for the next n weeks using the trained LSTM model.
+
+        Arguments:
+        previous_data: Last 'window size' weeks of normalized data [features, target]
+        future_weather: Weather data for the next n weeks
+        window_size: Model's input time steps
+
+        Returns:
+        predictions: Predicted dengue cases for the next n weeks
+        """
+
         predictions = []
-        current_sequence = initial_sequence.copy()
+        current_input = previous_data.copy()
         current_week_number = self.get_latest_week_number()
 
-        # Loop through each week and predict
-        for week in range(n_weeks):
-            batch_size = 1
-            num_features = 4
-            model_input = current_sequence.reshape(
-                batch_size, self.window_size, num_features
-            )
-            prediction = self.model.predict(model_input, verbose=0)
+        # Current API does not support more than 2 weeks of prediction
+        for week in range(2):
+            weather = future_weather[week]
+            weather_normalized = self.scaler_features.transform([weather])[0]
 
-            # Denormalize the predicted cases value
-            denormalized_prediction = self.denormalize_value(prediction[0][0], "Cases")
-
-            # Get weather data for the next week
-            if week < len(future_weather):
-                next_weather = future_weather[week]
-            else:
-                # If no weather data provided, use the last known weather
-                next_weather = future_weather[-1]
-
-            # Create new data point with predicted cases and next week's weather
-            new_data_point = np.array(
-                [
-                    self.normalize_value(next_weather["rainfall"], "Rainfall"),
-                    self.normalize_value(
-                        next_weather["max_temperature"], "MaxTemperature"
-                    ),
-                    self.normalize_value(next_weather["humidity"], "Humidity"),
-                    prediction[0][0],  # Already normalized
-                ]
-            )
-
-            # Update sequence for the next prediction
-            current_sequence = np.vstack([current_sequence[1:], new_data_point])
-
-            # Store the prediction with a confidence interval
+            # Predict cases
+            input_data = np.array([current_input])
+            predicted_normalized = self.model.predict(input_data)[0][0]
+            predicted = self.scaler_target.inverse_transform([[predicted_normalized]])[
+                0
+            ][0]
+            # predictions.append(predicted)
             predictions.append(
                 {
                     "week": current_week_number + week + 1,
-                    "predicted_cases": math.ceil(float(denormalized_prediction)),
+                    "predicted_cases": math.ceil(predicted),
                     "confidence_interval": {
-                        "lower": math.ceil(float(denormalized_prediction * 0.9)),
-                        "upper": math.ceil(float(denormalized_prediction * 1.1)),
+                        "lower": math.ceil(predicted * 0.9),
+                        "upper": math.ceil(predicted * 1.1),
                     },
                 }
             )
+
+            # Update input for next prediction
+            new_row = np.append(weather_normalized, predicted_normalized)
+            current_input = np.vstack([current_input[1:], new_row])
 
         return predictions
 
     def post(self, request):
         try:
-            # Use the PredictionRequestSerializer to validate the input data
             serializer = PredictionRequestSerializer(data=request.data)
 
-            # Check if the data is valid
-            if serializer.is_valid():
-                weather_last_five_weeks = Weather.objects.all().order_by("-start_day")[
-                    :5
-                ]
-
-                # Error checking inside the database
-                # Todo: Create a better implementation than this one
-                # One scenario is that the weather table has no value
-                # or less than the required last 5 weeks
-                if len(weather_last_five_weeks) < 5:
-                    return Response(
-                        {
-                            "error": "Insufficient historical weather data. Need at least 5 weeks of data. Please run the seeder"
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-
-                weather_last_five_weeks = list(reversed(weather_last_five_weeks))
-
-                historical_data = []
-                for weather in weather_last_five_weeks:
-                    cases_for_week = fetch_cases_for_week(weather.start_day)
-
-                    historical_data.append(
-                        {
-                            "rainfall": weather.weekly_rainfall,
-                            "humidity": weather.weekly_humidity,
-                            "max_temperature": weather.weekly_temperature,
-                            "cases": cases_for_week,
-                        }
-                    )
-
-                future_weather = serializer.validated_data["future_weather"]
-
-                initial_sequence = np.array(
-                    [
-                        [
-                            self.normalize_value(data["rainfall"], "Rainfall"),
-                            self.normalize_value(
-                                data["max_temperature"], "MaxTemperature"
-                            ),
-                            self.normalize_value(data["humidity"], "Humidity"),
-                            self.normalize_value(data["cases"], "Cases"),
-                        ]
-                        for data in historical_data[-self.window_size :]
-                    ]
-                )
-
-                # Get predictions for the next 8 weeks
-                predictions = self.predict_next_n_weeks(
-                    initial_sequence,
-                    future_weather,
-                    # Using the current plan for weatheropenai,
-                    # the maximum forecasted weather data is 16 days
-                    # However, the optimized version is to use
-                    # the window size of 5 weeks
-                    n_weeks=2,
-                    # n_weeks=self.window_size,
-                )
-
-                # Calculate prediction dates
-                for i, pred in enumerate(predictions):
-                    # Todo: Do not solely rely on the last weather data
-                    pred["date"] = (
-                        weather_last_five_weeks[-1].start_day + timedelta(weeks=i + 1)
-                    ).strftime("%Y-%m-%d")
-
-                # Return the predictions and metadata in the response
-                return Response(
+            if not serializer.is_valid():
+                return JsonResponse(
                     {
-                        "predictions": predictions,
-                        "metadata": {
-                            "model_window_size": self.window_size,
-                            "prediction_generated_at": datetime.now().strftime(
-                                "%Y-%m-%d-%H-%M-%S"
-                            ),
-                        },
+                        "success": False,
+                        "message": serializer.errors,
                     }
                 )
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+            weather_last_n_weeks = Weather.objects.all().order_by("-start_day")[
+                : self.window_size
+            ]
+
+            # To mitigate negative indexing
+            weather_last_n_weeks = list(reversed(weather_last_n_weeks))
+
+            features_last_n_weeks = np.empty((0, 3))
+            target_last_n_weeks = np.empty((0, 1))
+
+            for week in weather_last_n_weeks:
+                cases_for_week = fetch_cases_for_week(week.start_day)
+
+                # Append features
+                features_last_n_weeks = np.append(
+                    features_last_n_weeks,
+                    [
+                        [
+                            week.weekly_rainfall,
+                            week.weekly_temperature,
+                            week.weekly_humidity,
+                        ]
+                    ],
+                    axis=0,
+                )
+
+                # Append target
+                target_last_n_weeks = np.append(
+                    target_last_n_weeks, [[cases_for_week]], axis=0
+                )
+
+            self.scaler_features.fit(features_last_n_weeks)
+            self.scaler_target.fit(target_last_n_weeks.reshape(-1, 1))
+            normalized_features = self.scaler_features.transform(features_last_n_weeks)
+            normalized_target = self.scaler_target.transform(
+                target_last_n_weeks.reshape(-1, 1)
+            )
+            normalized_last_n_weeks_data = np.hstack(
+                [normalized_features, normalized_target]
+            )
+
+            # Process future weather data
+            future_weather = serializer.validated_data.get("future_weather")
+            future_weather = [
+                [
+                    week["rainfall"],
+                    week["max_temperature"],
+                    week["humidity"],
+                ]
+                for week in future_weather
+            ]
+
+            predicted_cases = self.predict_n_weeks(
+                normalized_last_n_weeks_data,
+                future_weather,
+            )
+
+            # Add start date
+            for i, pred in enumerate(predicted_cases):
+                pred["date"] = (
+                    weather_last_n_weeks[-1].start_day + timedelta(weeks=i + 1)
+                ).strftime("%Y-%m-%d")
+
+            # Get model metadata
+            model_metadata = {
+                "window_size": self.window_size,
+                "prediction_generated_at": datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),
+            }
+
+            # Try to get additional metadata if available
+            try:
+                if os.path.exists(self.metadata_path):
+                    with open(self.metadata_path, "r") as f:
+                        file_metadata = json.load(f)
+                        model_metadata["last_trained"] = file_metadata.get(
+                            "last_trained", "Unknown"
+                        )
+                        model_metadata["metrics"] = file_metadata.get("metrics", {})
+            except Exception:
+                pass
+
+            return JsonResponse(
+                {
+                    "predictions": predicted_cases,
+                    "metadata": model_metadata,
+                }
+            )
+
+            #     previous_data.append()
         except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
