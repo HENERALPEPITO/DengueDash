@@ -163,6 +163,9 @@ class LstmTrainingView(APIView):
         self,
         window_size=5,
         validation_split=0.2,
+        epochs=100,
+        batch_size=1,
+        learning_rate=0.001,
     ):
         # Fetch and normalize data
         self.normalize_data()
@@ -196,7 +199,6 @@ class LstmTrainingView(APIView):
 
         # Compile the model with Adam optimizer and custom learning rate
 
-        learning_rate = 0.001
         optimizer = Adam(learning_rate=learning_rate)
         model.compile(optimizer=optimizer, loss="mean_squared_error")
 
@@ -209,8 +211,8 @@ class LstmTrainingView(APIView):
         history = model.fit(
             X_train,
             y_train,
-            epochs=100,
-            batch_size=1,
+            epochs=epochs,
+            batch_size=batch_size,
             validation_data=(X_test, y_test),
             verbose=1,
             callbacks=[early_stopping],
@@ -343,6 +345,9 @@ class LstmTrainingView(APIView):
 
             window_size = serialier.validated_data.get("window_size", 5)
             validation_split = serialier.validated_data.get("validation_split", 0.2)
+            epochs = serialier.validated_data.get("epochs", 100)
+            batch_size = serialier.validated_data.get("batch_size", 1)
+            learning_rate = serialier.validated_data.get("learning_rate", 0.001)
 
             # Only backup existing model if needed
             backup_info = self.backup_existing_model()
@@ -351,6 +356,9 @@ class LstmTrainingView(APIView):
             training_result = self.train_model_with_validation(
                 window_size,
                 validation_split,
+                epochs,
+                batch_size,
+                learning_rate,
             )
 
             if not training_result["success"]:
@@ -374,23 +382,28 @@ class LstmTrainingView(APIView):
             should_commit = True
             commit_reason = "New model trained successfully"
 
-            if existing_model_metrics:
-                # Example: Only commit if R² is better or same but RMSE is lower
-                if metrics["r2"] >= existing_model_metrics["r2"] or (
-                    metrics["r2"]
-                    >= existing_model_metrics["r2"] * 0.95  # Within 5% of previous R²
-                    and metrics["rmse"] < existing_model_metrics["rmse"]
-                ):
-                    commit_reason = (
-                        "New model has better or comparable performance metrics"
-                    )
-                else:
-                    should_commit = False
-                    commit_reason = "New model metrics are worse than existing model"
+            # todo: might implement
+            # todo: determine if this is a good idead
+            # todo: consult with sir Dimzon
+            # todo: purspose only commit if R^2 or RMSE is better than the previously generated training
+            # if existing_model_metrics:
+            #     # Example: Only commit if R² is better or same but RMSE is lower
+            #     if metrics["r2"] >= existing_model_metrics["r2"] or (
+            #         metrics["r2"]
+            #         >= existing_model_metrics["r2"] * 0.95  # Within 5% of previous R²
+            #         and metrics["rmse"] < existing_model_metrics["rmse"]
+            #     ):
+            #         commit_reason = (
+            #             "New model has better or comparable performance metrics"
+            #         )
+            #     else:
+            #         should_commit = False
+            #         commit_reason = "New model metrics are worse than existing model"
 
             response_data = {
                 "training_completed": True,
                 "metrics": metrics,
+                "previous_model_metrics": existing_model_metrics,
                 "dataset_size": training_result["dataset_size"],
                 "window_size": training_result["window_size"],
                 "epochs_completed": training_result["epochs_completed"],
