@@ -5,9 +5,9 @@ export const verifyTokenSignature = async (
   token: string,
   tokenKind: string
 ): Promise<boolean> => {
-  const SECRET_KEY = process.env.SECRET_KEY;
+  const JWT_SECRET = process.env.JWT_SECRET;
   try {
-    await jwtVerify(token, new TextEncoder().encode(SECRET_KEY));
+    await jwtVerify(token, new TextEncoder().encode(JWT_SECRET));
     console.log(`${tokenKind} token signature verified`);
     return true;
   } catch (error) {
