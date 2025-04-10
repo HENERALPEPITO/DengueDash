@@ -445,11 +445,12 @@ class LstmPredictionView(APIView):
         self.metadata_path = None
         self.user_location = None
         self.model = None
+        self.window_size = None
+
+        self.model_metadata = {}
 
         self.scaler_features = MinMaxScaler()
         self.scaler_target = MinMaxScaler()
-
-        self.window_size = 5
 
         self.location_filter = None
         self.weather_filter = None
@@ -457,6 +458,9 @@ class LstmPredictionView(APIView):
     def get_latest_week_number(self):
         cases = Case.objects.latest("date_con").date_con
         return cases.isocalendar().week
+
+    def initialize_window_size(self, window_size):
+        self.window_size = window_size
 
     def initialize_paths_filters(self, request):
         user = request.user
@@ -494,15 +498,29 @@ class LstmPredictionView(APIView):
             self.model_dir,
             f"model_metadata_{self.user_location}.json",
         )
+
         # Load the model
         if os.path.exists(self.model_path):
             self.model = tf.keras.models.load_model(self.model_path)
         else:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "message": "Model not found.",
-                },
+            raise Exception(
+                "Model not found. Please train the model first.",
+            )
+
+        # Initialize the window size based on the model's metadata
+        if os.path.exists(self.metadata_path):
+            with open(self.metadata_path, "r") as f:
+                file_metadata = json.load(f)
+                window_size = file_metadata.get("window_size", 10)
+                self.initialize_window_size(window_size)
+                self.model_metadata["last_trained"] = file_metadata.get(
+                    "last_trained", "Unknown"
+                )
+                self.model_metadata["metrics"] = file_metadata.get("metrics", {})
+                print("Passed")
+        else:
+            raise Exception(
+                "Model metadata not found. Please train the model first.",
             )
 
     def predict_n_weeks(
@@ -636,36 +654,22 @@ class LstmPredictionView(APIView):
                 ).strftime("%Y-%m-%d")
 
             # Get model metadata
-            model_metadata = {
+            self.model_metadata = {
                 "window_size": self.window_size,
                 "prediction_generated_at": datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),
             }
 
-            # Try to get additional metadata if available
-            try:
-                if os.path.exists(self.metadata_path):
-                    with open(self.metadata_path, "r") as f:
-                        file_metadata = json.load(f)
-                        model_metadata["last_trained"] = file_metadata.get(
-                            "last_trained", "Unknown"
-                        )
-                        model_metadata["metrics"] = file_metadata.get("metrics", {})
-            except Exception:
-                pass
-
             return JsonResponse(
                 {
                     "predictions": predicted_cases,
-                    "metadata": model_metadata,
+                    "metadata": self.model_metadata,
                 }
             )
 
-            #     previous_data.append()
         except Exception as e:
             return JsonResponse(
                 {
                     "success": False,
                     "message": str(e),
                 },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
