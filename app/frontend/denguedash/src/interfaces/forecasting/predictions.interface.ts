@@ -28,4 +28,6 @@ export interface MetadataMetrics {
 export interface ModelPredictionResponse {
   predictions: ModelPredictions;
   metadata: PredictionMetadata;
+  success?: boolean;
+  message?: string;
 }
