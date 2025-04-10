@@ -27,6 +27,8 @@ import TrendAndPredictionLineChart from "@/components/forecasting/cases-line-cha
 import CasesCards from "@/components/forecasting/cases-cards";
 import WeatherCards from "@/components/forecasting/weather-cards";
 import CasesRiskLocations from "@/components/forecasting/cases-risk-locations";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function ForecastingMain() {
   const [currentWeekDengueData, setCurrentWeekDengueData] = useState<
@@ -64,10 +66,29 @@ export default function ForecastingMain() {
 
   const handlePredict = async () => {
     setIsPredicting(true);
-    const response: ModelPredictionResponse = await postService.predictCases();
-    setPredictions(response.predictions);
-    setPredictionMetaData(response.metadata);
-    setIsPredicting(false);
+    try {
+      const response: ModelPredictionResponse =
+        await postService.predictCases();
+      if (response.success == false) {
+        setIsPredicting(false);
+        toast.error("Error generating predictions", {
+          description: response.message,
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+        return;
+      }
+      setPredictions(response.predictions);
+      setPredictionMetaData(response.metadata);
+      setIsPredicting(false);
+    } catch (_) {
+      setIsPredicting(false);
+      toast.error("Failed to connect to the server", {
+        description: "Please check your internet connection",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
+    }
   };
 
   const fetchCurrentWeekDengueData = async () => {
