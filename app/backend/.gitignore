@@ -84,3 +84,7 @@ gunicorn.pid
 
 # Pytest cache
 .pytest_cache/
+
+# Ignore exported models and metadata
+forecasting/ml-dl-models/*
+!forecasting/ml-dl-models/.gitkeep
