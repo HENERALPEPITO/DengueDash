@@ -517,7 +517,6 @@ class LstmPredictionView(APIView):
                     "last_trained", "Unknown"
                 )
                 self.model_metadata["metrics"] = file_metadata.get("metrics", {})
-                print("Passed")
         else:
             raise Exception(
                 "Model metadata not found. Please train the model first.",
