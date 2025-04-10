@@ -1,1 +1,1 @@
-{"window_size": 20, "last_trained": "2025-04-09 16:52:07", "dataset_size": 720, "metrics": {"mse": 267.91178048328845, "rmse": 16.368010889637397, "mae": 9.325127107756478, "r2": 0.8446037525401748}, "epochs_completed": 24}
+{"window_size": 10, "last_trained": "2025-04-10 02:40:41", "dataset_size": 720, "metrics": {"mse": 311.41962896522443, "rmse": 17.647085565759134, "mae": 9.711412203983523, "r2": 0.8182786811993557}, "epochs_completed": 13}
