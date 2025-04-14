@@ -76,6 +76,23 @@ The training process was conducted using three distinct window sizes (5 weeks, 1
 
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
+\subsubsection{Hyperparameter Tuning}
+After identifying the optimal window size, it is saved and used to generate the final data sequences, which are then utilized during hyper-parameter tuning.
+
+To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters, specifically:
+
+\begin{itemize}
+	\item \textbf{LSTM units:} Ranged from 32 to 256 with a step size of 32
+	\item \textbf{Learning Rate:} Sampled logarithmically between 0.00001 and 0.001
+\end{itemize}
+
+The tuner was instanstiated with:
+\begin{itemize}
+	\item \textbf{max trials = 10:} Limiting the search to 10 different configurations
+	\item \textbf{executions per trial = 2:} Running each configuration twice to reduce variance
+	\item \textbf{validation split = 0.2:} Reserving 20\% of the training data for validation
+\end{itemize}
+
 
 \subsubsection{ARIMA}
 The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.

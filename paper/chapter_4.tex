@@ -167,6 +167,31 @@ Furthermore, the R² score of 0.85 for the 10-week window indicates that 85\% of
 
 This suggests that using a 10-week sequence length effectively balances the model’s ability to capture temporal dependencies with predictive accuracy, without unnecessarily increasing model complexity or introducing additional noise from longer sequences.
 
+\subsubsection{Hyperparameter Tuning}
+Using the 10-week sequence length identified as the optimal window size in preliminary experiments, the dataset was reshaped accordingly and served as the input for hyperparameter tuning. The tuning process was conducted using the \textit{Bayesian Optimization} approach provided by the \texttt{Keras Tuner} library, targeting the minimization of validation loss (Mean Squared Error). The key hyperparameters explored during the tuning were:
+
+\begin{itemize}
+	\item \textbf{LSTM units:} 256
+	\item \textbf{Learning Rate:} 0.001
+\end{itemize}
+
+Although the tuning process successfully identified a configuration that minimized the validation loss during training, it did not result in improved performance on the test set. In fact, the model’s evaluation metrics slightly declined when compared to the baseline model trained with manually selected hyperparameters.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|c|}
+		\hline
+		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
+		\textbf{Before tuning} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} & \textbf{0.85}\\ \hline
+		\textbf{After tuning} & \textbf{317.70} & \textbf{17.82} & \textbf{10.42} &\textbf{0.81}\\ \hline
+	\end{tabular}
+	\caption{Comparison of Model Performance Before and After Tuning (Using window size = 10)}
+	\label{tab:comparison_of_tuning}
+\end{table}
+
+This outcome suggests that the tuned model may have overfitted the validation split, a common occurrence when working with relatively small datasets. It is also possible that the default or manually chosen configuration was already close to optimal in terms of generalization. Furthermore, although the tuning search space was reasonably defined, it may have excluded other more effective hyperparameter combinations.
+
+These results emphasize the importance of critically evaluating tuning results and underscore that automated hyperparameter optimization does not always guarantee better model performance on unseen data.
 
 
 \section*{Training and Testing Data Division for ARIMA and Seasonal Arima}
