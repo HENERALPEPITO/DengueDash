@@ -3,7 +3,6 @@ from case.models import (
     Case,
     Patient,
 )
-from api.custom_exceptions.custom_validation_exception import CustomValidationException
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -22,39 +21,46 @@ class CaseSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # NS1 Result Validation
         if data.get("ns1_result") != "PR" and data.get("date_ns1") is None:
-            raise CustomValidationException(
+            raise Exception(
                 "NS1 date must not be empty",
+                status_code=None,
             )
         if data.get("ns1_result") == "PR" and data.get("date_ns1") is not None:
-            raise CustomValidationException(
+            raise Exception(
                 "NS1 date must be null",
+                status_code=None,
             )
 
         # IgG ELISA Validation
         if data.get("igg_elisa") != "PR" and data.get("date_igg_elisa") is None:
-            raise CustomValidationException(
+            raise Exception(
                 "IgG ELISA date must not be empty",
+                status_code=None,
             )
         if data.get("igg_elisa") == "PR" and data.get("date_igg_elisa") is not None:
-            raise CustomValidationException(
+            raise Exception(
                 "IgG ELISA date must be null",
             )
 
         # IgM ELISA Validation
         if data.get("igm_elisa") != "PR" and data.get("date_igm_elisa") is None:
-            raise CustomValidationException(
+            raise Exception(
                 "IgM ELISA date must not be empty",
             )
         if data.get("igm_elisa") == "PR" and data.get("date_igm_elisa") is not None:
-            raise CustomValidationException(
+            raise Exception(
                 "IgM ELISA date must be null",
             )
 
         # Death Validation
         if data.get("outcome") == "D" and data.get("date_death") is None:
-            raise CustomValidationException("Death date must not be empty")
+            raise Exception(
+                "Death date must not be empty",
+            )
         if data.get("outcome") == "A" and data.get("date_death") is not None:
-            raise CustomValidationException("Death date must be null")
+            raise Exception(
+                "Death date must be null",
+            )
 
         return data
 
@@ -79,8 +85,8 @@ class CaseSerializer(serializers.ModelSerializer):
             patient=patient,
             date_con=date_con,
         ).exists():
-            raise serializers.ValidationError(
-                {"err_msg": "Case already exists"},
+            raise Exception(
+                "Case with the same patient and date of consultation already exists",
             )
 
         # Check if a case with the same patient that is already dead
@@ -88,8 +94,8 @@ class CaseSerializer(serializers.ModelSerializer):
             patient=patient,
             outcome="D",
         ).exists():
-            raise serializers.ValidationError(
-                {"err_msg": "Patient is already dead"},
+            raise Exception(
+                "Patient is already dead",
             )
 
         # Create and return the new case linked to the patient
