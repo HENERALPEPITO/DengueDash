@@ -36,3 +36,12 @@ class PatientCaseView(APIView):
                     "message": str(e),
                 },
             )
+
+        # Still errors but not validation errors
+        # Built-in error handling from the defined structure from the model
+        return JsonResponse(
+            {
+                "success": False,
+                "message": serializer.errors,
+            },
+        )
