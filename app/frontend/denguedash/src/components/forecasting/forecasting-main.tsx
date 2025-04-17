@@ -183,7 +183,7 @@ export default function ForecastingMain() {
           <CardHeader>
             <CardTitle>Dengue Cases Trend & Prediction</CardTitle>
             <CardDescription>
-              Last 4 weeks historical data{" "}
+              Last 5 weeks historical data{" "}
               {predictions.length > 0 ? "and 2-week forecast" : ""}
             </CardDescription>
           </CardHeader>
