@@ -40,13 +40,13 @@ class Patient(models.Model):
         null=False,
     )
     addr_house_no = models.IntegerField(
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     addr_street = models.CharField(
         max_length=100,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     addr_barangay = models.CharField(
         max_length=100,
