@@ -76,10 +76,37 @@ The training process was conducted using three distinct window sizes (5 weeks, 1
 
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
+\subsubsection{Hyperparameter Tuning}
+After identifying the optimal window size, it is saved and used to generate the final data sequences, which are then utilized during hyper-parameter tuning.
+
+To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
+
+\textbf{LSTM units:}
+\begin{itemize}
+	\item  min value: 32 
+	\item	max value: 256
+	\item	step: 32
+	\item	sampling: linear
+\end{itemize}
+\textbf{Learning Rate:}
+\begin{itemize}
+	\item  min value: 0.0001 
+	\item	max value: 0.01
+	\item	step: None
+	\item	sampling: log
+\end{itemize}
+
+The tuner was instanstiated with:
+\begin{itemize}
+	\item \textbf{max trials = 20:} Limiting the search to 20 different configurations
+	\item \textbf{executions per trial = 3:} Running each configuration thrice to reduce variance
+	\item \textbf{validation split = 0.2:} Reserving 20\% of the training data for validation
+\end{itemize}
+
 
 \subsubsection{ARIMA}
 The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
-The dataset was split into training (80%) and testing (20%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
+The dataset was split into training (80\%) and testing (20\%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
 \begin{itemize}
 	\item p (autoregressive order): 0 to 3
 	\item d (differencing order): 0 to 2
