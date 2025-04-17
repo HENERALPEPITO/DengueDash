@@ -81,7 +81,7 @@ export default function ForecastingMain() {
       setPredictions(response.predictions);
       setPredictionMetaData(response.metadata);
       setIsPredicting(false);
-    } catch (_) {
+    } catch {
       setIsPredicting(false);
       toast.error("Failed to connect to the server", {
         description: "Please check your internet connection",
