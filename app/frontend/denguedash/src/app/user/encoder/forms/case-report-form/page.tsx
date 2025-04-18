@@ -30,26 +30,6 @@ import {
 } from "@/interfaces/services/services.interface";
 
 export default function CaseReportForm() {
-  // const cookieStore = await cookies();
-  // const accessToken = cookieStore.get("access_token");
-  // // todo: refactor this
-  // if (!accessToken) {
-  //   console.error("Access token is undefined");
-  //   return null;
-  // }
-  // const dataFromToken: TokenData | null = await getDataFromToken(
-  //   accessToken.value
-  // );
-  // if (!dataFromToken) {
-  //   console.error("Data from token is null");
-  //   return null;
-  // }
-  // const userId = dataFromToken.user_id;
-  // if (userId === null) {
-  //   console.error("User ID is null");
-  //   return null;
-  // }
-
   const [currentPage, setCurrentPage] = useState<"personal" | "clinical">(
     "personal"
   );
@@ -163,6 +143,10 @@ export default function CaseReportForm() {
         duration: defaultToastSettings.duration,
         dismissible: defaultToastSettings.isDismissible,
       });
+
+      // Reset the form and go back to the first page
+      form.reset();
+      setCurrentPage("personal");
     } else {
       if (typeof response.message === "string") {
         toast.error("Error submitting form", {
