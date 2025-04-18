@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@shadcn/components/ui/select";
 import type { UseFormReturn } from "react-hook-form";
-import { ReportFormValues } from "@/lib/case-report-form/schema";
+import { ReportFormValues } from "@/lib/schemas/case-report-form.schema";
 import { useEffect, useState } from "react";
 
 interface LaboratoryResultsSectionProps {

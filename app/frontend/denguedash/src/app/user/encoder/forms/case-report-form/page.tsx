@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   reportFormSchema,
   ReportFormValues,
-} from "@/lib/case-report-form/schema";
+} from "@/lib/schemas/case-report-form.schema";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";

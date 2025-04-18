@@ -15,7 +15,7 @@ export const reportFormSchema = z
         message: "Civil Status is required",
       }),
     date_of_birth: z.date({ required_error: "Date of Birth is required" }),
-    addr_house_no: z.string().optional(),
+    addr_house_no: z.number().optional(),
     addr_street: z.string().optional(),
     addr_barangay: z.string().min(1, "Barangay is required"),
     addr_city: z.string().min(1, "City is required"),

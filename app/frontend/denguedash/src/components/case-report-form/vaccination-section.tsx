@@ -16,7 +16,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@shadcn/lib/utils";
 import type { UseFormReturn } from "react-hook-form";
-import { ReportFormValues } from "@/lib/case-report-form/schema";
+import { ReportFormValues } from "@/lib/schemas/case-report-form.schema";
 
 interface VaccinationSectionProps {
   form: UseFormReturn<ReportFormValues>;
