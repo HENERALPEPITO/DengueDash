@@ -1,4 +1,4 @@
-import { ReportFormValues } from "@/lib/case-report-form/schema";
+import { ReportFormValues } from "@/lib/schemas/case-report-form.schema";
 import {
   FormControl,
   FormField,
@@ -98,7 +98,9 @@ export function AddressSection({ form }: AddressSectionProps) {
             <FormItem>
               <FormLabel>Region</FormLabel>
               <Select
-                onValueChange={(value) => handleRegionChange(field, value)}
+                onValueChange={(value: string) =>
+                  handleRegionChange(field, value)
+                }
                 defaultValue={field.value}
               >
                 <FormControl>
@@ -129,7 +131,9 @@ export function AddressSection({ form }: AddressSectionProps) {
             <FormItem>
               <FormLabel>Province</FormLabel>
               <Select
-                onValueChange={(value) => handleProvinceChange(field, value)}
+                onValueChange={(value: string) =>
+                  handleProvinceChange(field, value)
+                }
                 defaultValue={field.value}
               >
                 <FormControl>
@@ -138,14 +142,16 @@ export function AddressSection({ form }: AddressSectionProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {filteredProvince().map((province) => (
-                    <SelectItem
-                      key={province.name}
-                      value={`${province.name}|${province.prov_code}`}
-                    >
-                      {province.name}
-                    </SelectItem>
-                  ))}
+                  {filteredProvince().map(
+                    (province: { name: string; prov_code: string }) => (
+                      <SelectItem
+                        key={province.name}
+                        value={`${province.name}|${province.prov_code}`}
+                      >
+                        {province.name}
+                      </SelectItem>
+                    )
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -160,7 +166,7 @@ export function AddressSection({ form }: AddressSectionProps) {
             <FormItem>
               <FormLabel>City</FormLabel>
               <Select
-                onValueChange={(value) =>
+                onValueChange={(value: string) =>
                   handleCityMunicipalityChange(field, value)
                 }
                 defaultValue={field.value}
