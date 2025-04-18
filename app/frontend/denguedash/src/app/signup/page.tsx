@@ -97,7 +97,7 @@ export default function SignUp() {
         } else {
           Object.entries(response.message).forEach(([field, errors]) => {
             (errors as string[]).forEach((error: string) => {
-              toast.warning("Failed to create account", {
+              toast.error("Failed to create account", {
                 description: `${field}: ${error}`,
                 duration: defaultToastSettings.duration,
                 dismissible: defaultToastSettings.isDismissible,

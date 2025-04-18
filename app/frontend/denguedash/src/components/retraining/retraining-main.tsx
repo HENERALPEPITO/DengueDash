@@ -127,7 +127,7 @@ export default function RetrainingMain() {
               <CardHeader>
                 <CardTitle>Model Results</CardTitle>
                 <CardDescription>
-                  View the model's performance metrics and charts
+                  View the model&apos;s performance metrics and charts
                 </CardDescription>
               </CardHeader>
               <CardContent>
