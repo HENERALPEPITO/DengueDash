@@ -8,19 +8,8 @@ import {
   CardTitle,
   CardContent,
 } from "@/shadcn/components/ui/card";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@shadcn/components/ui/alert-dialog";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Button } from "@/shadcn/components/ui/button";
 import deleteService from "@/services/delete.service";
 import { useRouter } from "next/navigation";
@@ -53,9 +42,11 @@ export default function DengueReportView({
       );
       if (response.success) {
         const constantPath = "data-tables/dengue-reports/?status=case-deleted";
-        user?.role === "Encoder"
-          ? router.push("/user/encoder/".concat(constantPath))
-          : router.push("/user/admin/".concat(constantPath));
+        if (user?.role === "Encoder") {
+          router.push("/user/encoder/".concat(constantPath));
+        } else {
+          router.push("/user/admin/".concat(constantPath));
+        }
       } else {
         toast.error("Failed to delete case", {
           description: response.message,
