@@ -28,11 +28,14 @@ import {
   BaseServiceResponse,
   ReportFormResponse,
 } from "@/interfaces/services/services.interface";
+import { Upload } from "lucide-react";
+import { BulkUploadModal } from "@/components/case-report-form/bulk-upload.modal";
 
 export default function CaseReportForm() {
   const [currentPage, setCurrentPage] = useState<"personal" | "clinical">(
     "personal"
   );
+  const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
 
   // Initialize the form
   const form = useForm<ReportFormValues>({
@@ -192,9 +195,11 @@ export default function CaseReportForm() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-row justify-between gap-1">
-        <div>
-          <p className="text-2xl lg:text-4xl font-bold">Case Report Form</p>
-        </div>
+        <p className="text-2xl lg:text-4xl font-bold">Case Report Form</p>
+        <Button variant={"outline"} onClick={() => setBulkUploadOpen(true)}>
+          <Upload className="h-4 w-4 mr-2" />
+          Bulk Upload
+        </Button>
       </div>
       <Separator className="mt-2" />
       <div className="container mx-auto py-10">
@@ -266,6 +271,8 @@ export default function CaseReportForm() {
           </form>
         </Form>
       </div>
+
+      <BulkUploadModal open={bulkUploadOpen} onOpenChange={setBulkUploadOpen} />
     </div>
   );
 }
