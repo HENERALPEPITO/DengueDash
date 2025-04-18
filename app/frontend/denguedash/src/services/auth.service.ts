@@ -15,6 +15,30 @@ export const axiosOpen = axios.create({
   },
 });
 
+// Requesting for a protected page
+axiosProtected.interceptors.request.use(
+  async (config) => {
+    const accessTokenResponse = await fetch("/api/auth/request", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!accessTokenResponse.ok) {
+      throw new Error("Failed to get access token");
+    }
+
+    const data = await accessTokenResponse.json();
+    const accessToken = data.accessToken;
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Handling 401 errors and refreshing the token
 axiosProtected.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -23,7 +47,7 @@ axiosProtected.interceptors.response.use(
         // Call the Next.js API route to refresh the token
         const refreshResponse = await fetch("/api/auth/refresh", {
           method: "POST",
-          credentials: "include", // Send cookies with request
+          credentials: "include",
         });
 
         if (!refreshResponse.ok) {
