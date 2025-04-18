@@ -218,7 +218,7 @@ export function AddressSection({ form }: AddressSectionProps) {
             <FormItem>
               <FormLabel>Street</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -232,7 +232,7 @@ export function AddressSection({ form }: AddressSectionProps) {
             <FormItem>
               <FormLabel>House No.</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
