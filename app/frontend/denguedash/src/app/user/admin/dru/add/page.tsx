@@ -4,7 +4,7 @@ import type {
   BaseErrorResponse,
   BaseServiceResponse,
 } from "@/interfaces/services/services.interface";
-import { registerDRUSchema } from "@/lib/register-dru-form/schema";
+import { registerDRUSchema } from "@/lib/schemas/register-dru-form.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
