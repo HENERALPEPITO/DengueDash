@@ -24,7 +24,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@shadcn/lib/utils";
 import type { UseFormReturn } from "react-hook-form";
-import { ReportFormValues } from "@/lib/case-report-form/schema";
+import { ReportFormValues } from "@/lib/schemas/case-report-form.schema";
 
 interface PersonalDetailSectionProps {
   form: UseFormReturn<ReportFormValues>;
@@ -100,7 +100,7 @@ export function PersonalDetailSection({ form }: PersonalDetailSectionProps) {
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select sex" />
+                    <SelectValue placeholder="Select Sex" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -122,7 +122,7 @@ export function PersonalDetailSection({ form }: PersonalDetailSectionProps) {
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select civil status" />
+                    <SelectValue placeholder="Select Civil Status" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
