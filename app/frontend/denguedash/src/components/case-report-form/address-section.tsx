@@ -238,7 +238,14 @@ export function AddressSection({ form }: AddressSectionProps) {
             <FormItem>
               <FormLabel>House No.</FormLabel>
               <FormControl>
-                <Input {...field} value={field.value || ""} />
+                <Input
+                  {...field}
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    field.onChange(value === "" ? null : Number(value));
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
