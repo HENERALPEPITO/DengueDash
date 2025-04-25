@@ -64,15 +64,19 @@ The raw dataset included weekly aggregated weather variables (rainfall, temperat
 \subsubsection{LSTM Model}
 To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting.
 
-The LSTM model was designed using the TensorFlow and Keras libraries. The architecture comprised the following layers:
+The LSTM model architecture consisted of an input layer, a single LSTM layer with 64 units and ReLU activation, followed by a dense layer with a single output neuron to predict the dengue case count. Key hyperparameters included:
 \begin{itemize}
-	\item Input Layer: Accepting sequences of weeks with three features (rainfall, max temperature, and humidity).
-	\item LSTM Layer: A single LSTM layer with 64 units and ReLU activation, capturing temporal dependencies and feature interactions.
-	\item Dense Output Layer: A fully connected layer with a single neuron to predict the dengue cases for the next week.
+	\item Window Size: 5, 10, and 20 weeks, representing the time steps used in the sequence data for each prediction.
+	\item Epochs: 100 epochs were used for training, balancing sufficient training time with computational efficiency also implementing early stopping to avoid overfitting.
+	\item Batch Size: 1, allowing the model to process one sequence at a time, which is beneficial for small datasets but increases training time.
+	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.001 was set to ensure gradual convergence and minimize risk of overfitting.
 \end{itemize}
-The model was trained for 100 epochs implementing early stopping with a batch size of 1, enabling fine-grained weight updates. The training dataset consisted of 80\% of the sequences, while the remaining 20\% was used as the test set to evaluate model performance. Validation loss was monitored during training to assess model generalization.
 
-The training process was conducted using three distinct window sizes (5 weeks, 10 weeks, and 20 weeks) to determine the optimal sequence length of weeks to input into the LSTM model for improved forecasting performance.
+The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
+\begin{itemize}
+	\item \textbf{Training Set:} 80\% of the data (572 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
+	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
+\end{itemize}
 
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
@@ -171,12 +175,6 @@ Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the conf
 	
 \end{enumerate}
 
-
-
-
-
-
-
 \subsubsection{Kalman Filter:}
 \begin{itemize}
 	\item Input Variables: The target variable (Cases) was modeled using three regressors: rainfall, max temperature, and humidity.
@@ -186,17 +184,9 @@ Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the conf
 
 The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
 
-\section{Kalman Filter}
 
-\begin{itemize}
-	\item \textbf{Input Variables}: The target variable (Cases) was modeled using three regressors: rainfall, max temperature, and humidity.
-	\item \textbf{Training and Testing Split}: The dataset was split into 80\% training and 20\% testing to evaluate model performance.
-	\item \textbf{Observation Matrix}: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
-\end{itemize}
 
-The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
-
-\section{Kalman Filter Methodology with Matrix Calculations}
+\subsubsection{Kalman Filter Methodology with Matrix Calculations}
 
 \textbf{Measurement Acquisition}: Obtain the measurement:
 $(z_k)$ of the system's state with associated confidence. This measurement matrix provides a noisy observation of the true state.

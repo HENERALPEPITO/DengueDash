@@ -100,45 +100,30 @@ where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
 This result indicates that dengue cases exceeding 98 in Iloilo City can be considered an outbreak. However, it is important to note that this threshold serves only as a baseline. Additional parameters, such as the number of hospital beds available in the city, must be considered to compute a more effective threshold and develop an appropriate response strategy.
 
 	
-\section{Model Training}
-The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2011 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
+\section{Model Training Results}
 
-Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due to seasonal changes and long-term trends. Dengue case data is updated every month, and weather data can be extracted manually every week. By continuously monitoring performance, incorporating external factors, and updating the model regularly (preferably monthly or semi-annually), forecasting accuracy can be maintained. If drastic environmental or epidemiological changes occur, more frequent retraining is necessary. This ensures that public health interventions remain proactive, effectively mitigating dengue outbreaks.
-
-To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE).
-
-The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The acceptable threshold for Mean Absolute Error (MAE) in forecasting dengue cases for it to be considered accurate can vary depending on the context. However, related studies often serve as benchmarks, with commonly cited acceptable values ranging from 20 to 30. For this study, we have established a threshold of 15 to emphasize the significance of accurate dengue prediction.
+The models were evaluated using three metrics: MSE, RMSE, and MAE. The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The lower values of the three metrics indicate better forecasting performance. Table \ref{tab:comparison_of_models} shows that the models performed differently on testing data. LSTM outperformed the other models with the lowest RMSE, MSE, and MAE while the other three models had relatively higher values for the three metrics.
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|l|c|c|c|}
-		\hline
-		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\ \hline
-		\textbf{LSTM} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} \\ \hline
-		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} & \textbf{18.09} \\ \hline
-		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} & \textbf{25.80} \\ \hline
-		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} & \textbf{22.34} \\ \hline
-	\end{tabular}
+	\resizebox{1\textwidth}{!}{%
+		\begin{tabular}{|l|c|c|c|c|}
+			\hline
+			\textbf{Method} & \textbf{LSTM (Window Size 10)} & \begin{tabular}[c]{@{}c@{}}\textbf{Seasonal ARIMA}\\ \textbf{(2, 0, 2)(0, 1, 1)}\end{tabular} & \textbf{ARIMA (1, 2, 2)} & \textbf{Kalman Filter} \\ \hline
+			\textbf{Testing MSE}   & 260.93 & 1109.69 & 1521.48 & 1474.82 \\ \hline
+			\textbf{Testing RMSE}  &  16.15  & 33.31  & 39.00 & 38.40 \\ \hline
+			\textbf{Testing MAE}   &  9.30  & 18.08  & 25.80 & 22.33 \\ \hline
+		\end{tabular}%
+	}
+	
 	\caption{Comparison of Models}
 	\label{tab:comparison_of_models}
 \end{table}
 
+
+
 \subsection{LSTM Model}
-The LSTM model architecture consisted of an input layer, a single LSTM layer with 64 units and ReLU activation, followed by a dense layer with a single output neuron to predict the dengue case count. Key hyperparameters included:
-\begin{itemize}
-	\item Window Size: 5, 10, and 20 weeks, representing the time steps used in the sequence data for each prediction.
-	\item Epochs: 100 epochs were used for training, balancing sufficient training time with computational efficiency also implementing early stopping to avoid overfitting.
-	\item Batch Size: 1, allowing the model to process one sequence at a time, which is beneficial for small datasets but increases training time.
-	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.001 was set to ensure gradual convergence and minimize risk of overfitting.
-\end{itemize}
-
-The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
-\begin{itemize}
-	\item \textbf{Training Set:} 80\% of the data (572 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
-	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
-\end{itemize}
-
-The training process was conducted using three distinct window sizes—5 weeks, 10 weeks, and 20 weeks—to identify the optimal sequence length of weeks for input into the LSTM model, thereby enhancing forecasting performance. The following plots illustrate the performance of the model in predicting dengue cases for each of the specified window sizes.
+Figure \ref{fig:lstm_comparison} illustrate the performance of the model in predicting dengue cases for each of the specified window sizes. The plots demonstrate that the predicted cases closely follow the trend of the actual cases, indicating that the LSTM model successfully captured the underlying patterns in the data. Despite the fact that the test data is unseen, the model shows a remarkable ability to generalize, suggesting that the model is effectively leveraging past observations to predict future trends.
 
 \begin{figure}[H]
 	\centering
@@ -147,7 +132,7 @@ The training process was conducted using three distinct window sizes—5 weeks, 
 	\label{fig:lstm_comparison}
 \end{figure}
 
-The evaluation metrics included Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE) and R² Score, which assess the accuracy of the model's predictions.
+Further evaluating which window size is most suitable for the prediction model, Table \ref{tab:comparison_of_lstm} shows the evaluation metrics for each window size used in the LSTM model training.
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|l|c|c|c|c|}
@@ -167,15 +152,7 @@ Furthermore, the R² score of 0.85 for the 10-week window indicates that 85\% of
 
 This suggests that using a 10-week sequence length effectively balances the model’s ability to capture temporal dependencies with predictive accuracy, without unnecessarily increasing model complexity or introducing additional noise from longer sequences.
 
-\subsubsection{Hyperparameter Tuning}
-Using the 10-week sequence length identified as the optimal window size in preliminary experiments, the dataset was reshaped accordingly and served as the input for hyperparameter tuning. The tuning process was conducted using the \textit{Bayesian Optimization} approach provided by the \texttt{Keras Tuner} library, targeting the minimization of validation loss (Mean Squared Error). The key hyperparameters explored during the tuning were:
-
-\begin{itemize}
-	\item \textbf{LSTM units:} 96
-	\item \textbf{Learning Rate:} 0.006
-\end{itemize}
-
-Although the tuning process successfully identified a configuration that minimized the validation loss during training, it did not result in improved performance on the test set. In fact, the model’s evaluation metrics slightly declined when compared to the baseline model trained with manually selected hyperparameters.
+Using the 10-week sequence length identified as the optimal window size in preliminary experiments, the dataset was reshaped accordingly and served as the input for hyperparameter tuning. Although the tuning process successfully identified a configuration that minimized the validation loss during training, it did not result in improved performance on the test set. In fact, the model’s evaluation metrics slightly declined when compared to the baseline model trained with manually selected hyperparameters.
 
 \begin{table}[h!]
 	\centering
@@ -192,13 +169,9 @@ Although the tuning process successfully identified a configuration that minimiz
 This outcome suggests that the tuned model may have overfitted the validation split, a common occurrence when working with relatively small datasets. It is also possible that the default or manually chosen configuration was already close to optimal in terms of generalization. Furthermore, although the tuning search space was reasonably defined, it may have excluded other more effective hyperparameter combinations. These results emphasize the importance of critically evaluating tuning results and underscore that automated hyperparameter optimization does not always guarantee better model performance on unseen data.
 
 
-\section*{Training and Testing Data Division for ARIMA and Seasonal Arima}
-Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
-\begin{itemize}
-	\item \textbf{Training Set}: 80\% of the data was used for training, allowing the models to learn underlying patterns in the dataset.
-	\item \textbf{Test Set}: 20\% of the data was reserved for testing, providing an unbiased assessment of the models' performance on unseen data.
-\end{itemize}
 \subsection{ARIMA Model}
+
+
 
 \begin{figure}[H]
 	\centering
@@ -207,16 +180,10 @@ Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
 	\label{fig:Arima_result}
 \end{figure}
 
-The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution.
+The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Figure \ref{fig:Arima_result} illustrates the comparison between actual and predicted dengue cases in the test set. As shown in the plot, the ARIMA model struggled to capture the non-linear characteristics and abrupt spikes in the data. Consequently, it failed to accurately reflect the fluctuations and outbreak patterns seen in the actual case counts.
 
-The model's performance was assessed using regression metrics to evaluate its forecasting capability:
-\begin{itemize}
-	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
-	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
-	\item Mean Absolute Error (MAE): Measures the average magnitude of the absolute errors between the predicted and actual values.
-\end{itemize}
+The model's performance was assessed using regression metrics to evaluate its forecasting capability. The ARIMA model yielded the following error metrics:
 
-The ARIMA model yielded the following error metrics:
 \begin{itemize}
 	\item \textbf{MSE (Mean Squared Error)}: 1521.48
 	\item \textbf{RMSE (Root Mean Squared Error)}: 39.01
@@ -225,6 +192,8 @@ The ARIMA model yielded the following error metrics:
 
 \subsection{Seasonal ARIMA (SARIMA) Model}
 
+To address the limitations of the ARIMA model, a Seasonal ARIMA (SARIMA) model was developed to capture both non-seasonal and seasonal variations in the data.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_Sarima}
@@ -232,11 +201,11 @@ The ARIMA model yielded the following error metrics:
 	\label{fig:Sarima_result}
 \end{figure}
 
-This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit.
+This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit. As shown in Figure \ref{fig:Sarima_result}, the SARIMA model demonstrates a notable improvement in performance. Unlike its non-seasonal counterpart, it effectively captures the general trend and aligns more closely with the peaks observed in the actual dengue cases, indicating its ability to model seasonal dynamics.
 
-The model's performance was assessed using regression metrics to evaluate its forecasting capability: \begin{itemize} \item Mean Squared Error (MSE): Quantifies average squared prediction error. \item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale. \item Mean Absolute Error (MAE): Measures the average magnitude of the absolute errors between the predicted and actual values. \end{itemize}
+The model's performance was assessed using regression metrics to evaluate its forecasting capability. The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The lower error values, when compared to the ARIMA model, highlight the SARIMA model's superior capability in forecasting dengue cases. Its effectiveness in capturing seasonal patterns contributed to a more accurate representation of the actual cases.
 
-The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The SARIMA model outperformed the ARIMA model in terms of lower MSE and RMSE values, indicating its effectiveness in capturing the seasonal patterns in the data.
+
 
 \subsection{Kalman Filter Model}
 
@@ -247,16 +216,17 @@ The SARIMA model yielded the following error metrics: \begin{itemize} \item \tex
 	\label{fig:Kalman_result}
 \end{figure}
 
+Figure \ref{fig:Kalman_result} shows the comparison between the actual dengue cases and the predicted values on the test set. As illustrated in the plot, the Kalman Filter model demonstrates a moderate ability to follow the general trend of the actual data. While it effectively captures some rising and falling patterns, it still struggles to accurately replicate the sharp peaks and extreme values found in the real case counts. This limitation is particularly noticeable during the large spikes in 2022 and 2024.
+\\
 
-\textbf{Model Evaluation}:
-Upon testing, the Kalman Filter produced the following error metrics:
+The model’s performance was evaluated using standard regression metrics. The results are as follows:
 \[
 \text{MSE} = 1474.82, \quad
 \text{RMSE} = 38.40, \quad
 \text{MAE} = 22.34
 \]
 
-These results indicate the model's performance in predicting dengue cases, where lower errors suggest a better fit to the observed data.
+These metrics indicate that the Kalman Filter outperforms the ARIMA model in terms of mean absolute error (MAE), suggesting better accuracy in capturing day-to-day fluctuations. However, it still underperforms compared to the SARIMA model, particularly in modeling seasonal trends and sharp outbreaks. Despite its limitations, the Kalman Filter shows promise for short-term forecasting due to its adaptability and real-time updating capability.
 
 
 \clearpage
