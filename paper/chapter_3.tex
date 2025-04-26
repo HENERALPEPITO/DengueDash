@@ -62,34 +62,19 @@ The deep learning models were developed and trained to forecast weekly dengue ca
 The raw dataset included weekly aggregated weather variables (rainfall, temperature, wind, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
 
 \subsubsection{LSTM Model}
-To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting.
-
-The LSTM model architecture consisted of an input layer, a single LSTM layer with 64 units and ReLU activation, followed by a dense layer with a single output neuron to predict the dengue case count. Key hyperparameters included:
-\begin{itemize}
-	\item Window Size: 5, 10, and 20 weeks, representing the time steps used in the sequence data for each prediction.
-	\item Epochs: 100 epochs were used for training, balancing sufficient training time with computational efficiency also implementing early stopping to avoid overfitting.
-	\item Batch Size: 1, allowing the model to process one sequence at a time, which is beneficial for small datasets but increases training time.
-	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.001 was set to ensure gradual convergence and minimize risk of overfitting.
-\end{itemize}
-
 The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
 \begin{itemize}
 	\item \textbf{Training Set:} 80\% of the data (572 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
 	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
 \end{itemize}
 
-After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
-
-\subsubsection{Hyperparameter Tuning}
-After identifying the optimal window size, it is saved and used to generate the final data sequences, which are then utilized during hyper-parameter tuning.
-
-To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
+To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting. To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
 
 \textbf{LSTM units:}
 \begin{itemize}
 	\item  min value: 32 
-	\item	max value: 256
-	\item	step: 32
+	\item	max value: 128
+	\item	step: 16
 	\item	sampling: linear
 \end{itemize}
 \textbf{Learning Rate:}
@@ -100,13 +85,20 @@ To enhance the performance of the LSTM model in predicting dengue cases, Bayesia
 	\item	sampling: log
 \end{itemize}
 
+
+
 The tuner was instanstiated with:
 \begin{itemize}
-	\item \textbf{max trials = 20:} Limiting the search to 20 different configurations
+	\item \textbf{max trials = 10:} Limiting the search to 10 different configurations
 	\item \textbf{executions per trial = 3:} Running each configuration thrice to reduce variance
 	\item \textbf{validation split = 0.2:} Reserving 20\% of the training data for validation
 \end{itemize}
 
+The hyperparameter tuning was conducted for three different window sizes of data: 5, 10, and 20. This allows the model to have the optimal hyperparameters used for each window size. Training was conducted over 100 epochs with early stopping to prevent overfitting while maintaining computational efficiency. A batch size of 1 was used, enabling the model to process individual sequences, which is suitable for smaller datasets but results in longer training times. The Adam optimizer, known for its adaptive learning capabilities and stability was employed.
+
+
+
+After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
 \subsubsection{ARIMA}
 The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
@@ -245,10 +237,6 @@ where \( H \) is the observation matrix. This residual represents the new inform
 	\]
 	where \( I \) is the identity matrix.
 \end{itemize}
-
-
-\subsection{Backtesting Validation}
-To evaluate the performance and effectiveness of the machine learning models, cross validation is needed in order to properly assess the models. It is common practice to implement cross validation in most machine learning algorithms, wherein the dataset is divided into n-folds. This allows the model to be evaluated using different test sets, meaning it is evaluated on different unseen data, reducing the chances of overfitting. However, given the nature of data this research is involved, which is time series data, it is not suitable to use the normal n-fold cross validation. This is because when dealing with time-series data, the sequence is important and using n-fold cross validation shuffles the order of the data, which naturally contradicts the nature of the problem the research is trying to solve. In this case, one of the ways to validate time series data is to cross validate on a rolling basis, also known as backtesting. Backtesting allows the dataset to be divided into n-folds just like cross validation, but instead of shuffling the dataset, it folds the dataset over a period of time. This allows the model to perform on different sets of test set, which can help us validate the performance of the models. This also mimics closely the real world scenario this research is trying to solve, since over time, the dataset increases and thus, increasing the fold of the training and test sets. The backtesting validation will be implemented on all the machine learning models trained above. The performance metrics will be the same as the performance metrics used in training: MAE, RMSE, and MAE.
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 

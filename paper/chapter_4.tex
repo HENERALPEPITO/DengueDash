@@ -109,10 +109,13 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 	\resizebox{1\textwidth}{!}{%
 		\begin{tabular}{|l|c|c|c|c|}
 			\hline
-			\textbf{Method} & \textbf{LSTM (Window Size 10)} & \begin{tabular}[c]{@{}c@{}}\textbf{Seasonal ARIMA}\\ \textbf{(2, 0, 2)(0, 1, 1)}\end{tabular} & \textbf{ARIMA (1, 2, 2)} & \textbf{Kalman Filter} \\ \hline
-			\textbf{Testing MSE}   & 260.93 & 1109.69 & 1521.48 & 1474.82 \\ \hline
-			\textbf{Testing RMSE}  &  16.15  & 33.31  & 39.00 & 38.40 \\ \hline
-			\textbf{Testing MAE}   &  9.30  & 18.08  & 25.80 & 22.33 \\ \hline
+			\textbf{Method} & \textbf{LSTM} & \textbf{Seasonal ARIMA} & \textbf{ARIMA} & \textbf{Kalman Filter} \\ \hline
+			\textbf{Testing MSE}   & 285.54 & 1109.69 & 1521.48 & 1474.82 \\ \hline
+			\textbf{Testing RMSE}  &  16.90  & 33.31  & 39.00 & 38.40 \\ \hline
+			\textbf{Testing MAE}   &  9.45  & 18.08  & 25.80 & 22.33 \\ \hline
+			\textbf{Best Parameters}   &  \begin{tabular}[c]{@{}c@{}}{Window Size: 5}\\ {Learning Rate: 0.01}\\ {Units: 96}\end{tabular}  
+			& (2, 0, 2)(0, 1, 1)  & (1, 2, 2) & -- \\ \hline
+			
 		\end{tabular}%
 	}
 	
@@ -123,6 +126,22 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 
 
 \subsection{LSTM Model}
+The LSTM model was tuned for the following parameters: learning rate and units. The hyperparameter tuning was conducted for each window size, finding the best parameters for each window size. Further evaluating which window size is most suitable for the prediction model, Table \ref{tab:comparison_of_lstm} shows the evaluation metrics for each window size used in the LSTM model training.
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|c|}
+		\hline
+		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
+		\textbf{5} & \textbf{285.54} & \textbf{16.90} & \textbf{9.45} & \textbf{0.83}\\ \hline
+		\textbf{10} & \textbf{334.63} & \textbf{18.29} & \textbf{9.85} & \textbf{0.80}\\ \hline
+		\textbf{20} & \textbf{294.85} & \textbf{17.17} & \textbf{9.35} & \textbf{0.83}\\ \hline
+	\end{tabular}
+	\caption{Comparison of Window Sizes}
+	\label{tab:comparison_of_lstm}
+\end{table}
+
+The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSEvalues. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
+
 Figure \ref{fig:lstm_comparison} illustrate the performance of the model in predicting dengue cases for each of the specified window sizes. The plots demonstrate that the predicted cases closely follow the trend of the actual cases, indicating that the LSTM model successfully captured the underlying patterns in the data. Despite the fact that the test data is unseen, the model shows a remarkable ability to generalize, suggesting that the model is effectively leveraging past observations to predict future trends.
 
 \begin{figure}[H]
@@ -131,43 +150,6 @@ Figure \ref{fig:lstm_comparison} illustrate the performance of the model in pred
 	\caption{Comparison of Window Sizes}
 	\label{fig:lstm_comparison}
 \end{figure}
-
-Further evaluating which window size is most suitable for the prediction model, Table \ref{tab:comparison_of_lstm} shows the evaluation metrics for each window size used in the LSTM model training.
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{|l|c|c|c|c|}
-		\hline
-		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
-		\textbf{5} & \textbf{274.70} & \textbf{16.57} & \textbf{9.57} & \textbf{0.84}\\ \hline
-		\textbf{10} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} & \textbf{0.85}\\ \hline
-		\textbf{20} & \textbf{297.11} & \textbf{17.24} & \textbf{9.84} & \textbf{0.83}\\ \hline
-	\end{tabular}
-	\caption{Comparison of Window Sizes}
-	\label{tab:comparison_of_lstm}
-\end{table}
-
-The results indicate that a window size of 10 weeks provides the most accurate predictions, as evidenced by the lowest MSE (260.93) and RMSE (16.15) values. Although the 10-week window size yields the lowest MAE (9.30), the 5-week window follows closely with 9.57, while the 20-week window is slightly higher at 9.84. These differences are relatively small, especially between the 5- and 10-week windows, indicating that the average prediction error remains fairly consistent across different window sizes.
-
-Furthermore, the R² score of 0.85 for the 10-week window indicates that 85\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall. In contrast, the 5-week and 20-week windows yield R² scores of 0.84 and 0.83, respectively, reflecting marginally lower explanatory power.
-
-This suggests that using a 10-week sequence length effectively balances the model’s ability to capture temporal dependencies with predictive accuracy, without unnecessarily increasing model complexity or introducing additional noise from longer sequences.
-
-Using the 10-week sequence length identified as the optimal window size in preliminary experiments, the dataset was reshaped accordingly and served as the input for hyperparameter tuning. Although the tuning process successfully identified a configuration that minimized the validation loss during training, it did not result in improved performance on the test set. In fact, the model’s evaluation metrics slightly declined when compared to the baseline model trained with manually selected hyperparameters.
-
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{|l|c|c|c|c|}
-		\hline
-		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
-		\textbf{Before tuning} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} & \textbf{0.85}\\ \hline
-		\textbf{After tuning} & \textbf{317.70} & \textbf{17.82} & \textbf{10.42} &\textbf{0.81}\\ \hline
-	\end{tabular}
-	\caption{Comparison of Model Performance Before and After Tuning (Using window size = 10)}
-	\label{tab:comparison_of_tuning}
-\end{table}
-
-This outcome suggests that the tuned model may have overfitted the validation split, a common occurrence when working with relatively small datasets. It is also possible that the default or manually chosen configuration was already close to optimal in terms of generalization. Furthermore, although the tuning search space was reasonably defined, it may have excluded other more effective hyperparameter combinations. These results emphasize the importance of critically evaluating tuning results and underscore that automated hyperparameter optimization does not always guarantee better model performance on unseen data.
-
 
 \subsection{ARIMA Model}
 
