@@ -200,7 +200,6 @@ Shadcn offers a collection of open-source UI boilerplate components that can be 
 \subsubsection{Zod}
 Data validation is integral in this web application since it will handle crucial data that will be used for analytical inferences and observations. Since Zod is primarily used for validating and parsing data, it ensures proper communication between the client and the server \cite{zod-nd}. 
 
-\clearpage
 \section{Application Requirements}
 
 \subsection{Backend Requirements}
@@ -214,22 +213,14 @@ Determining how data flows and how it would be structured is crucial in creating
 \end{figure}
 
 \subsection{User Interface Requirements}
-\subsubsection{Disease Reporting Unit Admin Interface}
+\subsubsection{Admin Interface}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{admin_dru}
-	\caption{Use Case Diagram for DRU Admin}
-	\label{fig:admin-dru-use-case}
+	\includegraphics[width=1\textwidth]{admin}
+	\caption{Use Case Diagram for Admins}
+	\label{fig:admin-use-case}
 \end{figure}
-\subsubsection{Surveillance Unit Admin Interface}
-Figure \ref{fig:admin-dru-use-case} shows the actions an admin for a specific Disease Reporting Unit (DRU) can take in the application. These include managing accounts, browsing records, and forecasting and retraining all the consolidated data under the unit. To protect the integrity of data, encoders that register to a DRU must first be verified by these users, and then the encoder's account can only be authorized to use the application. 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{admin_su}
-	\caption{Use Case Diagram for Surveillance Unit Admin}
-	\label{fig:admin-su-use-case}
-\end{figure}
-While the previous use case focuses on hospitals, clinics, and other reporting units, the use case presented in Figure \ref{fig:admin-su-use-case} has a one-step higher authorization as it manages these DRUs. It has the same features as the DRU admin but with extra management of the DRUs under a specific surveillance unit. At this point, only the authorized surveillance unit administrator can register and create a DRU to uphold transparency and accountability. 
+Figure \ref{fig:admin-use-case} shows the actions of an admin for a specific Disease Reporting Unit (DRU) and an admin for a specific Surveillance Unit can take in the application. Both of them include the management of accounts, browsing records, and forecasting and retraining all the consolidated data under their supervision. Most importantly, these users must verify the encoders who register under their jurisdiction before allowing their account to access the application in the name of safeguarding the integrity of the data. The only advantage of the latter type of administrator is that it has a one-step higher authorization as it manages the DRUs. In addition, only the authorized surveillance unit administrator can register and create a DRU to uphold transparency and accountability.  
 
 
 \subsubsection{Encoder Interface}
