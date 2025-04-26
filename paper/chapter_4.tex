@@ -258,60 +258,6 @@ The Kalman Filter was then combined with the LSTM model in order to see improvem
 
 As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
 
-\clearpage
-\section{Preliminary System Requirements}
-\subsection{Backend Requirements}
-\subsubsection{Database Structure Design}
-Determining how data flows and how it would be structured is crucial in creating the system as it defines how extendible and flexible it would be for future features and updates. Thus, creating a comprehensive map of data ensures proper normalization that eliminates data redundancy and improves data integrity. Figure \ref{fig:er_diagram} depicts the designed database schema that showcases the relationship between the application's entities. 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{er_diagram}
-	\caption{Entity-Relationship Database Schema Hybrid Diagram for DengueDash Database Structure}
-	\label{fig:er_diagram}
-\end{figure}
-
-\subsection{User Interface Requirements}
-\subsubsection{Admin Interface}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{admin}
-	\caption{Use Case Diagram for Admin}
-	\label{fig:admin-use-case}
-\end{figure}
-Figure \ref{fig:admin-use-case} shows the possible tasks that the admin can do in the application. To protect the integrity of data, only the admins can register and delete accounts. Both account creation and deletion will be done within the application.
-
-\subsubsection{Encoder Interface}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{encoder}
-	\caption{Use Case Diagram for Encoder}
-	\label{fig:encoder-use-case}
-\end{figure}
-
-Figure \ref{fig:encoder-use-case}, on the other hand, illustrates the use cases for the system's primary users. Since only the admin accounts can register a user, the registration process is not part of it. Instead, the main features, which include reporting and viewing records, are the only permitted actions for this type of user. The said processes can be done in the application by filling out a form with details required for each dengue case. 
-As data is entered, it will be consolidated for model training and used for further forecasting of dengue cases.
-
-
-\subsection{Security and Validation Requirements}
-\subsubsection{Password Encryption}
-Storing passwords as plain text in the database is a disgrace and a mortal sin in production. It is important to implement precautionary methods such as hashing and salting, followed by encryption with a strong algorithm, to prevent bad actors from using the accounts for malicious transactions. By default, Django generates a unique random salt for each password and encrypts it with Password-Based Key Derivation Function 2 (PBKDF2) with a SHA256 hash function. Utilizing these techniques ensures that in the event of a data breach, cracking these passwords would be time-consuming and useless for the attackers. 
-
-\subsubsection{Authentication}
-DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the mechanism operates in a stateless manner, tokens are served only after a successful login, eliminating the need for the server to keep a record of the token, which is vulnerable to session hijacking. In addition, these tokens are signed with a secret key, ensuring they have not been tampered with. 
-
-\subsubsection{Data Validation}
-Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
-
-\subsection{Testing Process}
-\begin{figure}[H]
-	\centering
-	\includegraphics[height=10cm]{testing_process}
-	\caption{Testing Process for DengueWatch}
-	\label{fig:testing-process}
-\end{figure}
-
-As the system requirements and functionalities have been mentioned above, it is important to implement testing to validate the system's performance and efficacy. Since dengue reports include confidential information, anonymized historical dengue reports were used to train the model and create the foundational architecture of the system. By using functional tests, data validation and visualization can be ensured for further continual improvements. Security testing is also important as it is needed to safeguard confidential information when the system is deployed. It includes proper authentication, permission views, and mitigating common injection attacks. Finally, a user acceptance test from the prospected users, in this case, the Iloilo City Epidemiology and Surveillance Unit, is crucial to assess its performance and user experience. It enables the developers to confirm if the system meets the needs of the problem, and once confirmed, it will be deployed and further evaluated to ensure stability and reliability in live operation. 
-
 \section{System Prototype}
 \subsection{Guest Interface}
 The Guest Interface is intended for all visitors of the web application. It shows the related statistics for dengue cases in a particular area and time. As the system is still in its testing phase, the data converted into charts shown in Figure \ref{fig:guest_dashboard} are generated from Python's Faker library. 
