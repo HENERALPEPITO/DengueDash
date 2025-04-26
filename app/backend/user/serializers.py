@@ -128,12 +128,17 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop("password_confirm")
         password = validated_data.pop("password")
-        request = self.context.get("request")
-        if request and request.user.is_authenticated and request.user.is_admin:
-            validated_data.setdefault("is_verified", True)
-        else:
-            validated_data["is_verified"] = False
-            validated_data["is_admin"] = False
+
+        validated_data["is_verified"] = False
+        validated_data["is_admin"] = False
+
+        # todo: delete this
+        # request = self.context.get("request")
+        # if request and request.user.is_authenticated and request.user.is_admin:
+        #     validated_data.setdefault("is_verified", True)
+        # else:
+        #     validated_data["is_verified"] = False
+        #     validated_data["is_admin"] = False
 
         return User.objects.create_user(password=password, **validated_data)
 
