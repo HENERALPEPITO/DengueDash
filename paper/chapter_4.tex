@@ -113,7 +113,7 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 			\textbf{Testing MSE}   & 285.54 & 1109.69 & 1521.48 & 1474.82 \\ \hline
 			\textbf{Testing RMSE}  &  16.90  & 33.31  & 39.00 & 38.40 \\ \hline
 			\textbf{Testing MAE}   &  9.45  & 18.08  & 25.80 & 22.33 \\ \hline
-			\textbf{Best Parameters}   &  \begin{tabular}[c]{@{}c@{}}{Window Size: 5}\\ {Learning Rate: 0.01}\\ {Units: 96}\end{tabular}  
+			\textbf{Best Parameters}   &  \begin{tabular}[c]{@{}c@{}}{Window Size: 5}\\ {Learning Rate: 0.01}\\ {Units: 64}\end{tabular}  
 			& (2, 0, 2)(0, 1, 1)  & (1, 2, 2) & -- \\ \hline
 			
 		\end{tabular}%
@@ -140,15 +140,22 @@ The LSTM model was tuned for the following parameters: learning rate and units. 
 	\label{tab:comparison_of_lstm}
 \end{table}
 
-The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSEvalues. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
+The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
 
-Figure \ref{fig:lstm_comparison} illustrate the performance of the model in predicting dengue cases for each of the specified window sizes. The plots demonstrate that the predicted cases closely follow the trend of the actual cases, indicating that the LSTM model successfully captured the underlying patterns in the data. Despite the fact that the test data is unseen, the model shows a remarkable ability to generalize, suggesting that the model is effectively leveraging past observations to predict future trends.
+Figure \ref{fig:tcsv_training} illustrates the model’s performance in predicting dengue cases for each fold using a window size of 5. As shown in the plot, the training set progressively increases with each fold, mimicking a real-world scenario where more data becomes available over time for dengue prediction. Figure \ref{fig:tcsv_testing} demonstrates that the predicted cases closely follow the trend of the actual cases, indicating that the LSTM model successfully captures the underlying patterns in the data. It is also evident that as the fold number increases and the training set grows, the accuracy of the predictions on the test set improves. Despite the test data being unseen, the model exhibits a strong ability to generalize, suggesting it effectively leverages past observations to predict future trends.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{lstm_comparison}
-	\caption{Comparison of Window Sizes}
-	\label{fig:lstm_comparison}
+	\includegraphics[width=1\textwidth]{TSCV_training}
+	\caption{Training Folds - Window Size 5}
+	\label{fig:tcsv_training}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{TCSV_testing}
+	\caption{Testing Folds - Window Size 5}
+	\label{fig:tcsv_testing}
 \end{figure}
 
 \subsection{ARIMA Model}

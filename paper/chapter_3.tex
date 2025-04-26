@@ -96,7 +96,7 @@ The tuner was instanstiated with:
 
 The hyperparameter tuning was conducted for three different window sizes of data: 5, 10, and 20. This allows the model to have the optimal hyperparameters used for each window size. Training was conducted over 100 epochs with early stopping to prevent overfitting while maintaining computational efficiency. A batch size of 1 was used, enabling the model to process individual sequences, which is suitable for smaller datasets but results in longer training times. The Adam optimizer, known for its adaptive learning capabilities and stability was employed.
 
-
+To validate the effectiveness of the model, cross-validation was implemented. However, standard k-fold cross-validation randomly shuffles the data, which isn't suitable for time series since the order of observations is important. To address this, a time series-specific cross-validation strategy was used with TimeSeriesSplit from the scikit-learn library. This method creates multiple train-test splits where each training set expands over time and each test set follows sequentially. This approach preserves the temporal structure of the data while helping reduce overfitting by validating the model across different time segments.
 
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
