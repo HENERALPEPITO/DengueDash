@@ -261,10 +261,10 @@ The Agile Model is the birthchild of both iterative and incremental approaches i
 
 \subsection{Design, Building, Testing, and Integration}
 \subsubsection{Design and Developlment}
-After brainstorming and researching the most appropriate type of application to accommodate both the prospected users and the proposed solutions, the team has decided to proceed with a web application. Given the time constraints and available resources, we believe this is the most pragmatic and practical move. The next step is to select modern and stable frameworks that align with the fundamental ideas we have learned at the university. The template obtained from WVCHD and Iloilo Provincial Epidemiology and Surveillance Unit was meticulously analyzed to create use cases and develop a preliminary well-structured database that adheres to the requirements needed to produce a quality application. The said use cases serve as the basis of general features. Part by part, these are converted into code, and with the help of selected libraries and packages, it resulted in the desired outcome that may still modified and extended since it is continuously being developed. 
+After brainstorming and researching the most appropriate type of application to accommodate both the prospected users and the proposed solutions, the team has decided to proceed with a web application. Given the time constraints and available resources, it has been decided that the said means is the most pragmatic and practical move. The next step is to select modern and stable frameworks that align with the fundamental ideas learned by the developers in the university. The template obtained from WVCHD and Iloilo Provincial Epidemiology and Surveillance Unit was meticulously analyzed to create use cases and develop a preliminary well-structured database that adheres to the requirements needed to produce a quality application. The said use cases serve as the basis of general features. Part by part, these are converted into code, and with the help of selected libraries and packages, it resulted in the desired outcome that may still modified and extended to achieve scalability. 
 
 \subsubsection{Testing and Integration}
-Each feature will be rigorously user-tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Moreover, integration between each feature serves as a pillar for a cohesive user experience. Presently, we have not been able to use performance metrics to measure the system's performance, as developing and connecting the core features is the utmost priority. 
+Each feature was user-tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Moreover, integration between each feature serves as a pillar for a cohesive user experience. Presently, we have not been able to use performance metrics to measure the system's performance, as developing and connecting the core features is the utmost priority. 
 
 \section{Development Tools}
 \subsection{Software}
@@ -308,8 +308,69 @@ Shadcn offers a collection of open-source UI boilerplate components that can be 
 \subsubsection{Zod}
 Data validation is integral in this web application since it will handle crucial data that will be used for analytical inferences and observations. Since Zod is primarily used for validating and parsing data, it ensures proper communication between the client and the server \cite{zod-nd}. 
 
+\section{Application Requirements}
 
-\clearpage
+\subsection{Backend Requirements}
+\subsubsection{Database Structure Design}
+Determining how data flows and how it would be structured is crucial in creating the system as it defines how extendible and flexible it would be for future features and updates. Thus, creating a comprehensive map of data ensures proper normalization that eliminates data redundancy and improves data integrity. Figure \ref{fig:er_diagram} depicts the designed database schema that showcases the relationship between the application's entities. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{er_diagram}
+	\caption{Entity-Relationship Database Schema Hybrid Diagram for DengueDash Database Structure}
+	\label{fig:er_diagram}
+\end{figure}
+
+\subsection{User Interface Requirements}
+\subsubsection{Disease Reporting Unit Admin Interface}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{admin_dru}
+	\caption{Use Case Diagram for DRU Admin}
+	\label{fig:admin-dru-use-case}
+\end{figure}
+\subsubsection{Surveillance Unit Admin Interface}
+Figure \ref{fig:admin-dru-use-case} shows the actions an admin for a specific Disease Reporting Unit (DRU) can take in the application. These include managing accounts, browsing records, and forecasting and retraining all the consolidated data under the unit. To protect the integrity of data, encoders that register to a DRU must first be verified by these users, and then the encoder's account can only be authorized to use the application. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{admin_su}
+	\caption{Use Case Diagram for Surveillance Unit Admin}
+	\label{fig:admin-su-use-case}
+\end{figure}
+While the previous use case focuses on hospitals, clinics, and other reporting units, the use case presented in Figure \ref{fig:admin-su-use-case} has a one-step higher authorization as it manages these DRUs. It has the same features as the DRU admin but with extra management of the DRUs under a specific surveillance unit. At this point, only the authorized surveillance unit administrator can register and create a DRU to uphold transparency and accountability. 
+
+
+\subsubsection{Encoder Interface}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{encoder}
+	\caption{Use Case Diagram for Encoder}
+	\label{fig:encoder-use-case}
+\end{figure}
+
+Figure \ref{fig:encoder-use-case}, on the other hand, illustrates the use cases for the system's primary users. These users can register but must wait for further verification to access the application. Similar to the previous interfaces, encoders can browse and manage records, as well as forecast the consolidated cases under a specific surveillance or disease reporting unit, but they are not allowed to retrain the model. Lastly, they are the only type of user that can file and create dengue cases by filling out a form with the required details.
+
+
+\subsection{Security and Validation Requirements}
+\subsubsection{Password Encryption}
+Storing passwords as plain text in the database is a disgrace and a mortal sin in production. It is important to implement precautionary methods such as hashing and salting, followed by encryption with a strong algorithm, to prevent bad actors from using the accounts for malicious transactions. By default, Django generates a unique random salt for each password and encrypts it with Password-Based Key Derivation Function 2 (PBKDF2) with a SHA256 hash function. Utilizing these techniques ensures that in the event of a data breach, cracking these passwords would be time-consuming and useless for the attackers. 
+
+\subsubsection{Authentication}
+DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the mechanism operates in a stateless manner, tokens are served only after a successful login, eliminating the need for the server to keep a record of the token, which is vulnerable to session hijacking. In addition, these tokens are signed with a secret key, ensuring they have not been tampered with. 
+
+\subsubsection{Data Validation}
+Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
+
+\subsection{Testing Process}
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=10cm]{testing_process}
+	\caption{Testing Process for DengueWatch}
+	\label{fig:testing-process}
+\end{figure}
+
+As the system requirements and functionalities have been mentioned above, it is important to implement testing to validate the system's performance and efficacy. Since dengue reports include confidential information, anonymized historical dengue reports were used to train the model and create the foundational architecture of the system. By using functional tests, data validation and visualization can be ensured for further continual improvements. Security testing is also important as it is needed to safeguard confidential information when the system is deployed. It includes proper authentication, permission views, and mitigating common injection attacks. Finally, a user acceptance test from the prospected users, in this case, doctors, nurses, and other health workers, is crucial to assess its performance and user experience. It enables the developers to confirm if the system meets the needs of the problem, and once confirmed, it will be deployed and further evaluated to ensure stability and reliability in live operation. 
+
+
 \section{Calendar of Activities}
 
 A Gantt chart showing the schedule of the activities is included below. Each bullet represents approximately one week of activity.
