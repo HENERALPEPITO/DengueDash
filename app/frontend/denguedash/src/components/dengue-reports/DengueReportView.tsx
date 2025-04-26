@@ -9,7 +9,7 @@ import {
   CardContent,
 } from "@/shadcn/components/ui/card";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/shadcn/components/ui/button";
 import deleteService from "@/services/delete.service";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ import { BaseServiceResponse } from "@/interfaces/services/services.interface";
 import { UserContext } from "@/contexts/UserContext";
 import { toast } from "sonner";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
+import { UpdateCaseDialog } from "./UpdateCaseDialog";
 
 export default function DengueReportView({
   caseDetails,
@@ -26,6 +27,8 @@ export default function DengueReportView({
 }) {
   const router = useRouter();
   const { user } = useContext(UserContext);
+
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -166,16 +169,26 @@ export default function DengueReportView({
           title={`Case Record #${caseDetails.case_id}`}
         />
         {caseDetails.can_delete && (
-          <div className="py-5 px-8">
-            <CustomAlertDialog
-              title="Delete Case"
-              description="Are you sure you want to delete this case? This action cannot be undone."
-              actionLabel="Delete"
-              variant="destructive"
-              onAction={handleDelete}
-            >
-              <Button variant="destructive">Delete Case</Button>
-            </CustomAlertDialog>
+          <div className="flex flex-row">
+            <div className="py-5 pr-5">
+              <Button
+                variant="default"
+                onClick={() => setIsUpdateDialogOpen(true)}
+              >
+                Update Case
+              </Button>
+            </div>
+            <div className="py-5 pr-8">
+              <CustomAlertDialog
+                title="Delete Case"
+                description="Are you sure you want to delete this case? This action cannot be undone."
+                actionLabel="Delete"
+                variant="destructive"
+                onAction={handleDelete}
+              >
+                <Button variant="destructive">Delete Case</Button>
+              </CustomAlertDialog>
+            </div>
           </div>
         )}
       </div>
@@ -298,6 +311,13 @@ export default function DengueReportView({
           </div>
         </div>
       </CardContent>
+
+      {/* Update Case Dialog */}
+      <UpdateCaseDialog
+        isOpen={isUpdateDialogOpen}
+        onClose={() => setIsUpdateDialogOpen(false)}
+        caseId="25017095"
+      />
     </Card>
   );
 
