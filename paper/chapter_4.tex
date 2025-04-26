@@ -284,9 +284,9 @@ The registration page, as shown in Figure \ref{fig:registration_page}, serves as
 	\label{fig:login_page}
 \end{figure}
 
-\subsection{Personnel Interface}
-\subsubsection{Encoder's View}
-Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the digitized counterpart of the form obtained from the Iloilo Provincial Epidemiology and Surveillance Unit. As the system aims to support expandability for future features, some fields were modified to accommodate more detailed input. It is worth noting that all of the included fields adhere to the latest Philippine Integrated Disease and Surveillance Response (PIDSR) Dengue Forms, which the referenced form was based on. By doing this, it is assumed that the targeted users will have a familiarity when deployed on a national scale. On a further note, the case form includes the patient's basic information, dengue vaccination status, consultation details, laboratory results, and the outcome. 
+\subsection{Encoder's Interface}
+\subsubsection{Case Report Form}
+Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the digitized counterpart of the form obtained from the Iloilo Provincial Epidemiology and Surveillance Unit. As the system aims to support expandability for future features, some fields were modified to accommodate more detailed input. It is worth noting that all of the included fields adhere to the latest Philippine Integrated Disease and Surveillance Response (PIDSR) Dengue Forms, which the referenced form was based on. By doing this, if implemented on a national scale, the transition between targeted users will be easier. Moreover, the case form includes the patient's basic information, dengue vaccination status, consultation details, laboratory results, and the outcome. On the other hand, encoders can also create case records using a "bulk upload" feature that makes use of a formatted CSV file template. As shown in Figure \ref{fig:bulk_upload}, an encoder can download the template using the "Download Template" button, and insert multiple records inside the file, then upload it by clicking the "Click to upload" button. The web application automatically checks the file for data inconsistencies and validation. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{case_report_form_1}
@@ -299,9 +299,16 @@ Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the d
 	\caption{Second Part of Case Report Form}
 	\label{fig:case_report_form_2}
 \end{figure}
-\clearpage
-Once the data generated from the case report form is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. 
-It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that came from the same DRU. On the other hand, in a consolidated surveillance unit such as a regional and provincial quarter, its users can view all the records that came from all the DRUs that report to them. Moving forward, Figure \ref{fig:case_report} shows the detailed case report of the patient on a particular consultation date. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{bulk_upload}
+	\caption{Bulk Upload of Cases using CSV}
+	\label{fig:bulk_upload}
+\end{figure}
+
+\subsubsection{Browsing and Deletion of Records}
+Once the data generated from the case report form and the bulk upload are validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. 
+It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:case_report} shows the detailed case report of the patient on a particular consultation date. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{dengue_reports}
