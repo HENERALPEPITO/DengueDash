@@ -101,71 +101,18 @@ To validate the effectiveness of the model, cross-validation was implemented. Ho
 After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
 \subsubsection{ARIMA}
-The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
-The dataset was split into training (80\%) and testing (20\%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
-\begin{itemize}
-	\item p (autoregressive order): 0 to 3
-	\item d (differencing order): 0 to 2
-	\item q (moving average order): 0 to 3
-\end{itemize}
-The combinations of these parameters were evaluated by fitting an ARIMA model for each set of (p, d, q) values. The model's performance was assessed using the mean squared error (MSE) between the predicted and actual dengue cases in the test set. The combination yielding the lowest MSE was selected as the optimal parameter configuration.
+The ARIMA model was utilized to forecast weekly dengue cases, leveraging historical weather data—including rainfall, maximum temperature, and humidity—as exogenous variables alongside historical dengue case counts as the primary dependent variable. The dataset was partitioned into training (80\%) and testing (20\%) sets while maintaining temporal consistency.
 
-The fitted ARIMA model was used to forecast weekly dengue cases for the test dataset. Predictions were directly assigned to the PredictedCases column in the test dataset.
+To identify the optimal ARIMA configuration, a comprehensive grid search was performed across the following parameter ranges:
+\begin{itemize} \item Autoregressive order (p): 0 to 3 \item Differencing order (d): 0 to 2 \item Moving average order (q): 0 to 3 \end{itemize}
 
-\subsubsection{Steps to Create the ARIMA Model:}
-\begin{enumerate}
-	\item \textbf{Data Preprocessing:}Prepare the dataset by handling any missing values and scaling the data if necessary to improve model convergence and stability.
+Each combination of (p,d,q) was used to fit an ARIMA model, and performance was evaluated based on the mean squared error (MSE) between the predicted and actual dengue cases on the test set. The parameter set that achieved the lowest MSE was selected as the final model configuration.
 
-\item \textbf{Hyperparameter Tuning:}  
-Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(1, 2, 2)}.
-
-\item \textbf{Model Training:}
-\begin{itemize}
-	\item Set the number of iterations to 400 to ensure thorough training and convergence.
-	\item Train the ARIMA model on 80\% of the data and reserve 20\% for testing.
-\end{itemize}
-\end{enumerate}
-
+Following model selection, the best-fit ARIMA model was retrained on the training set and subsequently used to forecast dengue cases for the test period. The predictions were assigned to the \texttt{PredictedCases} column in the test dataset. Model performance was further assessed using key evaluation metrics, including MSE, root mean squared error (RMSE), and mean absolute error (MAE). Visual comparisons between actual and predicted dengue cases were produced through line plots to better illustrate the model's forecasting accuracy.
 
 \subsubsection{Seasonal ARIMA (SARIMA)}
 
-\begin{enumerate}
-	\item \textbf{Data Preprocessing}  
-	\begin{itemize}
-		\item Handle missing values through interpolation or imputation.
-		\item Normalize or standardize features to ensure stable training.
-		\item Split data into training (80\%) and testing (20\%) sets while maintaining temporal continuity.
-	\end{itemize}
-	
-	\item \textbf{Seasonality Analysis}  
-	\begin{itemize}
-		\item Perform time series decomposition to examine trend, seasonality, and residual components.
-		\item Identify seasonality using autocorrelation plots and spectral analysis.
-		\item A periodicity of \textbf{52 weeks} was detected, justifying the use of a seasonal model.
-	\end{itemize}
-	
-	\item \textbf{Hyperparameter Tuning}  
-	\begin{itemize}
-		\item Conduct a grid search to optimize SARIMA parameters $(p, d, q)(P, D, Q)[S]$.
-		\item Determine optimal configuration for seasonal and non-seasonal components.
-		\item Verify stationarity through Augmented Dickey-Fuller (ADF) test.
-	\end{itemize}
-	
-	\item \textbf{Model Training}  
-	\begin{itemize}
-		\item Fit the SARIMA model on the training dataset, incorporating exogenous variables such as rainfall, temperature, and humidity.
-		\item Set a maximum number of iterations to ensure convergence.
-		\item Monitor model diagnostics (residual analysis) to confirm the absence of autocorrelation in residuals.
-	\end{itemize}
-	
-	\item \textbf{Forecasting and Validation}  
-	\begin{itemize}
-		\item Generate out-of-sample forecasts for future dengue cases.
-		\item Compare predicted values against actual data to assess real-world applicability.
-		\item Visualize results with line plots and confidence intervals.
-	\end{itemize}
-	
-\end{enumerate}
+The SARIMA modeling process began with data preprocessing, which included handling missing values through interpolation or imputation, and standardizing features to ensure stable model training. The dataset was then split into training and testing sets in an 80:20 ratio, preserving the temporal order of observations. Seasonality analysis was conducted using time series decomposition and autocorrelation plots, which revealed a periodicity of 52 weeks—justifying the adoption of a seasonal model. To fine-tune the model, a grid search was performed over a range of SARIMA parameters (p,d,q)(P,D,Q)[S], while stationarity was validated using the Augmented Dickey-Fuller (ADF) test. The model was then trained on the dataset using rainfall, temperature, and humidity as exogenous variables, with convergence ensured by setting a maximum number of iterations. Residual diagnostics were used to confirm that residuals were uncorrelated, indicating a good model fit. For evaluation, forecasts were compared against actual values, and results were visualized with line plots. Finally, to validate the model’s generalizability across different time periods, Time Series Cross-Validation with three folds was applied. This allowed assessment of the model’s performance on multiple time segments, providing insights into its robustness in real-world forecasting scenarios.
 
 \subsubsection{Kalman Filter:}
 \begin{itemize}
@@ -174,69 +121,8 @@ Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the conf
 	\item Observation Matrix: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
 \end{itemize}
 
-The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
+The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
-
-
-\subsubsection{Kalman Filter Methodology with Matrix Calculations}
-
-\textbf{Measurement Acquisition}: Obtain the measurement:
-$(z_k)$ of the system's state with associated confidence. This measurement matrix provides a noisy observation of the true state.
-
-The dataset was split into training and test sets to evaluate the Kalman Filter's performance and generalizability:
-\begin{itemize}
-	\item \textbf{Training Set}: 80\% of the data was used for training, enabling the Kalman Filter model to capture key patterns.
-	\item \textbf{Test Set}: The remaining 20\% of the data was reserved for testing.
-\end{itemize}
-
-\textbf{Prediction Step}:
-\begin{itemize}
-	\item Predict the next state:
-	\[
-	\hat{x}_{k|k-1} = A \hat{x}_{k-1|k-1} + B u_k
-	\]
-	
-	\item Update the state covariance:
-	\[
-	P_{k|k-1} = A P_{k-1|k-1} A^T + Q
-	\]
-	where \( Q \) is the process noise covariance matrix.
-\end{itemize}
-
-\textbf{Compute Residual}: Calculate the residual:
-\[
-y_k = z_k - H \hat{x}_{k|k-1}
-\]
-where \( H \) is the observation matrix. This residual represents the new information from the measurement.
-
-\textbf{Scaling Factor (Kalman Gain)}:
-\begin{itemize}
-	\item Compute the Kalman Gain:
-	\[
-	K_k = P_{k|k-1} H^T \left( H P_{k|k-1} H^T + R \right)^{-1}
-	\]
-	where \( R \) is the measurement noise covariance matrix.
-	
-	\item The Kalman Gain determines the weight of the measurement relative to the prediction.
-\end{itemize}
-
-\textbf{State Update}:
-\begin{itemize}
-	\item Update the state estimate:
-	\[
-	\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k y_k
-	\]
-	blending the prediction and measurement.
-\end{itemize}
-
-\textbf{Uncertainty Update}:
-\begin{itemize}
-	\item Update the state covariance:
-	\[
-	P_{k|k} = (I - K_k H) P_{k|k-1}
-	\]
-	where \( I \) is the identity matrix.
-\end{itemize}
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 

@@ -107,21 +107,29 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 \begin{table}[h!]
 	\centering
 	\resizebox{1\textwidth}{!}{%
-		\begin{tabular}{|l|c|c|c|c|}
+		\begin{tabular}{|l|c|c|c|c|c|}
 			\hline
-			\textbf{Method} & \textbf{LSTM} & \textbf{Seasonal ARIMA} & \textbf{ARIMA} & \textbf{Kalman Filter} \\ \hline
-			\textbf{Testing MSE}   & 285.54 & 1109.69 & 1521.48 & 1474.82 \\ \hline
-			\textbf{Testing RMSE}  &  16.90  & 33.31  & 39.00 & 38.40 \\ \hline
-			\textbf{Testing MAE}   &  9.45  & 18.08  & 25.80 & 22.33 \\ \hline
-			\textbf{Best Parameters}   &  \begin{tabular}[c]{@{}c@{}}{Window Size: 5}\\ {Learning Rate: 0.01}\\ {Units: 64}\end{tabular}  
-			& (2, 0, 2)(0, 1, 1)  & (1, 2, 2) & -- \\ \hline
-			
+			\textbf{Method} & \textbf{LSTM} & \textbf{Seasonal ARIMA} & \textbf{ARIMA} & \textbf{Kalman Filter} & \textbf{KF-LSTM} \\ 
+			\hline
+			\textbf{Testing MSE}   & 285.54 & 1261.20 & 1521.48 & 1474.82 & 785.35 \\ 
+			\hline
+			\textbf{Testing RMSE}  & 16.90  & 34.45  & 39.00 & 38.40 & 25.56 \\ 
+			\hline
+			\textbf{Testing MAE}   & 9.45  & 18.73  & 25.80 & 22.33 & 14.55 \\ 
+			\hline
+			\textbf{Best Parameters}   
+			& \begin{tabular}[c]{@{}c@{}}Window Size: 5\\ Learning Rate: 0.01\\ Units: 64\end{tabular}  
+			& (2,0,2)(0,1,1)  
+			& (1,2,2) 
+			& \begin{tabular}[c]{@{}c@{}}Observation Covariance: 10.0\\ Transition Covariance: 0.1 $\times$ Identity\end{tabular}
+			& Same as LSTM \\ 
+			\hline
 		\end{tabular}%
 	}
-	
-	\caption{Comparison of Models}
+	\caption{Comparison of different models for dengue prediction}
 	\label{tab:comparison_of_models}
 \end{table}
+
 
 
 
@@ -194,10 +202,34 @@ This model incorporates seasonal parameters, which were tuned using grid search 
 
 The model's performance was assessed using regression metrics to evaluate its forecasting capability. The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The lower error values, when compared to the ARIMA model, highlight the SARIMA model's superior capability in forecasting dengue cases. Its effectiveness in capturing seasonal patterns contributed to a more accurate representation of the actual cases.
 
+After training the model, the SARIMA model was validated using the same Time Series Cross-Validation strategy employed in the LSTM model. Table \ref{tab:tcsv_sarima} presents the performance metrics for each fold, as well as the average metrics across all folds. The average RMSE and MAE values were close to those obtained during the initial training phase, indicating that the SARIMA model performed consistently across different time segments.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Fold} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\
+		\hline
+		1 & 659.68  & 25.68 & 16.00 \\
+		2 & 2127.49 & 46.12 & 21.30 \\
+		3 & 996.43  & 31.56 & 18.89 \\
+		\hline
+		\textbf{Average} & \textbf{1261.20} & \textbf{34.45} & \textbf{18.73} \\
+		\hline
+	\end{tabular}
+	\caption{Comparison of SARIMA performance for each fold}
+	\label{tab:tcsv_sarima}
+\end{table}
 
 
 \subsection{Kalman Filter Model}
 
+Figure \ref{fig:Kalman_result} shows the comparison between the actual dengue cases and the predicted values on the test set. As illustrated in the plot, the Kalman Filter model demonstrates a moderate ability to follow the general trend of the actual data. While it effectively captures some rising and falling patterns, it still struggles to accurately replicate the sharp peaks and extreme values found in the real case counts. This limitation is particularly noticeable during the large spikes in 2022 and 2024. The model’s performance was evaluated using standard regression metrics. The results are as follows:
+\[
+\text{MSE} = 1474.82, \quad
+\text{RMSE} = 38.40, \quad
+\text{MAE} = 22.34
+\]
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_Kalman}
@@ -205,18 +237,26 @@ The model's performance was assessed using regression metrics to evaluate its fo
 	\label{fig:Kalman_result}
 \end{figure}
 
-Figure \ref{fig:Kalman_result} shows the comparison between the actual dengue cases and the predicted values on the test set. As illustrated in the plot, the Kalman Filter model demonstrates a moderate ability to follow the general trend of the actual data. While it effectively captures some rising and falling patterns, it still struggles to accurately replicate the sharp peaks and extreme values found in the real case counts. This limitation is particularly noticeable during the large spikes in 2022 and 2024.
-\\
+The Kalman Filter was then combined with the LSTM model in order to see improvements in its predictions. Table \ref{tab:tcsv_kflstm} shows the metrics across three folds using the same Time Series Cross Validation Strategy employed in the previous models to see how it performed on different time segments.
 
-The model’s performance was evaluated using standard regression metrics. The results are as follows:
-\[
-\text{MSE} = 1474.82, \quad
-\text{RMSE} = 38.40, \quad
-\text{MAE} = 22.34
-\]
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Fold} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\
+		\hline
+		1 & 113.59  & 10.66 & 6.42 \\
+		2 & 752.51 & 27.43 & 12.11 \\
+		3 & 1489.95  & 38.60 & 25.13 \\
+		\hline
+		\textbf{Average} & \textbf{785.35} & \textbf{25.56} & \textbf{14.55} \\
+		\hline
+	\end{tabular}
+	\caption{Comparison of KF-LSTM performance for each fold}
+	\label{tab:tcsv_kflstm}
+\end{table}
 
-These metrics indicate that the Kalman Filter outperforms the ARIMA model in terms of mean absolute error (MAE), suggesting better accuracy in capturing day-to-day fluctuations. However, it still underperforms compared to the SARIMA model, particularly in modeling seasonal trends and sharp outbreaks. Despite its limitations, the Kalman Filter shows promise for short-term forecasting due to its adaptability and real-time updating capability.
-
+As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
 
 \clearpage
 \section{Preliminary System Requirements}
