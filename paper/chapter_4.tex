@@ -254,28 +254,37 @@ The Kalman Filter was then combined with the LSTM model in order to see improvem
 	\end{tabular}
 	\caption{Comparison of KF-LSTM performance for each fold}
 	\label{tab:tcsv_kflstm}
-\end{table}
+\end{table}2
 
 As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
 
 \section{System Prototype}
-\subsection{Guest Interface}
-The Guest Interface is intended for all visitors of the web application. It shows the related statistics for dengue cases in a particular area and time. As the system is still in its testing phase, the data converted into charts shown in Figure \ref{fig:guest_dashboard} are generated from Python's Faker library. 
+\subsection{Home Page}
+The Home Page is intended for all visitors of the web application. The Analytics Dashboard, which displays relevant statistics for dengue cases at a certain year and location, is the primary component highlighted, as seen in Figure \ref{fig:home_page}. This component includes a combo chart that graphs the number of dengue cases and deaths per week in a specific year, a choropleth map that tracks the number of dengue cases per location, and various bar charts that indicate the top locations affected by dengue. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{guest_dashboard}
-	\caption{Dashboard for Guests}
-	\label{fig:guest_dashboard}
+	\includegraphics[width=1\textwidth]{home_page}
+	\caption{Home Page}
+	\label{fig:home_page}
 \end{figure}
-\subsection{Personnel Interface}
-\subsubsection{User Authentication, and Login}
-To protect the data's integrity in production, it has been decided that the registration process will not be visible. Instead, an admin must register a user using a different interface. As of the moment, registering a user is done using API via Postman. In the login process, the system implements HTTP-only cookies that contains the JSON Web Tokens (JWT) to protect against XSS attacks. After proper credentials have been provided, it will redirect to the user's home page.
+
+\subsection{User Registration, Login, and Authentication}
+The registration page, as shown in Figure \ref{fig:registration_page}, serves as a gateway to access the authenticated pages of the web application. Only prospected encoders can create an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page the type of user belongs to. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{login}
-	\caption{Login Page for Users}
+	\includegraphics[width=1\textwidth]{registration_page}
+	\caption{Sign Up Page}
+	\label{fig:registration_page}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{login_page}
+	\caption{Login Page}
 	\label{fig:login_page}
 \end{figure}
+
+\subsection{Personnel Interface}
 \subsubsection{Encoder's View}
 Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the digitized counterpart of the form obtained from the Iloilo Provincial Epidemiology and Surveillance Unit. As the system aims to support expandability for future features, some fields were modified to accommodate more detailed input. It is worth noting that all of the included fields adhere to the latest Philippine Integrated Disease and Surveillance Response (PIDSR) Dengue Forms, which the referenced form was based on. By doing this, it is assumed that the targeted users will have a familiarity when deployed on a national scale. On a further note, the case form includes the patient's basic information, dengue vaccination status, consultation details, laboratory results, and the outcome. 
 \begin{figure}[H]
