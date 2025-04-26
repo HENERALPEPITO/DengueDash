@@ -247,6 +247,9 @@ where \( H \) is the observation matrix. This residual represents the new inform
 \end{itemize}
 
 
+\subsection{Backtesting Validation}
+To evaluate the performance and effectiveness of the machine learning models, cross validation is needed in order to properly assess the models. It is common practice to implement cross validation in most machine learning algorithms, wherein the dataset is divided into n-folds. This allows the model to be evaluated using different test sets, meaning it is evaluated on different unseen data, reducing the chances of overfitting. However, given the nature of data this research is involved, which is time series data, it is not suitable to use the normal n-fold cross validation. This is because when dealing with time-series data, the sequence is important and using n-fold cross validation shuffles the order of the data, which naturally contradicts the nature of the problem the research is trying to solve. In this case, one of the ways to validate time series data is to cross validate on a rolling basis, also known as backtesting. Backtesting allows the dataset to be divided into n-folds just like cross validation, but instead of shuffling the dataset, it folds the dataset over a period of time. This allows the model to perform on different sets of test set, which can help us validate the performance of the models. This also mimics closely the real world scenario this research is trying to solve, since over time, the dataset increases and thus, increasing the fold of the training and test sets. The backtesting validation will be implemented on all the machine learning models trained above. The performance metrics will be the same as the performance metrics used in training: MAE, RMSE, and MAE.
+
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 
 \subsubsection{Dashboard Design and Development}
