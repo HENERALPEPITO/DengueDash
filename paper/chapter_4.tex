@@ -307,8 +307,7 @@ Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the d
 \end{figure}
 
 \subsubsection{Browsing, Update, and Deletion of Records}
-Once the data generated from the case report form and the bulk upload are validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. 
-It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
+Once the data generated from the case report form or the bulk upload is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{dengue_reports}
@@ -321,6 +320,9 @@ It is also worth noting that it only shows cases the user is permitted to view. 
 	\caption{Detailed Case Report}
 	\label{fig:detailed_case_report}
 \end{figure}
+
+To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show up confirming the action of the user. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently. 
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{update_report}
@@ -333,6 +335,78 @@ It is also worth noting that it only shows cases the user is permitted to view. 
 	\caption{Delete Report Alert Dialog}
 	\label{fig:delete_report}
 \end{figure}
+
+\subsubsection{Forecasting}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{forecasting}
+	\caption{Forecasting Page}
+	\label{fig:forecasting}
+\end{figure}
+
+\subsection{Admin Interface}
+
+\subsubsection{Retraining}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{retraining_configs}
+	\caption{Retraining Configurations}
+	\label{fig:retraining_configs}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{retraining_train}
+	\caption{Start Retraining}
+	\label{fig:retraining_train}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{retraining_results}
+	\caption{Retraining Results}
+	\label{fig:retraining_results}
+\end{figure}
+
+\subsubsection{Managing Accounts}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{verified_accounts}
+	\caption{List of Verified Accounts}
+	\label{fig:verified_accounts}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{pending_accounts}
+	\caption{List of Pending Accounts}
+	\label{fig:pending_accounts}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{account_details}
+	\caption{Account Details}
+	\label{fig:account_details}
+\end{figure}
+
+\subsubsection{Managing DRUs}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{register_dru}
+	\caption{DRU Registration}
+	\label{fig:register_dru}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{browse_drus}
+	\caption{List of DRUs}
+	\label{fig:browse_drus}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{dru_details}
+	\caption{DRU details}
+	\label{fig:dru_details}
+\end{figure}
+
 
 \section{User Testing}
 To evaluate the usability of the system, the System Usability Scale (SUS) was utilized. SUS is a Likert-scale-based questionnaire comprising 10 items that are critical to assessing system usability. A total of five participants completed the survey. Their responses were processed following the step-by-step calculation method adopted from \cite{babich_sus_usability_website}. The resulting usability scores for each participant are shown in Table~\ref{tab:sus_scores}.
