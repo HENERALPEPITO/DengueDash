@@ -254,9 +254,19 @@ The Kalman Filter was then combined with the LSTM model in order to see improvem
 	\end{tabular}
 	\caption{Comparison of KF-LSTM performance for each fold}
 	\label{tab:tcsv_kflstm}
-\end{table}2
+\end{table}
 
 As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
+
+\section{Model Simulation}
+To evaluate the LSTM model's real-world forecasting ability, a simulation was conducted to predict dengue cases for the year 2025. The model was trained exclusively on data from 2011 to 2024, using both dengue cases and weather variables. Importantly, the actual dengue case values for 2025 were never included during training. Instead, only the weather variables collected for 2025 were input into the model to generate predictions for that year. After prediction, the forecasted dengue cases for 2025 were compared against the true observed cases to assess the model’s accuracy. Figure \ref{fig:modeltesting} shows that the predicted values closely follow the trend, although it may overestimate the dengue cases in some weeks. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{modeltesting}
+	\caption{Predicted vs Actual Dengue Cases 2025}
+	\label{fig:modeltesting}
+\end{figure}
 
 \section{System Prototype}
 \subsection{Home Page}
