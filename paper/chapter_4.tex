@@ -321,7 +321,7 @@ Once the data generated from the case report form or the bulk upload is validate
 	\label{fig:detailed_case_report}
 \end{figure}
 
-To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show up confirming the action of the user. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently. 
+To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show confirming the action of the user. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently.
 
 \begin{figure}[H]
 	\centering
@@ -337,6 +337,8 @@ To update the case, the user can click the "Update Case" button, where a dialog 
 \end{figure}
 
 \subsubsection{Forecasting}
+
+The main highlight of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next following weeks. To predict, the application utilizes the exported keras model derived from training the consolidated data from the database. It requires the recent weekly dengue cases, weather variable data (temperature, humidity, and rainfall) based on the window size, and future weather data through OpenWeatherMap API. However, due to limitations imposed in the current plan subscribed in the API, only the next 16 days of weather data can be fetched. As a result, the web application can only make a two-week prediction. Moving forward, the Forecasting page, as shown in Figure 4.24, introduces a user-friendly interface that shows the current cases for the week, and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown as well as the the forecasted weather data fetched from the said API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
 
 \begin{figure}[H]
 	\centering
