@@ -161,3 +161,21 @@ class CaseViewSerializer(serializers.ModelSerializer):
             # todo: or the user that created the case and the admin can delete it
             return request.user.is_admin or obj.interviewer == request.user
         return False
+
+
+class CaseUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Case
+        fields = [
+            "ns1_result",
+            "date_ns1",
+            "igg_elisa",
+            "date_igg_elisa",
+            "igm_elisa",
+            "date_igm_elisa",
+            "pcr",
+            "date_pcr",
+            "case_class",
+            "outcome",
+            "date_death",
+        ]
