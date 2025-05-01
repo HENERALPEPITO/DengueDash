@@ -31,59 +31,223 @@ import {
 import { format } from "date-fns";
 import { CalendarIcon, FlaskConical, ClipboardList } from "lucide-react";
 import { cn } from "@shadcn/lib/utils";
+import patchService from "@/services/patch.service";
+import {
+  BaseErrorResponse,
+  BaseServiceResponse,
+} from "@/interfaces/services/services.interface";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
+import {
+  CaseCanBeUpdatedFields,
+  CaseClassificationDisplay,
+  LaboratoryResultDisplay,
+  OutcomeDisplay,
+  CaseView,
+} from "@/interfaces/dengue-reports/dengue-reports.interface";
 
-export function UpdateCaseDialog({
-  isOpen,
-  onClose,
-  caseId,
-}: {
+type LaboratoryResult = "PR" | "P" | "N" | "E";
+type Outcome = "A" | "D";
+
+const labClassDisplayToCode: { [key: string]: LaboratoryResult } = {
+  "Pending Result": "PR",
+  Positive: "P",
+  Negative: "N",
+  Equivocal: "E",
+};
+const outcomeDisplayToCode: { [key: string]: Outcome } = {
+  Alive: "A",
+  Deceased: "D",
+};
+
+const getKeyByValue = <T extends string | number | symbol, V>(
+  object: Record<T, V>,
+  value: V
+): T | undefined => {
+  const entry = Object.entries(object).find(([, val]) => val === value);
+  return entry ? (entry[0] as T) : undefined;
+};
+
+export type CaseUpdateForm = {
+  ns1_result: LaboratoryResult;
+  date_ns1: string | null;
+  igg_elisa: LaboratoryResult;
+  date_igg_elisa: string | null;
+  igm_elisa: LaboratoryResult;
+  date_igm_elisa: string | null;
+  pcr: LaboratoryResult;
+  date_pcr: string | null;
+  outcome: Outcome;
+  date_death: string | null;
+};
+
+type UpdateCaseDialogProps = {
   isOpen: boolean;
   onClose: () => void;
-  caseId: string;
-}) {
-  // State for form values
-  const [nsiResult, setNsiResult] = useState("Pending Result");
-  const [nsiDate, setNsiDate] = useState<Date | undefined>(undefined);
+  onUpdate: (updatedData: Partial<CaseView>) => void;
+  caseId: number;
+  caseClassification: CaseClassificationDisplay;
+  canBeUpdateFields: CaseCanBeUpdatedFields;
+};
 
-  const [igGResult, setIgGResult] = useState("Equivocal");
-  const [igGDate, setIgGDate] = useState<Date>(new Date("2024-11-07"));
+export function UpdateCaseDialog(props: UpdateCaseDialogProps) {
+  const [ns1Result, setNs1Result] = useState<LaboratoryResult>(
+    labClassDisplayToCode[props.canBeUpdateFields.ns1_result_display]
+  );
+  const [ns1Date, setNs1Date] = useState<Date | undefined>(
+    props.canBeUpdateFields.date_ns1
+      ? new Date(props.canBeUpdateFields.date_ns1)
+      : undefined
+  );
 
-  const [igMResult, setIgMResult] = useState("Equivocal");
-  const [igMDate, setIgMDate] = useState<Date>(new Date("2024-11-07"));
+  const [igGResult, setIgGResult] = useState<LaboratoryResult>(
+    labClassDisplayToCode[props.canBeUpdateFields.igg_elisa_display]
+  );
+  const [igGDate, setIgGDate] = useState<Date | undefined>(
+    props.canBeUpdateFields.date_igg_elisa
+      ? new Date(props.canBeUpdateFields.date_igg_elisa)
+      : undefined
+  );
 
-  const [pcrResult, setPcrResult] = useState("Equivocal");
-  const [pcrDate, setPcrDate] = useState<Date>(new Date("2024-11-05"));
+  const [igMResult, setIgMResult] = useState<LaboratoryResult>(
+    labClassDisplayToCode[props.canBeUpdateFields.igm_elisa_display]
+  );
+  const [igMDate, setIgMDate] = useState<Date | undefined>(
+    props.canBeUpdateFields.date_igm_elisa
+      ? new Date(props.canBeUpdateFields.date_igm_elisa)
+      : undefined
+  );
 
-  const [caseClassification, setCaseClassification] = useState("Probable");
-  const [outcome, setOutcome] = useState("Alive");
-  const [dateOfDeath, setDateOfDeath] = useState<Date | undefined>(undefined);
+  const [pcrResult, setPcrResult] = useState<LaboratoryResult>(
+    labClassDisplayToCode[props.canBeUpdateFields.pcr_display]
+  );
+  const [pcrDate, setPcrDate] = useState<Date | undefined>(
+    props.canBeUpdateFields.date_pcr
+      ? new Date(props.canBeUpdateFields.date_pcr)
+      : undefined
+  );
+  const [outcome, setOutcome] = useState<Outcome>(
+    outcomeDisplayToCode[props.canBeUpdateFields.outcome_display]
+  );
+  const [dateOfDeath, setDateOfDeath] = useState<Date | undefined>(
+    props.canBeUpdateFields.date_death
+      ? new Date(props.canBeUpdateFields.date_death)
+      : undefined
+  );
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const getCaseClassification = (): CaseClassificationDisplay => {
+    const hasPositiveResult =
+      ns1Result === "P" ||
+      igGResult === "P" ||
+      igMResult === "P" ||
+      pcrResult === "P";
+
+    if (hasPositiveResult) {
+      return "Confirmed";
+    } else if (props.caseClassification == "Confirmed") {
+      return "Probable";
+    }
+    return props.caseClassification;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the updated data to your API
-    console.log("Submitting updated case data:", {
-      nsiResult,
-      nsiDate,
-      igGResult,
-      igGDate,
-      igMResult,
-      igMDate,
-      pcrResult,
-      pcrDate,
-      caseClassification,
-      outcome,
-      ...(outcome === "Deceased" && { dateOfDeath }),
-    });
-    onClose();
+    const formData: CaseUpdateForm = {
+      ns1_result: ns1Result,
+      date_ns1:
+        ns1Result !== "PR" && ns1Date ? format(ns1Date, "yyyy-MM-dd") : null,
+      igg_elisa: igGResult,
+      date_igg_elisa:
+        igGResult !== "PR" && igGDate ? format(igGDate, "yyyy-MM-dd") : null,
+      igm_elisa: igMResult,
+      date_igm_elisa:
+        igMResult !== "PR" && igMDate ? format(igMDate, "yyyy-MM-dd") : null,
+      pcr: pcrResult,
+      date_pcr:
+        pcrResult !== "PR" && pcrDate ? format(pcrDate, "yyyy-MM-dd") : null,
+      outcome: outcome,
+      date_death:
+        outcome === "D" && dateOfDeath
+          ? format(dateOfDeath, "yyyy-MM-dd")
+          : null,
+    };
+    try {
+      const response: BaseServiceResponse | BaseErrorResponse =
+        await patchService.updateCaseStatus(props.caseId, formData);
+      if (response.success) {
+        toast.success("Case updated successfully", {
+          description: "The case has been updated successfully.",
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+        // Make the changes reflect in the UI
+        const updatedData: Partial<CaseView> = {
+          ns1_result_display: getKeyByValue(
+            labClassDisplayToCode,
+            formData.ns1_result
+          ) as LaboratoryResultDisplay,
+          date_ns1: formData.date_ns1,
+          igg_elisa_display: getKeyByValue(
+            labClassDisplayToCode,
+            formData.igg_elisa
+          ) as LaboratoryResultDisplay,
+          date_igg_elisa: formData.date_igg_elisa,
+          igm_elisa_display: getKeyByValue(
+            labClassDisplayToCode,
+            formData.igm_elisa
+          ) as LaboratoryResultDisplay,
+          date_igm_elisa: formData.date_igm_elisa,
+          pcr_display: getKeyByValue(
+            labClassDisplayToCode,
+            formData.pcr
+          ) as LaboratoryResultDisplay,
+          date_pcr: formData.date_pcr,
+          case_class_display: getCaseClassification(),
+          outcome_display: getKeyByValue(
+            outcomeDisplayToCode,
+            formData.outcome
+          ) as OutcomeDisplay,
+          date_death: formData.date_death,
+        };
+        props.onUpdate(updatedData);
+      } else {
+        if (typeof response.message === "string") {
+          // Simple message (like general failure message)
+          toast.warning("Failed to update case", {
+            description: response.message,
+            duration: defaultToastSettings.duration,
+            dismissible: defaultToastSettings.isDismissible,
+          });
+        } else {
+          Object.entries(response.message).forEach(([field, errors]) => {
+            (errors as string[]).forEach((error: string) => {
+              toast.error("Failed to update case", {
+                description: `${field}: ${error}`,
+                duration: defaultToastSettings.duration,
+                dismissible: defaultToastSettings.isDismissible,
+              });
+            });
+          });
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to update case", {
+        description: "An error occurred while updating the case.",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
+      console.error("Error updating case:", error);
+    } finally {
+      props.onClose();
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={props.isOpen} onOpenChange={props.onClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold flex items-center gap-2">
-            Update Case #{caseId}
+            Update Case #{props.caseId}
           </DialogTitle>
         </DialogHeader>
 
@@ -96,21 +260,24 @@ export function UpdateCaseDialog({
             </div>
             <Separator />
 
-            {/* NSI */}
+            {/* NS1 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="nsi-result">NSI</Label>
-                <Select value={nsiResult} onValueChange={setNsiResult}>
-                  <SelectTrigger id="nsi-result" className="w-full">
+                <Label htmlFor="ns1-result">NS1</Label>
+                <Select
+                  value={ns1Result}
+                  onValueChange={(value) =>
+                    setNs1Result(value as LaboratoryResult)
+                  }
+                >
+                  <SelectTrigger id="ns1-result" className="w-full">
                     <SelectValue placeholder="Select result" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Pending Result">
-                      Pending Result
-                    </SelectItem>
-                    <SelectItem value="Positive">Positive</SelectItem>
-                    <SelectItem value="Negative">Negative</SelectItem>
-                    <SelectItem value="Equivocal">Equivocal</SelectItem>
+                    <SelectItem value="PR">Pending Result</SelectItem>
+                    <SelectItem value="P">Positive</SelectItem>
+                    <SelectItem value="N">Negative</SelectItem>
+                    <SelectItem value="E">Equivocal</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -123,18 +290,21 @@ export function UpdateCaseDialog({
                       variant="outline"
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !nsiDate && "text-muted-foreground"
+                        !ns1Date && "text-muted-foreground"
                       )}
+                      disabled={ns1Result === "PR"}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {nsiDate ? format(nsiDate, "PPP") : "n/a"}
+                      {ns1Date && ns1Result != "PR"
+                        ? format(ns1Date, "PPP")
+                        : "N/A"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={nsiDate}
-                      onSelect={setNsiDate}
+                      selected={ns1Date}
+                      onSelect={setNs1Date}
                       initialFocus
                     />
                   </PopoverContent>
@@ -146,14 +316,20 @@ export function UpdateCaseDialog({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="igg-result">IgG Elisa</Label>
-                <Select value={igGResult} onValueChange={setIgGResult}>
+                <Select
+                  value={igGResult}
+                  onValueChange={(value) =>
+                    setIgGResult(value as LaboratoryResult)
+                  }
+                >
                   <SelectTrigger id="igg-result" className="w-full">
                     <SelectValue placeholder="Select result" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Positive">Positive</SelectItem>
-                    <SelectItem value="Negative">Negative</SelectItem>
-                    <SelectItem value="Equivocal">Equivocal</SelectItem>
+                    <SelectItem value="PR">Pending Result</SelectItem>
+                    <SelectItem value="P">Positive</SelectItem>
+                    <SelectItem value="N">Negative</SelectItem>
+                    <SelectItem value="E">Equivocal</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -164,10 +340,16 @@ export function UpdateCaseDialog({
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !igGDate && "text-muted-foreground"
+                      )}
+                      disabled={igGResult === "PR"}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {format(igGDate, "PPP")}
+                      {igGDate && igGResult != "PR"
+                        ? format(igGDate, "PPP")
+                        : "N/A"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -186,14 +368,20 @@ export function UpdateCaseDialog({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="igm-result">IgM Elisa</Label>
-                <Select value={igMResult} onValueChange={setIgMResult}>
+                <Select
+                  value={igMResult}
+                  onValueChange={(value) =>
+                    setIgMResult(value as LaboratoryResult)
+                  }
+                >
                   <SelectTrigger id="igm-result" className="w-full">
                     <SelectValue placeholder="Select result" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Positive">Positive</SelectItem>
-                    <SelectItem value="Negative">Negative</SelectItem>
-                    <SelectItem value="Equivocal">Equivocal</SelectItem>
+                    <SelectItem value="PR">Pending Result</SelectItem>
+                    <SelectItem value="P">Positive</SelectItem>
+                    <SelectItem value="N">Negative</SelectItem>
+                    <SelectItem value="E">Equivocal</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -204,10 +392,16 @@ export function UpdateCaseDialog({
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !igMDate && "text-muted-foreground"
+                      )}
+                      disabled={igMResult === "PR"}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {format(igMDate, "PPP")}
+                      {igMDate && igMResult != "PR"
+                        ? format(igMDate, "PPP")
+                        : "N/A"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -226,14 +420,20 @@ export function UpdateCaseDialog({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="pcr-result">PCR</Label>
-                <Select value={pcrResult} onValueChange={setPcrResult}>
+                <Select
+                  value={pcrResult}
+                  onValueChange={(value) =>
+                    setPcrResult(value as LaboratoryResult)
+                  }
+                >
                   <SelectTrigger id="pcr-result" className="w-full">
                     <SelectValue placeholder="Select result" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Positive">Positive</SelectItem>
-                    <SelectItem value="Negative">Negative</SelectItem>
-                    <SelectItem value="Equivocal">Equivocal</SelectItem>
+                    <SelectItem value="PR">Pending Result</SelectItem>
+                    <SelectItem value="P">Positive</SelectItem>
+                    <SelectItem value="N">Negative</SelectItem>
+                    <SelectItem value="E">Equivocal</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -244,10 +444,16 @@ export function UpdateCaseDialog({
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !pcrDate && "text-muted-foreground"
+                      )}
+                      disabled={pcrResult === "PR"}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {format(pcrDate, "PPP")}
+                      {pcrDate && pcrResult != "PR"
+                        ? format(pcrDate, "PPP")
+                        : "N/A"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -261,82 +467,67 @@ export function UpdateCaseDialog({
                 </Popover>
               </div>
             </div>
-          </div>
 
-          {/* Outcome Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 font-semibold text-lg">
-              <ClipboardList className="h-5 w-5" />
-              <h3>Outcome</h3>
-            </div>
-            <Separator />
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="case-classification">Case Classification</Label>
-                <Select
-                  value={caseClassification}
-                  onValueChange={setCaseClassification}
-                >
-                  <SelectTrigger id="case-classification" className="w-full">
-                    <SelectValue placeholder="Select classification" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Confirmed">Confirmed</SelectItem>
-                    <SelectItem value="Probable">Probable</SelectItem>
-                    <SelectItem value="Suspected">Suspected</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Outcome Section */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 font-semibold text-lg">
+                <ClipboardList className="h-5 w-5" />
+                <h3>Outcome</h3>
               </div>
+              <Separator />
 
-              <div className="space-y-2">
-                <Label htmlFor="outcome">Outcome</Label>
-                <Select value={outcome} onValueChange={setOutcome}>
-                  <SelectTrigger id="outcome" className="w-full">
-                    <SelectValue placeholder="Select outcome" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Alive">Alive</SelectItem>
-                    <SelectItem value="Deceased">Deceased</SelectItem>
-                    <SelectItem value="Unknown">Unknown</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {outcome === "Deceased" && (
-                <div className="space-y-2 col-span-2">
-                  <Label>Date of Death</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !dateOfDeath && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateOfDeath
-                          ? format(dateOfDeath, "PPP")
-                          : "Select date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={dateOfDeath}
-                        onSelect={setDateOfDeath}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="outcome">Outcome</Label>
+                  <Select
+                    value={outcome}
+                    onValueChange={(value) => setOutcome(value as Outcome)}
+                  >
+                    <SelectTrigger id="outcome" className="w-full">
+                      <SelectValue placeholder="Select outcome" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A">Alive</SelectItem>
+                      <SelectItem value="D">Deceased</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
+
+                {outcome === "D" && (
+                  <div className="space-y-2">
+                    <Label>Date of Death</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !dateOfDeath && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {dateOfDeath
+                            ? format(dateOfDeath, "PPP")
+                            : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={dateOfDeath}
+                          onSelect={setDateOfDeath}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={props.onClose}>
               Cancel
             </Button>
             <Button type="submit">Save Changes</Button>
