@@ -17,6 +17,10 @@ class CaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Case
         fields = "__all__"
+        unique_together = (
+            "date_con",
+            "patient",
+        )
 
     def validate(self, data):
         # NS1 Result Validation

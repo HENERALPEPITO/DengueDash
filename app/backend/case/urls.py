@@ -1,6 +1,11 @@
 from django.urls import path
 from .views.patient_case_view import PatientCaseView
-from .views.case_report_view import CaseReportView, CaseDetailedView, CaseDeleteView
+from .views.case_report_view import (
+    CaseReportView,
+    CaseDetailedView,
+    CaseDeleteView,
+    CaseUpdateView,
+)
 from .views.case_count_view import (
     QuickStatisticsView,
     DenguePublicLocationStatView,
@@ -14,6 +19,7 @@ urlpatterns = [
     path("reports/", CaseReportView.as_view(), name="case-reports"),
     path("reports/<int:case_id>/", CaseDetailedView.as_view(), name="case-detail"),
     path("delete/<int:case_id>/", CaseDeleteView.as_view(), name="case-delete"),
+    path("update/<int:case_id>/", CaseUpdateView.as_view(), name="case-update"),
     # Stats
     path("stat/", QuickStatisticsView.as_view(), name="case-stat-quick"),
     path(
