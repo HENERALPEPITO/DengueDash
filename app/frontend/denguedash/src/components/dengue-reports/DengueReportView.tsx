@@ -30,6 +30,27 @@ export default function DengueReportView({
 
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
+  const [canBeUpdatedFields, setCanBeUpdatedFields] = useState({
+    ns1_result_display: caseDetails.ns1_result_display,
+    date_ns1: caseDetails.date_ns1,
+    igg_elisa_display: caseDetails.igg_elisa_display,
+    date_igg_elisa: caseDetails.date_igg_elisa,
+    igm_elisa_display: caseDetails.igm_elisa_display,
+    date_igm_elisa: caseDetails.date_igm_elisa,
+    pcr_display: caseDetails.pcr_display,
+    date_pcr: caseDetails.date_pcr,
+    case_class_display: caseDetails.case_class_display,
+    outcome_display: caseDetails.outcome_display,
+    date_death: caseDetails.date_death,
+  });
+
+  const updateFields = (updatedData: Partial<CaseView>) => {
+    setCanBeUpdatedFields((prevData) => ({
+      ...prevData,
+      ...updatedData,
+    }));
+  };
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -228,10 +249,19 @@ export default function DengueReportView({
         <div className="mx-auto grid grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-6">
-            <InfoRow label="NS1" value={caseDetails.ns1_result_display} />
-            <InfoRow label="IgG Elisa" value={caseDetails.igg_elisa_display} />
-            <InfoRow label="IgM Elisa" value={caseDetails.igm_elisa_display} />
-            <InfoRow label="PCR" value={caseDetails.pcr_display} />
+            <InfoRow
+              label="NS1"
+              value={canBeUpdatedFields.ns1_result_display}
+            />
+            <InfoRow
+              label="IgG Elisa"
+              value={canBeUpdatedFields.igg_elisa_display}
+            />
+            <InfoRow
+              label="IgM Elisa"
+              value={canBeUpdatedFields.igm_elisa_display}
+            />
+            <InfoRow label="PCR" value={canBeUpdatedFields.pcr_display} />
           </div>
 
           {/* Right Column */}
@@ -239,29 +269,33 @@ export default function DengueReportView({
             <InfoRow
               label="Date Done"
               value={
-                caseDetails.date_ns1 ? formatDate(caseDetails.date_ns1) : "N/A"
-              }
-            />
-            <InfoRow
-              label="Date Done"
-              value={
-                caseDetails.date_igg_elisa
-                  ? formatDate(caseDetails.date_igg_elisa)
+                canBeUpdatedFields.date_ns1
+                  ? formatDate(canBeUpdatedFields.date_ns1)
                   : "N/A"
               }
             />
             <InfoRow
               label="Date Done"
               value={
-                caseDetails.date_igm_elisa
-                  ? formatDate(caseDetails.date_igm_elisa)
+                canBeUpdatedFields.date_igg_elisa
+                  ? formatDate(canBeUpdatedFields.date_igg_elisa)
                   : "N/A"
               }
             />
             <InfoRow
               label="Date Done"
               value={
-                caseDetails.date_pcr ? formatDate(caseDetails.date_pcr) : "N/A"
+                canBeUpdatedFields.date_igm_elisa
+                  ? formatDate(canBeUpdatedFields.date_igm_elisa)
+                  : "N/A"
+              }
+            />
+            <InfoRow
+              label="Date Done"
+              value={
+                canBeUpdatedFields.date_pcr
+                  ? formatDate(canBeUpdatedFields.date_pcr)
+                  : "N/A"
               }
             />
           </div>
@@ -276,19 +310,22 @@ export default function DengueReportView({
           <div className="space-y-6">
             <InfoRow
               label="Case Classification"
-              value={caseDetails.case_class_display}
+              value={canBeUpdatedFields.case_class_display}
             />
-            {caseDetails.date_death && (
+            {canBeUpdatedFields.date_death && (
               <InfoRow
                 label="Date of Death"
-                value={formatDate(caseDetails.date_death)}
+                value={formatDate(canBeUpdatedFields.date_death)}
               />
             )}
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
-            <InfoRow label="Outcome" value={caseDetails.outcome_display} />
+            <InfoRow
+              label="Outcome"
+              value={canBeUpdatedFields.outcome_display}
+            />
           </div>
         </div>
       </CardContent>
@@ -316,7 +353,21 @@ export default function DengueReportView({
       <UpdateCaseDialog
         isOpen={isUpdateDialogOpen}
         onClose={() => setIsUpdateDialogOpen(false)}
-        caseId="25017095"
+        onUpdate={updateFields}
+        caseId={caseDetails.case_id}
+        caseClassification={canBeUpdatedFields.case_class_display}
+        canBeUpdateFields={{
+          ns1_result_display: canBeUpdatedFields.ns1_result_display,
+          date_ns1: canBeUpdatedFields.date_ns1,
+          igg_elisa_display: canBeUpdatedFields.igg_elisa_display,
+          date_igg_elisa: canBeUpdatedFields.date_igg_elisa,
+          igm_elisa_display: canBeUpdatedFields.igm_elisa_display,
+          date_igm_elisa: canBeUpdatedFields.date_igm_elisa,
+          pcr_display: canBeUpdatedFields.pcr_display,
+          date_pcr: canBeUpdatedFields.date_pcr,
+          outcome_display: canBeUpdatedFields.outcome_display,
+          date_death: canBeUpdatedFields.date_death,
+        }}
       />
     </Card>
   );
