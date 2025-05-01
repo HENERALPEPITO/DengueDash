@@ -273,7 +273,8 @@ class Command(BaseCommand):
                         if pcr == "PR"
                         else date_onset + timedelta(days=random.randint(1, 10))
                     )
-                    case_class = random.choice(["S", "P", "C"])
+                    # case_class = random.choice(["S", "P", "C"])
+                    case_class = "C"
                     outcome = random.choice(["A", "D"])
                     date_death = (
                         None
