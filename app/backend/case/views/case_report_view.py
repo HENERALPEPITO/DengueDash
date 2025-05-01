@@ -4,8 +4,11 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from case.models import Case
-from case.serializers.case_report_serializers import CaseReportSerializer
-from case.serializers.case_report_serializers import CaseViewSerializer
+from case.serializers.case_report_serializers import (
+    CaseReportSerializer,
+    CaseViewSerializer,
+    CaseUpdateSerializer,
+)
 from api.pagination import APIPagination
 from django.db.models import Case as DBCase, Value, When
 from django.http import JsonResponse
@@ -123,31 +126,6 @@ class CaseDetailedView(APIView):
 class CaseDeleteView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
-    # def delete(self, request, case_id):
-    #     user = request.user
-    #     filter_kwargs = get_filter_criteria(user)
-
-    #     # Attempt to retrieve the case based on user credentials
-    #     case = Case.objects.filter(
-    #         case_id=case_id,
-    #         **filter_kwargs,
-    #     ).first()
-
-    #     if case is None:
-    #         return JsonResponse(
-    #             {
-    #                 "success": False,
-    #                 "message": "You do not have the necessary permissions to access this case or the case does not exist.",
-    #             }
-    #         )
-    #     case.delete()
-    #     return JsonResponse(
-    #         {
-    #             "success": True,
-    #             "message": "Case deleted successfully.",
-    #         }
-    #     )
-
     def delete(self, request, case_id):
         user = request.user
         filter_kwargs = get_filter_criteria(user)
@@ -181,3 +159,57 @@ class CaseDeleteView(APIView):
                 "message": "Case deleted successfully.",
             }
         )
+
+
+class CaseUpdateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request, case_id):
+        user = request.user
+        filter_kwargs = get_filter_criteria(user)
+
+        try:
+            case = Case.objects.get(
+                case_id=case_id,
+                **filter_kwargs,
+            )
+        except Case.DoesNotExist:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You do not have the necessary permissions to access this case or the case does not exist.",
+                }
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred: {str(e)}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        # Validate the request data
+        serializer = CaseUpdateSerializer(
+            case,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message": "Case updated successfully.",
+                }
+            )
+        else:
+            print(f"Validation Errors: {serializer.errors}")
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Invalid data provided. Please check your input.",
+                },
+            )
