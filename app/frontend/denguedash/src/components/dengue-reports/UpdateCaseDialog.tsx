@@ -4,7 +4,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -149,6 +149,24 @@ export function UpdateCaseDialog(props: UpdateCaseDialogProps) {
     }
     return props.caseClassification;
   };
+
+  useEffect(() => {
+    if (ns1Result != "PR") {
+      setNs1Date(new Date());
+    }
+    if (igGResult != "PR") {
+      setIgGDate(new Date());
+    }
+    if (igMResult != "PR") {
+      setIgMDate(new Date());
+    }
+    if (pcrResult != "PR") {
+      setPcrDate(new Date());
+    }
+    if (outcome === "D") {
+      setDateOfDeath(new Date());
+    }
+  }, [ns1Result, igGResult, igMResult, pcrResult, outcome]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
