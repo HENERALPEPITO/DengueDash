@@ -175,7 +175,30 @@ class CaseUpdateSerializer(serializers.ModelSerializer):
             "date_igm_elisa",
             "pcr",
             "date_pcr",
-            "case_class",
             "outcome",
             "date_death",
         ]
+        read_only_fields = ["case_class"]
+
+    def update(self, instance, validated_data):
+        # First update the instance with all validated data
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        has_positive_result = any(
+            result == "P"
+            for result in [
+                instance.pcr,
+                instance.igg_elisa,
+                instance.igm_elisa,
+                instance.ns1_result,
+            ]
+        )
+
+        if has_positive_result:
+            instance.case_class = "C"  # Confirmed
+        elif instance.case_class == "C":
+            instance.case_class = "P"  # Probable
+
+        instance.save()
+        return instance
