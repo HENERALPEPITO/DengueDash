@@ -82,7 +82,11 @@ class UsersUnverifiedListSerializer(BaseUserSerializer):
 class BlacklistedUsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlacklistedUsers
-        fields = "__all__"
+        fields = [
+            "id",
+            "email",
+            "date_added",
+        ]
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
