@@ -18,6 +18,10 @@ import {
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
 import { CustomAlertDialog } from "../common/CustomAlertDialog";
 import { Button } from "@/shadcn/components/ui/button";
+import { BaseServiceResponse } from "@/interfaces/services/services.interface";
+import deleteService from "@/services/delete.service";
+import { toast } from "sonner";
+import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 
 export default function BlacklistedAccounts() {
   const [blacklistedAccounts, setBlacklistedAccounts] = useState<
@@ -55,7 +59,31 @@ export default function BlacklistedAccounts() {
   };
 
   const unbanUser = async (userId: number) => {
-    console.log(userId);
+    try {
+      const response: BaseServiceResponse =
+        await deleteService.unbanUser(userId);
+      if (response.success) {
+        toast.success("User unbanned successfully", {
+          description: "The selected user has been successfully unbanned",
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+        fetchBlacklistedAccounts(currentPage);
+      } else {
+        toast.error("User unban failed", {
+          description: response.message,
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to unban user:", error);
+      toast.error("Failed to unban user", {
+        description: "An error occurred while trying to unban the user.",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
+    }
   };
 
   return (
