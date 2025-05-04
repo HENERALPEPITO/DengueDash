@@ -14,6 +14,7 @@ from user.serializers import (
     RegisterUserSerializer,
 )
 from auth.permission import IsUserAdmin
+from user.models import BlacklistedUsers
 
 User = get_user_model()
 
@@ -85,6 +86,16 @@ class RegisterUserView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
+        email = request.data.get("email")
+        is_user_blacklisted = BlacklistedUsers.objects.filter(email=email).exists()
+        if is_user_blacklisted:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "User is blacklisted. Cannot register account.",
+                },
+            )
+
         serializer = RegisterUserSerializer(
             data=request.data, context={"request": request}
         )
@@ -178,8 +189,6 @@ class DeleteUserView(APIView):
                 }
             )
 
-        # Todo: Follow propr logic
-        # Basis: DeleteDRUView
         user_to_delete = User.objects.filter(id=user_id).first()
         if user_to_delete is None:
             return JsonResponse(
@@ -187,7 +196,6 @@ class DeleteUserView(APIView):
                     "success": False,
                     "message": "User not found",
                 },
-                status=status.HTTP_404_NOT_FOUND,
             )
         if user_to_delete.dru_id != current_user.dru.id:
             return JsonResponse(
@@ -195,8 +203,12 @@ class DeleteUserView(APIView):
                     "success": False,
                     "message": "You are not allowed to perform this action",
                 },
-                status=status.HTTP_403_FORBIDDEN,
             )
+
+        # Blacklist the user before deleting
+        BlacklistedUsers.objects.create(
+            email=user_to_delete.email,
+        )
         user_to_delete.delete()
         return JsonResponse(
             {
