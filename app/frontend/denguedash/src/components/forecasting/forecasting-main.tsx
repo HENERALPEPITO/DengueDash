@@ -104,7 +104,7 @@ export default function ForecastingMain() {
         // }
         {
           year: 2024,
-          week: 44,
+          week: 46,
         }
       );
     setCurrentWeekDengueData(response);
