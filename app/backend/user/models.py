@@ -15,6 +15,13 @@ class BlacklistedUsers(models.Model):
         blank=False,
         null=False,
     )
+    dru = models.ForeignKey(
+        DRU,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="blacklisted_users",
+    )
     date_added = models.DateTimeField(
         auto_now_add=True,
     )

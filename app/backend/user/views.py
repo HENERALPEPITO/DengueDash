@@ -12,6 +12,7 @@ from user.serializers import (
     UsersListSerializer,
     UsersUnverifiedListSerializer,
     RegisterUserSerializer,
+    BlacklistedUsersSerializer,
 )
 from auth.permission import IsUserAdmin
 from user.models import BlacklistedUsers
@@ -208,6 +209,7 @@ class DeleteUserView(APIView):
         # Blacklist the user before deleting
         BlacklistedUsers.objects.create(
             email=user_to_delete.email,
+            dru=user_to_delete.dru,
         )
         user_to_delete.delete()
         return JsonResponse(
@@ -215,4 +217,14 @@ class DeleteUserView(APIView):
                 "success": True,
                 "message": "User deleted successfully",
             }
+        )
+
+
+class BlacklistedUsersListView(BaseUserListView):
+    serializer_class = BlacklistedUsersSerializer
+
+    def get_queryset(self):
+        current_user = self.request.user
+        return BlacklistedUsers.objects.filter(
+            dru_id=current_user.dru.id,
         )
