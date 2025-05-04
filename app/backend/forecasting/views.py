@@ -26,6 +26,7 @@ import shutil
 import json
 from django.http import JsonResponse
 from auth.permission import IsUserAdmin
+from django.db.models import Count
 
 
 class LstmTrainingView(APIView):
@@ -98,6 +99,7 @@ class LstmTrainingView(APIView):
 
     def get_features_target(self):
         # todo: base the end_date to the last date_con in cases
+        # todo: if weather does not exist, fetch from OpenWeatherAPI
         weather_records = Weather.objects.filter(
             **self.weather_filter,
         ).order_by("start_day")
@@ -105,20 +107,19 @@ class LstmTrainingView(APIView):
         features_dataset = []
         target_dataset = []
 
-        for weather in weather_records:
+        for week in weather_records:
             cases_for_week = fetch_cases_for_week(
-                weather.start_day,
+                week.start_day,
                 self.location_filter,
             )
 
             features_dataset.append(
                 [
-                    weather.weekly_rainfall,
-                    weather.weekly_temperature,
-                    weather.weekly_humidity,
+                    week.weekly_rainfall,
+                    week.weekly_temperature,
+                    week.weekly_humidity,
                 ]
             )
-
             target_dataset.append(cases_for_week)
 
         # For Metdata
@@ -331,23 +332,23 @@ class LstmTrainingView(APIView):
 
     def post(self, request):
         try:
-            serialier = ModelTrainingSerializer(data=request.data)
+            serializer = ModelTrainingSerializer(data=request.data)
 
-            if not serialier.is_valid():
+            if not serializer.is_valid():
                 return JsonResponse(
                     {
                         "success": False,
-                        "message": serialier.errors,
+                        "message": serializer.errors,
                     }
                 )
 
             self.initialize_paths_filters(request)
 
-            window_size = serialier.validated_data.get("window_size", 5)
-            validation_split = serialier.validated_data.get("validation_split", 0.2)
-            epochs = serialier.validated_data.get("epochs", 100)
-            batch_size = serialier.validated_data.get("batch_size", 1)
-            learning_rate = serialier.validated_data.get("learning_rate", 0.001)
+            window_size = serializer.validated_data.get("window_size", 5)
+            validation_split = serializer.validated_data.get("validation_split", 0.2)
+            epochs = serializer.validated_data.get("epochs", 100)
+            batch_size = serializer.validated_data.get("batch_size", 1)
+            learning_rate = serializer.validated_data.get("learning_rate", 0.001)
 
             # Only backup existing model if needed
             backup_info = self.backup_existing_model()
@@ -522,55 +523,56 @@ class LstmPredictionView(APIView):
                 "Model metadata not found. Please train the model first.",
             )
 
+    def create_X_sequence(self, data):
+        X = []
+        for i in range(self.window_size, len(data)):
+            X.append(data[i - self.window_size : i])
+        return np.array(X)
+
     def predict_n_weeks(
         self,
-        previous_data,
-        future_weather,
+        X,
+        n_weeks=4,
     ):
-        """
-        Predict dengue cases for the next n weeks using the trained LSTM model.
-
-        Arguments:
-        previous_data: Last 'window size' weeks of normalized data [features, target]
-        future_weather: Weather data for the next n weeks
-        window_size: Model's input time steps
-
-        Returns:
-        predictions: Predicted dengue cases for the next n weeks
-        """
-
+        sequence = X[-1]
         predictions = []
-        current_input = previous_data.copy()
-        current_week_number = self.get_latest_week_number()
 
-        # Current API does not support more than 2 weeks of prediction
-        for week in range(2):
-            weather = future_weather[week]
-            weather_normalized = self.scaler_features.transform([weather])[0]
+        for _ in range(n_weeks):
 
-            # Predict cases
-            input_data = np.array([current_input])
-            predicted_normalized = self.model.predict(input_data)[0][0]
-            predicted = self.scaler_target.inverse_transform([[predicted_normalized]])[
-                0
-            ][0]
-            # predictions.append(predicted)
+            print(self.scaler_target.inverse_transform(sequence))
+
+            next_week_pred = self.model.predict(
+                sequence.reshape(1, self.window_size, -1)
+            )
+
             predictions.append(
+                self.scaler_target.inverse_transform(next_week_pred)[0][0]
+            )
+
+            # Update the sequence with the new prediction
+            sequence = np.roll(
+                sequence,
+                -1,
+                axis=0,
+            )
+            sequence[-1] = next_week_pred
+
+        # Return the predictions in json format
+        predictons_dict = []
+        current_week_number = self.get_latest_week_number()
+        for i in range(len(predictions)):
+            predictons_dict.append(
                 {
-                    "week": current_week_number + week + 1,
-                    "predicted_cases": math.ceil(predicted),
+                    "week": current_week_number + i + 1,
+                    "predicted_cases": math.ceil(predictions[i]),
                     "confidence_interval": {
-                        "lower": math.ceil(predicted * 0.9),
-                        "upper": math.ceil(predicted * 1.1),
+                        "lower": math.ceil(predictions[i] * 0.9),
+                        "upper": math.ceil(predictions[i] * 1.1),
                     },
                 }
             )
 
-            # Update input for next prediction
-            new_row = np.append(weather_normalized, predicted_normalized)
-            current_input = np.vstack([current_input[1:], new_row])
-
-        return predictions
+        return predictons_dict
 
     def post(self, request):
         try:
@@ -586,17 +588,22 @@ class LstmPredictionView(APIView):
 
             self.initialize_paths_filters(request)
 
-            weather_last_n_weeks = Weather.objects.filter(
-                **self.weather_filter,
-            ).order_by("-start_day")[: self.window_size]
+            # weather_last_n_weeks = Weather.objects.filter(
+            #     **self.weather_filter,
+            # ).order_by("-start_day")[: self.window_size]
 
-            # To mitigate negative indexing
-            weather_last_n_weeks = list(reversed(weather_last_n_weeks))
+            # # To mitigate negative indexing
+            # weather_last_n_weeks = list(reversed(weather_last_n_weeks))
+
+            weather_data = Weather.objects.filter(
+                **self.weather_filter,
+            ).order_by("-start_day")
+            weather_data = list(reversed(weather_data))
 
             features_last_n_weeks = np.empty((0, 3))
             target_last_n_weeks = np.empty((0, 1))
 
-            for week in weather_last_n_weeks:
+            for week in weather_data:
                 cases_for_week = fetch_cases_for_week(
                     week.start_day,
                     self.location_filter,
@@ -620,36 +627,28 @@ class LstmPredictionView(APIView):
                     target_last_n_weeks, [[cases_for_week]], axis=0
                 )
 
-            self.scaler_features.fit(features_last_n_weeks)
-            self.scaler_target.fit(target_last_n_weeks.reshape(-1, 1))
-            normalized_features = self.scaler_features.transform(features_last_n_weeks)
-            normalized_target = self.scaler_target.transform(
+            normalized_fetures = self.scaler_features.fit_transform(
+                features_last_n_weeks
+            )
+            normalized_target = self.scaler_target.fit_transform(
                 target_last_n_weeks.reshape(-1, 1)
             )
-            normalized_last_n_weeks_data = np.hstack(
-                [normalized_features, normalized_target]
-            )
 
-            # Process future weather data
-            future_weather = serializer.validated_data.get("future_weather")
-            future_weather = [
+            normalized_data = np.hstack(
                 [
-                    week["rainfall"],
-                    week["max_temperature"],
-                    week["humidity"],
+                    normalized_fetures,
+                    normalized_target,
                 ]
-                for week in future_weather
-            ]
-
-            predicted_cases = self.predict_n_weeks(
-                normalized_last_n_weeks_data,
-                future_weather,
             )
+
+            X = self.create_X_sequence(normalized_data)
+
+            predicted_cases = self.predict_n_weeks(X)
 
             # Add start date
             for i, pred in enumerate(predicted_cases):
                 pred["date"] = (
-                    weather_last_n_weeks[-1].start_day + timedelta(weeks=i + 1)
+                    weather_data[-1].start_day + timedelta(weeks=i + 1)
                 ).strftime("%Y-%m-%d")
 
             # Get model metadata
