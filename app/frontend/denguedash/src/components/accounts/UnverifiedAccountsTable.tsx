@@ -33,7 +33,7 @@ export default function UnverifiedAccountsTable() {
 
   useEffect(() => {
     fetchUsers(currentPage);
-  }, [currentPage]);
+  }, []);
 
   const fetchUsers = async (page: number) => {
     setIsLoading(true);
