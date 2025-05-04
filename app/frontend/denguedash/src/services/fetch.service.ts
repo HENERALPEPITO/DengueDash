@@ -120,6 +120,16 @@ const getUsersUnverifiedList = async (
   });
 };
 
+const getBlacklistedAccounts = async (
+  page: number,
+  itemsPerPage: number = 8
+) => {
+  return axiosClient("user/list/blacklisted/", OPERATION, DEFAULT_DATA, {
+    page,
+    itemsPerPage,
+  });
+};
+
 const getUserDetails = async (userId: number) => {
   return axiosClient(`user/${userId}`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
 };
@@ -155,6 +165,7 @@ const fetchService = {
   getDRUHierarchy,
   getUsersList,
   getUsersUnverifiedList,
+  getBlacklistedAccounts,
   getMyUserDetails,
   getUserDetails,
   getDRUList,

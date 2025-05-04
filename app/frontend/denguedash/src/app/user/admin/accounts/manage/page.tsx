@@ -1,6 +1,7 @@
 "use client";
 
 import AccountsTable from "@/components/accounts/AccountsTable";
+import BlacklistedAccounts from "@/components/accounts/BlacklistedAccounts";
 import UnverifiedAccountsTable from "@/components/accounts/UnverifiedAccountsTable";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 import { Separator } from "@/shadcn/components/ui/separator";
@@ -74,7 +75,7 @@ export default function ManageAccounts() {
           </TabsContent>
 
           <TabsContent value="blacklisted">
-            {/* <RequestsTable status="discontinued" /> */}
+            <BlacklistedAccounts />
           </TabsContent>
         </Tabs>
       </div>
