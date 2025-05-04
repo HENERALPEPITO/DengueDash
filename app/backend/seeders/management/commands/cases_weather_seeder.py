@@ -151,9 +151,9 @@ class Command(BaseCommand):
         humidity,
         rainfall,
     ):
-        sunday_of_week = datetime.fromisocalendar(year, week, 7)
+        monday_of_week = datetime.fromisocalendar(year, week, 1)
         weather = Weather(
-            start_day=sunday_of_week,
+            start_day=monday_of_week,
             location="ILOILO CITY (Capital)",
             weekly_rainfall=float(rainfall),
             weekly_temperature=float(max_temp),
@@ -199,8 +199,6 @@ class Command(BaseCommand):
                 #                 barangay_name,
                 #                 is_alive=False,
                 #             )
-
-                # print(f"Total cases for week {week}: {tmp_alive + tmp_deaths}")
 
                 case_types = [
                     ("alive_cases", True),
