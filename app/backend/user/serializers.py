@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from dru.models import DRU
+from user.models import BlacklistedUsers
 
 User = get_user_model()
 
@@ -76,6 +76,16 @@ class UsersUnverifiedListSerializer(BaseUserSerializer):
             "email",
             "sex_display",
             "created_at",
+        ]
+
+
+class BlacklistedUsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlacklistedUsers
+        fields = [
+            "id",
+            "email",
+            "date_added",
         ]
 
 

@@ -24,6 +24,16 @@ export interface UnverifiedUserListPagination extends PaginationInterface {
   results: UnverifiedUserBriefDetail[];
 }
 
+export interface BlacklistedAccount {
+  id: number;
+  email: string;
+  date_added: string;
+}
+
+export interface BlacklistedAccountListPagination extends PaginationInterface {
+  results: BlacklistedAccount[];
+}
+
 export interface MyUserInterface {
   id: number;
   email: string;

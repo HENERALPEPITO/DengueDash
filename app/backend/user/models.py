@@ -8,6 +8,28 @@ from core.models import BaseModel
 from dru.models import DRU
 
 
+class BlacklistedUsers(models.Model):
+    email = models.EmailField(
+        max_length=255,
+        unique=True,
+        blank=False,
+        null=False,
+    )
+    dru = models.ForeignKey(
+        DRU,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="blacklisted_users",
+    )
+    date_added = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    def __str__(self):
+        return self.email
+
+
 class UserManager(BaseUserManager):
     def create_user(
         self,
