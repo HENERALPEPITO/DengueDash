@@ -76,13 +76,31 @@ Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients b
 	\label{fig:correlation_bar}
 \end{figure}
 
-Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, with the addition of lagged effects. The analysis reveals no improvement in correlation when lagged variables are compared to direct observations. This suggests that the observed values of rainfall, humidity, and maximum temperature remain the most significant predictors for dengue case forecasting. Overall, the exploratory data analysis highlights the significance of rainfall, humidity, and max temperature variables in dengue case forecasting.
+Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as correlation metrics assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis. 
 
-\begin{figure}[h!]
+\begin{figure}[hbt!]
 	\centering
-	\includegraphics[width=0.75\textwidth]{lagged_correlation_bar}
-	\caption{Ranking of Correlations (with lagged effects)}
-	\label{fig:lagged_correlation_bar}
+	\includegraphics[width=1\textwidth]{scatterplots_features}
+	\caption{Scatterplots}
+	\label{fig:scatterplots_features}
+\end{figure}
+
+After applying a log transformation, Figure \ref{fig:new_scatterplots} shows the new distributions for the previously skewed distributions. Now, all distributions exhibit a somewhat normal distribution which is ideal for computing linear computations such as correlation metrics.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=1\textwidth]{new_scatterplots}
+	\caption{Transformed Distributions: Scatterplots}
+	\label{fig:new_scatterplots}
+\end{figure}
+
+Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small and not considered meaningful. As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=0.75\textwidth]{transformed_correlation_bar}
+	\caption{Ranking of Correlations with New Distributions}
+	\label{fig:transformed_correlation_bar}
 \end{figure}
 
 \section{Outbreak Detection}  
