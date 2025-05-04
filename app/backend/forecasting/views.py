@@ -539,8 +539,6 @@ class LstmPredictionView(APIView):
 
         for _ in range(n_weeks):
 
-            print(self.scaler_target.inverse_transform(sequence))
-
             next_week_pred = self.model.predict(
                 sequence.reshape(1, self.window_size, -1)
             )

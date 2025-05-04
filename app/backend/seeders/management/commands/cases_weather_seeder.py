@@ -200,8 +200,6 @@ class Command(BaseCommand):
                 #                 is_alive=False,
                 #             )
 
-                # print(f"Total cases for week {week}: {tmp_alive + tmp_deaths}")
-
                 case_types = [
                     ("alive_cases", True),
                     ("death_cases", False),

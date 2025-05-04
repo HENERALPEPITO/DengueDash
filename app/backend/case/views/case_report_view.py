@@ -209,7 +209,6 @@ class CaseUpdateView(APIView):
                 }
             )
         else:
-            print(f"Validation Errors: {serializer.errors}")
             return JsonResponse(
                 {
                     "success": False,
