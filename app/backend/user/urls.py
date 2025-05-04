@@ -9,6 +9,7 @@ from .views import (
     ToggleUserRoleView,
     RegisterUserView,
     BlacklistedUsersListView,
+    UnbanUserView,
 )
 
 urlpatterns = [
@@ -41,6 +42,11 @@ urlpatterns = [
         "verify/<int:user_id>/",
         VerifiyUserView.as_view(),
         name="user-verify",
+    ),
+    path(
+        "unban/<int:user_id>/",
+        UnbanUserView.as_view(),
+        name="user-unban",
     ),
     path(
         "toggle-role/<int:user_id>/",

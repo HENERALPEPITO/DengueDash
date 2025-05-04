@@ -228,3 +228,33 @@ class BlacklistedUsersListView(BaseUserListView):
         return BlacklistedUsers.objects.filter(
             dru_id=current_user.dru.id,
         )
+
+
+class UnbanUserView(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def delete(self, request, user_id):
+        current_user = request.user
+        id_to_find = BlacklistedUsers.objects.filter(id=user_id).first()
+        if id_to_find is None:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Blacklisted account not found",
+                },
+            )
+        if id_to_find.dru_id != current_user.dru.id:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You are not allowed to perform this action",
+                },
+            )
+
+        id_to_find.delete()
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "User unbanned successfully",
+            }
+        )
