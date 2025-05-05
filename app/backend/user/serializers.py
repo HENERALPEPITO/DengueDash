@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from dru.models import DRU
+from user.models import BlacklistedUsers
 
 User = get_user_model()
 
@@ -79,6 +79,16 @@ class UsersUnverifiedListSerializer(BaseUserSerializer):
         ]
 
 
+class BlacklistedUsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlacklistedUsers
+        fields = [
+            "id",
+            "email",
+            "date_added",
+        ]
+
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
     password_confirm = serializers.CharField(write_only=True, required=True)
@@ -128,12 +138,17 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop("password_confirm")
         password = validated_data.pop("password")
-        request = self.context.get("request")
-        if request and request.user.is_authenticated and request.user.is_admin:
-            validated_data.setdefault("is_verified", True)
-        else:
-            validated_data["is_verified"] = False
-            validated_data["is_admin"] = False
+
+        validated_data["is_verified"] = False
+        validated_data["is_admin"] = False
+
+        # todo: delete this
+        # request = self.context.get("request")
+        # if request and request.user.is_authenticated and request.user.is_admin:
+        #     validated_data.setdefault("is_verified", True)
+        # else:
+        #     validated_data["is_verified"] = False
+        #     validated_data["is_admin"] = False
 
         return User.objects.create_user(password=password, **validated_data)
 

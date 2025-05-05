@@ -31,10 +31,20 @@ const deleteDRU = async (druId: number) => {
   );
 };
 
+const unbanUser = async (userId: number) => {
+  return axiosClient(
+    `user/unban/${userId}/`,
+    OPERATION,
+    DEFAULT_DATA,
+    DEFAULT_PARAMS
+  );
+};
+
 const deleteService = {
   deleteCase,
   deleteUser,
   deleteDRU,
+  unbanUser,
 };
 
 export default deleteService;

@@ -8,23 +8,59 @@ from .views import (
     DeleteUserView,
     ToggleUserRoleView,
     RegisterUserView,
+    BlacklistedUsersListView,
+    UnbanUserView,
 )
 
 urlpatterns = [
-    path("me/", MyUserView.as_view(), name="user-me"),
-    path("list/", UsersListView.as_view(), name="user-list"),
+    path(
+        "me/",
+        MyUserView.as_view(),
+        name="user-me",
+    ),
+    path(
+        "list/",
+        UsersListView.as_view(),
+        name="user-list",
+    ),
     path(
         "list/unverified/",
         UsersUnverifiedListView.as_view(),
         name="user-list-unverified",
     ),
-    path("<int:user_id>/", AdminBrowseUserView.as_view(), name="user-detail"),
-    path("verify/<int:user_id>/", VerifiyUserView.as_view(), name="user-verify"),
+    path(
+        "list/blacklisted/",
+        BlacklistedUsersListView.as_view(),
+        name="user-list-blacklisted",
+    ),
+    path(
+        "<int:user_id>/",
+        AdminBrowseUserView.as_view(),
+        name="user-detail",
+    ),
+    path(
+        "verify/<int:user_id>/",
+        VerifiyUserView.as_view(),
+        name="user-verify",
+    ),
+    path(
+        "unban/<int:user_id>/",
+        UnbanUserView.as_view(),
+        name="user-unban",
+    ),
     path(
         "toggle-role/<int:user_id>/",
         ToggleUserRoleView.as_view(),
         name="user-toggle-role",
     ),
-    path("register/", RegisterUserView.as_view(), name="user-register"),
-    path("delete/<int:user_id>/", DeleteUserView.as_view(), name="user-delete"),
+    path(
+        "register/",
+        RegisterUserView.as_view(),
+        name="user-register",
+    ),
+    path(
+        "delete/<int:user_id>/",
+        DeleteUserView.as_view(),
+        name="user-delete",
+    ),
 ]

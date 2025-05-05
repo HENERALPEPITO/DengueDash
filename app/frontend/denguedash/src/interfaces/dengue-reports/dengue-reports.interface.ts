@@ -1,9 +1,31 @@
 import { PaginationInterface } from "../common/pagination-interface";
 
+export type LaboratoryResultDisplay =
+  | "Pending Result"
+  | "Positive"
+  | "Negative"
+  | "Equivocal";
+
+export type CaseClassificationDisplay = "Suspected" | "Confirmed" | "Probable";
+
+export type OutcomeDisplay = "Alive" | "Deceased";
+
+export type CaseCanBeUpdatedFields = {
+  ns1_result_display: LaboratoryResultDisplay;
+  date_ns1: string | null;
+  igg_elisa_display: LaboratoryResultDisplay;
+  date_igg_elisa: string | null;
+  igm_elisa_display: LaboratoryResultDisplay;
+  date_igm_elisa: string | null;
+  pcr_display: LaboratoryResultDisplay;
+  date_pcr: string | null;
+  outcome_display: OutcomeDisplay;
+  date_death: string | null;
+};
+
 interface Person {
   full_name: string;
 }
-
 interface Patient extends Person {
   addr_barangay: string;
   addr_city: string;
@@ -13,7 +35,7 @@ export interface Case {
   case_id: number;
   date_con: string;
   clncl_class_display: string;
-  case_class_display: string;
+  case_class_display: CaseClassificationDisplay;
   patient: Patient;
 }
 
@@ -34,19 +56,18 @@ interface Interviewer extends Person {
   full_name: string;
   dru: string;
 }
-
 export interface CaseView extends Omit<Case, "patient"> {
   is_admt: boolean;
   date_onset: string;
-  ns1_result_display: string;
+  ns1_result_display: LaboratoryResultDisplay;
   date_ns1: string | null;
-  igg_elisa_display: string;
+  igg_elisa_display: LaboratoryResultDisplay;
   date_igg_elisa: string | null;
-  igm_elisa_display: string;
+  igm_elisa_display: LaboratoryResultDisplay;
   date_igm_elisa: string | null;
-  pcr_display: string;
+  pcr_display: LaboratoryResultDisplay;
   date_pcr: string | null;
-  outcome_display: string;
+  outcome_display: OutcomeDisplay;
   date_death: string | null;
   patient: PatientView;
   interviewer: Interviewer;

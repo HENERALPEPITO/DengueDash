@@ -1,5 +1,4 @@
 import { TrainingResponse } from "@/interfaces/forecasting/training.interface";
-import { Button } from "@/shadcn/components/ui/button";
 import { Card, CardContent } from "@/shadcn/components/ui/card";
 import {
   Tabs,

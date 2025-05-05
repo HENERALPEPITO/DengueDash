@@ -62,30 +62,19 @@ The deep learning models were developed and trained to forecast weekly dengue ca
 The raw dataset included weekly aggregated weather variables (rainfall, temperature, wind, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
 
 \subsubsection{LSTM Model}
-To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting.
-
-The LSTM model was designed using the TensorFlow and Keras libraries. The architecture comprised the following layers:
+The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
 \begin{itemize}
-	\item Input Layer: Accepting sequences of weeks with three features (rainfall, max temperature, and humidity).
-	\item LSTM Layer: A single LSTM layer with 64 units and ReLU activation, capturing temporal dependencies and feature interactions.
-	\item Dense Output Layer: A fully connected layer with a single neuron to predict the dengue cases for the next week.
+	\item \textbf{Training Set:} 80\% of the data (572 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
+	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
 \end{itemize}
-The model was trained for 100 epochs implementing early stopping with a batch size of 1, enabling fine-grained weight updates. The training dataset consisted of 80\% of the sequences, while the remaining 20\% was used as the test set to evaluate model performance. Validation loss was monitored during training to assess model generalization.
 
-The training process was conducted using three distinct window sizes (5 weeks, 10 weeks, and 20 weeks) to determine the optimal sequence length of weeks to input into the LSTM model for improved forecasting performance.
-
-After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
-
-\subsubsection{Hyperparameter Tuning}
-After identifying the optimal window size, it is saved and used to generate the final data sequences, which are then utilized during hyper-parameter tuning.
-
-To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
+To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting. To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
 
 \textbf{LSTM units:}
 \begin{itemize}
 	\item  min value: 32 
-	\item	max value: 256
-	\item	step: 32
+	\item	max value: 128
+	\item	step: 16
 	\item	sampling: linear
 \end{itemize}
 \textbf{Learning Rate:}
@@ -96,86 +85,34 @@ To enhance the performance of the LSTM model in predicting dengue cases, Bayesia
 	\item	sampling: log
 \end{itemize}
 
+
+
 The tuner was instanstiated with:
 \begin{itemize}
-	\item \textbf{max trials = 20:} Limiting the search to 20 different configurations
+	\item \textbf{max trials = 10:} Limiting the search to 10 different configurations
 	\item \textbf{executions per trial = 3:} Running each configuration thrice to reduce variance
 	\item \textbf{validation split = 0.2:} Reserving 20\% of the training data for validation
 \end{itemize}
 
+The hyperparameter tuning was conducted for three different window sizes of data: 5, 10, and 20. This allows the model to have the optimal hyperparameters used for each window size. Training was conducted over 100 epochs with early stopping to prevent overfitting while maintaining computational efficiency. A batch size of 1 was used, enabling the model to process individual sequences, which is suitable for smaller datasets but results in longer training times. The Adam optimizer, known for its adaptive learning capabilities and stability was employed.
+
+To validate the effectiveness of the model, cross-validation was implemented. However, standard k-fold cross-validation randomly shuffles the data, which isn't suitable for time series since the order of observations is important. To address this, a time series-specific cross-validation strategy was used with TimeSeriesSplit from the scikit-learn library. This method creates multiple train-test splits where each training set expands over time and each test set follows sequentially. This approach preserves the temporal structure of the data while helping reduce overfitting by validating the model across different time segments.
+
+After training, predictions on both the training and test datasets were rescaled to their original scale using the inverse transformation of MinMaxScaler. Model performance was evaluated using the mean squared error (MSE), root mean squared error (RMSE) and mean absolute error (MAE).
 
 \subsubsection{ARIMA}
-The ARIMA model was employed to forecast weekly dengue cases using historical weather data (rainfall, max temperature, and humidity) as exogenous variables and historical case counts as the primary dependent variable.
-The dataset was split into training (80\%) and testing (20\%) sets. To determine the optimal configuration for the ARIMA model, a grid search was conducted over the following parameter ranges:
-\begin{itemize}
-	\item p (autoregressive order): 0 to 3
-	\item d (differencing order): 0 to 2
-	\item q (moving average order): 0 to 3
-\end{itemize}
-The combinations of these parameters were evaluated by fitting an ARIMA model for each set of (p, d, q) values. The model's performance was assessed using the mean squared error (MSE) between the predicted and actual dengue cases in the test set. The combination yielding the lowest MSE was selected as the optimal parameter configuration.
+The ARIMA model was utilized to forecast weekly dengue cases, leveraging historical weather data—including rainfall, maximum temperature, and humidity—as exogenous variables alongside historical dengue case counts as the primary dependent variable. The dataset was partitioned into training (80\%) and testing (20\%) sets while maintaining temporal consistency.
 
-The fitted ARIMA model was used to forecast weekly dengue cases for the test dataset. Predictions were directly assigned to the PredictedCases column in the test dataset.
+To identify the optimal ARIMA configuration, a comprehensive grid search was performed across the following parameter ranges:
+\begin{itemize} \item Autoregressive order (p): 0 to 3 \item Differencing order (d): 0 to 2 \item Moving average order (q): 0 to 3 \end{itemize}
 
-\subsubsection{Steps to Create the ARIMA Model:}
-\begin{enumerate}
-	\item \textbf{Data Preprocessing:}Prepare the dataset by handling any missing values and scaling the data if necessary to improve model convergence and stability.
+Each combination of (p,d,q) was used to fit an ARIMA model, and performance was evaluated based on the mean squared error (MSE) between the predicted and actual dengue cases on the test set. The parameter set that achieved the lowest MSE was selected as the final model configuration.
 
-\item \textbf{Hyperparameter Tuning:}  
-Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the configuration that minimizes error. The optimal parameters were found to be \textbf{(1, 2, 2)}.
-
-\item \textbf{Model Training:}
-\begin{itemize}
-	\item Set the number of iterations to 400 to ensure thorough training and convergence.
-	\item Train the ARIMA model on 80\% of the data and reserve 20\% for testing.
-\end{itemize}
-\end{enumerate}
-
+Following model selection, the best-fit ARIMA model was retrained on the training set and subsequently used to forecast dengue cases for the test period. The predictions were assigned to the \texttt{PredictedCases} column in the test dataset. Model performance was further assessed using key evaluation metrics, including MSE, root mean squared error (RMSE), and mean absolute error (MAE). Visual comparisons between actual and predicted dengue cases were produced through line plots to better illustrate the model's forecasting accuracy.
 
 \subsubsection{Seasonal ARIMA (SARIMA)}
 
-\begin{enumerate}
-	\item \textbf{Data Preprocessing}  
-	\begin{itemize}
-		\item Handle missing values through interpolation or imputation.
-		\item Normalize or standardize features to ensure stable training.
-		\item Split data into training (80\%) and testing (20\%) sets while maintaining temporal continuity.
-	\end{itemize}
-	
-	\item \textbf{Seasonality Analysis}  
-	\begin{itemize}
-		\item Perform time series decomposition to examine trend, seasonality, and residual components.
-		\item Identify seasonality using autocorrelation plots and spectral analysis.
-		\item A periodicity of \textbf{52 weeks} was detected, justifying the use of a seasonal model.
-	\end{itemize}
-	
-	\item \textbf{Hyperparameter Tuning}  
-	\begin{itemize}
-		\item Conduct a grid search to optimize SARIMA parameters $(p, d, q)(P, D, Q)[S]$.
-		\item Determine optimal configuration for seasonal and non-seasonal components.
-		\item Verify stationarity through Augmented Dickey-Fuller (ADF) test.
-	\end{itemize}
-	
-	\item \textbf{Model Training}  
-	\begin{itemize}
-		\item Fit the SARIMA model on the training dataset, incorporating exogenous variables such as rainfall, temperature, and humidity.
-		\item Set a maximum number of iterations to ensure convergence.
-		\item Monitor model diagnostics (residual analysis) to confirm the absence of autocorrelation in residuals.
-	\end{itemize}
-	
-	\item \textbf{Forecasting and Validation}  
-	\begin{itemize}
-		\item Generate out-of-sample forecasts for future dengue cases.
-		\item Compare predicted values against actual data to assess real-world applicability.
-		\item Visualize results with line plots and confidence intervals.
-	\end{itemize}
-	
-\end{enumerate}
-
-
-
-
-
-
+The SARIMA modeling process began with data preprocessing, which included handling missing values through interpolation or imputation, and standardizing features to ensure stable model training. The dataset was then split into training and testing sets in an 80:20 ratio, preserving the temporal order of observations. Seasonality analysis was conducted using time series decomposition and autocorrelation plots, which revealed a periodicity of 52 weeks—justifying the adoption of a seasonal model. To fine-tune the model, a grid search was performed over a range of SARIMA parameters (p,d,q)(P,D,Q)[S], while stationarity was validated using the Augmented Dickey-Fuller (ADF) test. The model was then trained on the dataset using rainfall, temperature, and humidity as exogenous variables, with convergence ensured by setting a maximum number of iterations. Residual diagnostics were used to confirm that residuals were uncorrelated, indicating a good model fit. For evaluation, forecasts were compared against actual values, and results were visualized with line plots. Finally, to validate the model’s generalizability across different time periods, Time Series Cross-Validation with three folds was applied. This allowed assessment of the model’s performance on multiple time segments, providing insights into its robustness in real-world forecasting scenarios.
 
 \subsubsection{Kalman Filter:}
 \begin{itemize}
@@ -184,77 +121,7 @@ Use a grid search on potential ARIMA parameters $(p, d, q)$ to identify the conf
 	\item Observation Matrix: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
 \end{itemize}
 
-The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
-
-\section{Kalman Filter}
-
-\begin{itemize}
-	\item \textbf{Input Variables}: The target variable (Cases) was modeled using three regressors: rainfall, max temperature, and humidity.
-	\item \textbf{Training and Testing Split}: The dataset was split into 80\% training and 20\% testing to evaluate model performance.
-	\item \textbf{Observation Matrix}: The Kalman Filter requires an observation matrix, which was constructed by adding an intercept (column of ones) to the regressors.
-\end{itemize}
-
-The Kalman Filter's EM method was employed for training, iteratively estimating model parameters over 10 iterations. The smooth method was used to compute the smoothed state estimates for the training data. Observation matrices for the test data were constructed similarly, ensuring compatibility with the trained model.
-
-\section{Kalman Filter Methodology with Matrix Calculations}
-
-\textbf{Measurement Acquisition}: Obtain the measurement:
-$(z_k)$ of the system's state with associated confidence. This measurement matrix provides a noisy observation of the true state.
-
-The dataset was split into training and test sets to evaluate the Kalman Filter's performance and generalizability:
-\begin{itemize}
-	\item \textbf{Training Set}: 80\% of the data was used for training, enabling the Kalman Filter model to capture key patterns.
-	\item \textbf{Test Set}: The remaining 20\% of the data was reserved for testing.
-\end{itemize}
-
-\textbf{Prediction Step}:
-\begin{itemize}
-	\item Predict the next state:
-	\[
-	\hat{x}_{k|k-1} = A \hat{x}_{k-1|k-1} + B u_k
-	\]
-	
-	\item Update the state covariance:
-	\[
-	P_{k|k-1} = A P_{k-1|k-1} A^T + Q
-	\]
-	where \( Q \) is the process noise covariance matrix.
-\end{itemize}
-
-\textbf{Compute Residual}: Calculate the residual:
-\[
-y_k = z_k - H \hat{x}_{k|k-1}
-\]
-where \( H \) is the observation matrix. This residual represents the new information from the measurement.
-
-\textbf{Scaling Factor (Kalman Gain)}:
-\begin{itemize}
-	\item Compute the Kalman Gain:
-	\[
-	K_k = P_{k|k-1} H^T \left( H P_{k|k-1} H^T + R \right)^{-1}
-	\]
-	where \( R \) is the measurement noise covariance matrix.
-	
-	\item The Kalman Gain determines the weight of the measurement relative to the prediction.
-\end{itemize}
-
-\textbf{State Update}:
-\begin{itemize}
-	\item Update the state estimate:
-	\[
-	\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k y_k
-	\]
-	blending the prediction and measurement.
-\end{itemize}
-
-\textbf{Uncertainty Update}:
-\begin{itemize}
-	\item Update the state covariance:
-	\[
-	P_{k|k} = (I - K_k H) P_{k|k-1}
-	\]
-	where \( I \) is the identity matrix.
-\end{itemize}
+The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
@@ -278,12 +145,18 @@ where \( H \) is the observation matrix. This residual represents the new inform
 \subsection{System Development Framework}
 The Agile Model is the birthchild of both iterative and incremental approaches in Software Engineering. It aims to be flexible and effective at the same time by being adaptable to change. It's also important to note that small teams looking to construct and develop projects quickly can benefit from this kind of methodology. As the Agile Method focuses on continuous testing, quality assurance is a guarantee since bugs and errors are quickly identified and patched. 
 
-\subsection{Design, Building, Testing, and Integration}
 \subsubsection{Design and Developlment}
-After brainstorming and researching the most appropriate type of application to accommodate both the prospected users and the proposed solutions, the team has decided to proceed with a web application. Given the time constraints and available resources, we believe this is the most pragmatic and practical move. The next step is to select modern and stable frameworks that align with the fundamental ideas we have learned at the university. The template obtained from WVCHD and Iloilo Provincial Epidemiology and Surveillance Unit was meticulously analyzed to create use cases and develop a preliminary well-structured database that adheres to the requirements needed to produce a quality application. The said use cases serve as the basis of general features. Part by part, these are converted into code, and with the help of selected libraries and packages, it resulted in the desired outcome that may still modified and extended since it is continuously being developed. 
+After brainstorming and researching the most appropriate type of application to accommodate both the prospected users and the proposed solutions, the team has decided to proceed with a web application. Given the time constraints and available resources, it has been decided that the said means is the most pragmatic and practical move. The next step is to select modern and stable frameworks that align with the fundamental ideas learned by the researchers in the university. The template obtained from WVCHD and Iloilo Provincial Epidemiology and Surveillance Unit was meticulously analyzed to create use cases and develop a preliminary well-structured database that adheres to the requirements needed to produce a quality application. The said use cases serve as the basis of general features. Part by part, these are converted into code, and with the help of selected libraries and packages, it resulted in the desired outcome that may still modified and extended to achieve scalability. 
 
 \subsubsection{Testing and Integration}
-Each feature will be rigorously user-tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Moreover, integration between each feature serves as a pillar for a cohesive user experience. Presently, we have not been able to use performance metrics to measure the system's performance, as developing and connecting the core features is the utmost priority. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=10cm]{testing_process}
+	\caption{Testing Process for DengueWatch}
+	\label{fig:testing-process}
+\end{figure}
+
+Implementing testing is important to validate the system's performance and efficacy. Thus a series of tests were conducted to identify and resolve bugs during the developmental phase. Each feature was rigorously tested to ensure quality assurance, with particular emphasis on prerequisite features, as development cannot progress properly if these fail. Because of this, integration between each feature serves as a pillar for a cohesive user experience. Since dengue reports include confidential information, anonymized historical dengue reports were used to train the model and create the foundational architecture of the system. By using functional tests, data validation and visualization can be ensured for further continual improvements. Security testing is also important as it is needed to safeguard confidential information when the system is deployed. It includes proper authentication, permission views, and mitigating common injection attacks. Finally, a user acceptance test from the prospected users, in this case, doctors, nurses, and other health workers is crucial to assess its performance and user experience. It enables the developers to confirm if the system meets the needs of the problem.
 
 \section{Development Tools}
 \subsection{Software}
@@ -305,7 +178,7 @@ A report by Statista (2024) claims that React is the most popular front-end fram
 As the application heavily relies on the Application Programming Interface (API) being thrown by the backend, it is a must to use a development tool that facilitates the development and testing of the API. Postman is a freemium API platform that offers a user-friendly interface to create and manage API requests \cite{postman-no-date}. 
 
 \subsection{Hardware}
-The web application is continuously being developed on laptop computers with minimum specifications of an 11th-generation Intel i5 CPU and 16 gigabytes of RAM.
+The web application was developed on laptop computers with minimum specifications of an 11th-generation Intel i5 CPU and 16 gigabytes of RAM. Furthermore, an RTX 3060 mobile GPU was also utilized to retrain the integrated model locally. 
 
 \subsection{Packages}
 
@@ -327,8 +200,51 @@ Shadcn offers a collection of open-source UI boilerplate components that can be 
 \subsubsection{Zod}
 Data validation is integral in this web application since it will handle crucial data that will be used for analytical inferences and observations. Since Zod is primarily used for validating and parsing data, it ensures proper communication between the client and the server \cite{zod-nd}. 
 
+\section{Application Requirements}
 
-\clearpage
+\subsection{Backend Requirements}
+\subsubsection{Database Structure Design}
+Determining how data flows and how it would be structured is crucial in creating the system as it defines how extendible and flexible it would be for future features and updates. Thus, creating a comprehensive map of data ensures proper normalization that eliminates data redundancy and improves data integrity. Figure \ref{fig:er_diagram} depicts the designed database schema that showcases the relationship between the application's entities. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{er_diagram}
+	\caption{Entity-Relationship Database Schema Hybrid Diagram for DengueDash Database Structure}
+	\label{fig:er_diagram}
+\end{figure}
+
+\subsection{User Interface Requirements}
+\subsubsection{Admin Interface}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{admin}
+	\caption{Use Case Diagram for Admins}
+	\label{fig:admin-use-case}
+\end{figure}
+Figure \ref{fig:admin-use-case} shows the actions of an admin for a specific Disease Reporting Unit (DRU) and an admin for a specific Surveillance Unit can take in the application. Both of them include the management of accounts, browsing records, and forecasting and retraining all the consolidated data under their supervision. Most importantly, these users must verify the encoders who register under their jurisdiction before allowing their account to access the application in the name of safeguarding the integrity of the data. The only advantage of the latter type of administrator is that it has a one-step higher authorization as it manages the DRUs. In addition, only the authorized surveillance unit administrator can register and create a DRU to uphold transparency and accountability.  
+
+
+\subsubsection{Encoder Interface}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{encoder}
+	\caption{Use Case Diagram for Encoder}
+	\label{fig:encoder-use-case}
+\end{figure}
+
+Figure \ref{fig:encoder-use-case}, on the other hand, illustrates the use cases for the system's primary users. These users can register but must wait for further verification to access the application. Similar to the previous interfaces, encoders can browse and manage records, as well as forecast the consolidated cases under a specific surveillance or disease reporting unit, but they are not allowed to retrain the model. Lastly, they are the only type of user that can file and create dengue cases by filling out a form with the required details.
+
+
+\subsection{Security and Validation Requirements}
+\subsubsection{Password Encryption}
+Storing passwords as plain text in the database is a disgrace and a mortal sin in production. It is important to implement precautionary methods such as hashing and salting, followed by encryption with a strong algorithm, to prevent bad actors from using the accounts for malicious transactions. By default, Django generates a unique random salt for each password and encrypts it with Password-Based Key Derivation Function 2 (PBKDF2) with a SHA256 hash function. Utilizing these techniques ensures that in the event of a data breach, cracking these passwords would be time-consuming and useless for the attackers. 
+
+\subsubsection{Authentication}
+DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the mechanism operates in a stateless manner, tokens are served only after a successful login, eliminating the need for the server to keep a record of the token, which is vulnerable to session hijacking. In addition, these tokens are signed with a secret key, ensuring they have not been tampered with. 
+
+\subsubsection{Data Validation}
+Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
+
+
 \section{Calendar of Activities}
 
 A Gantt chart showing the schedule of the activities is included below. Each bullet represents approximately one week of activity.
@@ -362,7 +278,6 @@ A Gantt chart showing the schedule of the activities is included below. Each bul
 		Integrate the Best Model to the System & \weekone & \weekfour & & & \\ \hline
 		Extend Features to Accommodate a National Setting & & \weekone & \weektwo & & \\ \hline
 		User Testing & & & \weektwo & \weekone & \\ \hline
-		System Deployment & & & & \weekthree & \\ \hline
 		Documentation & \weektwo & \weekfour & \weekfour & \weekfour & \weekfour  \\ \hline		
 	\end{tabular}
 	\label{tab:timetableactivities2025}

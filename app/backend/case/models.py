@@ -172,7 +172,7 @@ class Case(BaseModel):
         default=None,
     )
     case_class_choices = [
-        ("S", "Suspect"),
+        ("S", "Suspected"),
         ("P", "Probable"),
         ("C", "Confirmed"),
     ]
@@ -213,26 +213,22 @@ class Case(BaseModel):
     )
 
     def save(self, *args, **kwargs):
-        current_year = datetime.now().year % 100
-        prefix = current_year * 1000000
+        # Only generate a new case_id if this is a new record (not an update)
+        if not self.pk:
+            current_year = datetime.now().year % 100
+            prefix = current_year * 1000000
 
-        if last_record := (
-            Case.objects.filter(case_id__startswith=str(current_year))
-            .order_by("case_id")
-            .last()
-        ):
-            last_case_id = last_record.case_id
-            self.case_id = last_case_id + 1
-        else:
-            self.case_id = prefix
+            if last_record := (
+                Case.objects.filter(case_id__startswith=str(current_year))
+                .order_by("case_id")
+                .last()
+            ):
+                last_case_id = last_record.case_id
+                self.case_id = last_case_id + 1
+            else:
+                self.case_id = prefix
 
         super(Case, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (
-            "date_con",
-            "patient",
-        )
 
     def __str__(self):
         return self.case_id

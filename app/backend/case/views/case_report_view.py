@@ -1,23 +1,29 @@
 from datetime import timedelta
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from case.models import Case
-from case.serializers.case_report_serializers import CaseReportSerializer
-from case.serializers.case_report_serializers import CaseViewSerializer
+from case.serializers.case_report_serializers import (
+    CaseReportSerializer,
+    CaseViewSerializer,
+    CaseUpdateSerializer,
+)
 from api.pagination import APIPagination
 from django.db.models import Case as DBCase, Value, When
 from django.http import JsonResponse
 
 
-def fetch_cases_for_week(start_date, location_filter=None):
-    end_date = start_date + timedelta(days=6)
+def fetch_cases_for_week(
+    start_date,
+    location_filter=None,
+):
+    end_date = start_date + timedelta(days=7)
     # Base queryset
     cases = Case.objects.filter(
-        clncl_class__in=["W", "S"],
+        # clncl_class__in=["W", "S"],
         date_con__gte=start_date,
-        date_con__lte=end_date,
+        date_con__lt=end_date,
     )
 
     # Apply location filter if provided
@@ -127,19 +133,28 @@ class CaseDeleteView(APIView):
         user = request.user
         filter_kwargs = get_filter_criteria(user)
 
-        # Attempt to retrieve the case based on user credentials
-        case = Case.objects.filter(
-            case_id=case_id,
-            **filter_kwargs,
-        ).first()
-
-        if case is None:
+        try:
+            case = Case.objects.get(
+                case_id=case_id,
+                **filter_kwargs,
+            )
+        except Case.DoesNotExist:
             return JsonResponse(
                 {
                     "success": False,
                     "message": "You do not have the necessary permissions to access this case or the case does not exist.",
                 }
             )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred: {str(e)}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        # Delete the case
         case.delete()
         return JsonResponse(
             {
@@ -147,3 +162,56 @@ class CaseDeleteView(APIView):
                 "message": "Case deleted successfully.",
             }
         )
+
+
+class CaseUpdateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request, case_id):
+        user = request.user
+        filter_kwargs = get_filter_criteria(user)
+
+        try:
+            case = Case.objects.get(
+                case_id=case_id,
+                **filter_kwargs,
+            )
+        except Case.DoesNotExist:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "You do not have the necessary permissions to access this case or the case does not exist.",
+                }
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred: {str(e)}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        # Validate the request data
+        serializer = CaseUpdateSerializer(
+            case,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message": "Case updated successfully.",
+                }
+            )
+        else:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Invalid data provided. Please check your input.",
+                },
+            )

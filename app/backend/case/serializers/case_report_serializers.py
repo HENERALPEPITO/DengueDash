@@ -161,3 +161,44 @@ class CaseViewSerializer(serializers.ModelSerializer):
             # todo: or the user that created the case and the admin can delete it
             return request.user.is_admin or obj.interviewer == request.user
         return False
+
+
+class CaseUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Case
+        fields = [
+            "ns1_result",
+            "date_ns1",
+            "igg_elisa",
+            "date_igg_elisa",
+            "igm_elisa",
+            "date_igm_elisa",
+            "pcr",
+            "date_pcr",
+            "outcome",
+            "date_death",
+        ]
+        read_only_fields = ["case_class"]
+
+    def update(self, instance, validated_data):
+        # First update the instance with all validated data
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        has_positive_result = any(
+            result == "P"
+            for result in [
+                instance.pcr,
+                instance.igg_elisa,
+                instance.igm_elisa,
+                instance.ns1_result,
+            ]
+        )
+
+        if has_positive_result:
+            instance.case_class = "C"  # Confirmed
+        elif instance.case_class == "C":
+            instance.case_class = "P"  # Probable
+
+        instance.save()
+        return instance

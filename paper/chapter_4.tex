@@ -76,13 +76,31 @@ Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients b
 	\label{fig:correlation_bar}
 \end{figure}
 
-Figure \ref{fig:lagged_correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, with the addition of lagged effects. The analysis reveals no improvement in correlation when lagged variables are compared to direct observations. This suggests that the observed values of rainfall, humidity, and maximum temperature remain the most significant predictors for dengue case forecasting. Overall, the exploratory data analysis highlights the significance of rainfall, humidity, and max temperature variables in dengue case forecasting.
+Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as correlation metrics assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis. 
 
-\begin{figure}[h!]
+\begin{figure}[hbt!]
 	\centering
-	\includegraphics[width=0.75\textwidth]{lagged_correlation_bar}
-	\caption{Ranking of Correlations (with lagged effects)}
-	\label{fig:lagged_correlation_bar}
+	\includegraphics[width=1\textwidth]{scatterplots_features}
+	\caption{Scatterplots}
+	\label{fig:scatterplots_features}
+\end{figure}
+
+After applying a log transformation, Figure \ref{fig:new_scatterplots} shows the new distributions for the previously skewed distributions. Now, all distributions exhibit a somewhat normal distribution which is ideal for computing linear computations such as correlation metrics.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=1\textwidth]{new_scatterplots}
+	\caption{Transformed Distributions: Scatterplots}
+	\label{fig:new_scatterplots}
+\end{figure}
+
+Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small and not considered meaningful. As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=0.75\textwidth]{transformed_correlation_bar}
+	\caption{Ranking of Correlations with New Distributions}
+	\label{fig:transformed_correlation_bar}
 \end{figure}
 
 \section{Outbreak Detection}  
@@ -100,105 +118,75 @@ where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
 This result indicates that dengue cases exceeding 98 in Iloilo City can be considered an outbreak. However, it is important to note that this threshold serves only as a baseline. Additional parameters, such as the number of hospital beds available in the city, must be considered to compute a more effective threshold and develop an appropriate response strategy.
 
 	
-\section{Model Training}
-The proposed Dengue Watch system utilized four distinct models to forecast weekly dengue cases: Long Short-Term Memory (LSTM) networks, Autoregressive Integrated Moving Average (ARIMA), Seasonal ARIMA (SARIMA), and Kalman Filter. Each model was trained on a dataset containing 720 weeks of historical dengue cases from 2011 to 2024, with meteorological variables such as max temperature, humidity, and rainfall.
+\section{Model Training Results}
 
-Using SARIMA and LSTM for dengue forecasting requires an adaptive approach due to seasonal changes and long-term trends. Dengue case data is updated every month, and weather data can be extracted manually every week. By continuously monitoring performance, incorporating external factors, and updating the model regularly (preferably monthly or semi-annually), forecasting accuracy can be maintained. If drastic environmental or epidemiological changes occur, more frequent retraining is necessary. This ensures that public health interventions remain proactive, effectively mitigating dengue outbreaks.
-
-To optimize predictive performance, hyperparameter tuning was conducted individually for each model, refining parameters to achieve the most accurate and reliable forecasts. Following training, the models were rigorously evaluated against the dataset using a set of key performance metrics, including Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE).
-
-The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The acceptable threshold for Mean Absolute Error (MAE) in forecasting dengue cases for it to be considered accurate can vary depending on the context. However, related studies often serve as benchmarks, with commonly cited acceptable values ranging from 20 to 30. For this study, we have established a threshold of 15 to emphasize the significance of accurate dengue prediction.
+The models were evaluated using three metrics: MSE, RMSE, and MAE. The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The lower values of the three metrics indicate better forecasting performance. Table \ref{tab:comparison_of_models} shows that the models performed differently on testing data. LSTM outperformed the other models with the lowest RMSE, MSE, and MAE while the other three models had relatively higher values for the three metrics.
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|l|c|c|c|}
-		\hline
-		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\ \hline
-		\textbf{LSTM} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} \\ \hline
-		\begin{tabular}[c]{@{}l@{}}\textbf{Seasonal ARIMA} \\ \textbf{(2, 0, 2) (0, 1,1)}\end{tabular} & \textbf{1109.69} & \textbf{33.31} & \textbf{18.09} \\ \hline
-		\textbf{ARIMA (1, 2, 2)} & \textbf{1521.48} & \textbf{39.01} & \textbf{25.80} \\ \hline
-		\textbf{Kalman Filter} & \textbf{1474.82} & \textbf{38.40} & \textbf{22.34} \\ \hline
-	\end{tabular}
-	\caption{Comparison of Models}
+	\resizebox{1\textwidth}{!}{%
+		\begin{tabular}{|l|c|c|c|c|c|}
+			\hline
+			\textbf{Method} & \textbf{LSTM} & \textbf{Seasonal ARIMA} & \textbf{ARIMA} & \textbf{Kalman Filter} & \textbf{KF-LSTM} \\ 
+			\hline
+			\textbf{Testing MSE}   & 285.54 & 1261.20 & 1521.48 & 1474.82 & 785.35 \\ 
+			\hline
+			\textbf{Testing RMSE}  & 16.90  & 34.45  & 39.00 & 38.40 & 25.56 \\ 
+			\hline
+			\textbf{Testing MAE}   & 9.45  & 18.73  & 25.80 & 22.33 & 14.55 \\ 
+			\hline
+			\textbf{Best Parameters}   
+			& \begin{tabular}[c]{@{}c@{}}Window Size: 5\\ Learning Rate: 0.01\\ Units: 64\end{tabular}  
+			& (2,0,2)(0,1,1)  
+			& (1,2,2) 
+			& \begin{tabular}[c]{@{}c@{}}Observation Covariance: 10.0\\ Transition Covariance: 0.1 $\times$ Identity\end{tabular}
+			& Same as LSTM \\ 
+			\hline
+		\end{tabular}%
+	}
+	\caption{Comparison of different models for dengue prediction}
 	\label{tab:comparison_of_models}
 \end{table}
 
+
+
+
 \subsection{LSTM Model}
-The LSTM model architecture consisted of an input layer, a single LSTM layer with 64 units and ReLU activation, followed by a dense layer with a single output neuron to predict the dengue case count. Key hyperparameters included:
-\begin{itemize}
-	\item Window Size: 5, 10, and 20 weeks, representing the time steps used in the sequence data for each prediction.
-	\item Epochs: 100 epochs were used for training, balancing sufficient training time with computational efficiency also implementing early stopping to avoid overfitting.
-	\item Batch Size: 1, allowing the model to process one sequence at a time, which is beneficial for small datasets but increases training time.
-	\item Optimizer: The Adam optimizer was chosen for its adaptive learning capabilities and stability in training. A custom learning rate of 0.001 was set to ensure gradual convergence and minimize risk of overfitting.
-\end{itemize}
-
-The dataset was split into training and test sets to evaluate the model’s performance and generalizability:
-\begin{itemize}
-	\item \textbf{Training Set:} 80\% of the data (572 sequences) was used for model training, enabling the LSTM to learn underlying patterns in historical dengue case trends and their relationship with weather variables.
-	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
-\end{itemize}
-
-The training process was conducted using three distinct window sizes—5 weeks, 10 weeks, and 20 weeks—to identify the optimal sequence length of weeks for input into the LSTM model, thereby enhancing forecasting performance. The following plots illustrate the performance of the model in predicting dengue cases for each of the specified window sizes.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{lstm_comparison}
-	\caption{Comparison of Window Sizes}
-	\label{fig:lstm_comparison}
-\end{figure}
-
-The evaluation metrics included Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE) and R² Score, which assess the accuracy of the model's predictions.
+The LSTM model was tuned for the following parameters: learning rate and units. The hyperparameter tuning was conducted for each window size, finding the best parameters for each window size. Further evaluating which window size is most suitable for the prediction model, Table \ref{tab:comparison_of_lstm} shows the evaluation metrics for each window size used in the LSTM model training.
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|l|c|c|c|c|}
 		\hline
 		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
-		\textbf{5} & \textbf{274.70} & \textbf{16.57} & \textbf{9.57} & \textbf{0.84}\\ \hline
-		\textbf{10} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} & \textbf{0.85}\\ \hline
-		\textbf{20} & \textbf{297.11} & \textbf{17.24} & \textbf{9.84} & \textbf{0.83}\\ \hline
+		\textbf{5} & \textbf{285.54} & \textbf{16.90} & \textbf{9.45} & \textbf{0.83}\\ \hline
+		\textbf{10} & \textbf{334.63} & \textbf{18.29} & \textbf{9.85} & \textbf{0.80}\\ \hline
+		\textbf{20} & \textbf{294.85} & \textbf{17.17} & \textbf{9.35} & \textbf{0.83}\\ \hline
 	\end{tabular}
 	\caption{Comparison of Window Sizes}
 	\label{tab:comparison_of_lstm}
 \end{table}
 
-The results indicate that a window size of 10 weeks provides the most accurate predictions, as evidenced by the lowest MSE (260.93) and RMSE (16.15) values. Although the 10-week window size yields the lowest MAE (9.30), the 5-week window follows closely with 9.57, while the 20-week window is slightly higher at 9.84. These differences are relatively small, especially between the 5- and 10-week windows, indicating that the average prediction error remains fairly consistent across different window sizes.
+The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
 
-Furthermore, the R² score of 0.85 for the 10-week window indicates that 85\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall. In contrast, the 5-week and 20-week windows yield R² scores of 0.84 and 0.83, respectively, reflecting marginally lower explanatory power.
+Figure \ref{fig:tcsv_training} illustrates the model’s performance in predicting dengue cases for each fold using a window size of 5. As shown in the plot, the training set progressively increases with each fold, mimicking a real-world scenario where more data becomes available over time for dengue prediction. Figure \ref{fig:tcsv_testing} demonstrates that the predicted cases closely follow the trend of the actual cases, indicating that the LSTM model successfully captures the underlying patterns in the data. It is also evident that as the fold number increases and the training set grows, the accuracy of the predictions on the test set improves. Despite the test data being unseen, the model exhibits a strong ability to generalize, suggesting it effectively leverages past observations to predict future trends.
 
-This suggests that using a 10-week sequence length effectively balances the model’s ability to capture temporal dependencies with predictive accuracy, without unnecessarily increasing model complexity or introducing additional noise from longer sequences.
-
-\subsubsection{Hyperparameter Tuning}
-Using the 10-week sequence length identified as the optimal window size in preliminary experiments, the dataset was reshaped accordingly and served as the input for hyperparameter tuning. The tuning process was conducted using the \textit{Bayesian Optimization} approach provided by the \texttt{Keras Tuner} library, targeting the minimization of validation loss (Mean Squared Error). The key hyperparameters explored during the tuning were:
-
-\begin{itemize}
-	\item \textbf{LSTM units:} 96
-	\item \textbf{Learning Rate:} 0.006
-\end{itemize}
-
-Although the tuning process successfully identified a configuration that minimized the validation loss during training, it did not result in improved performance on the test set. In fact, the model’s evaluation metrics slightly declined when compared to the baseline model trained with manually selected hyperparameters.
-
-\begin{table}[h!]
+\begin{figure}[H]
 	\centering
-	\begin{tabular}{|l|c|c|c|c|}
-		\hline
-		\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
-		\textbf{Before tuning} & \textbf{260.93} & \textbf{16.15} & \textbf{9.30} & \textbf{0.85}\\ \hline
-		\textbf{After tuning} & \textbf{317.70} & \textbf{17.82} & \textbf{10.42} &\textbf{0.81}\\ \hline
-	\end{tabular}
-	\caption{Comparison of Model Performance Before and After Tuning (Using window size = 10)}
-	\label{tab:comparison_of_tuning}
-\end{table}
+	\includegraphics[width=1\textwidth]{TSCV_training}
+	\caption{Training Folds - Window Size 5}
+	\label{fig:tcsv_training}
+\end{figure}
 
-This outcome suggests that the tuned model may have overfitted the validation split, a common occurrence when working with relatively small datasets. It is also possible that the default or manually chosen configuration was already close to optimal in terms of generalization. Furthermore, although the tuning search space was reasonably defined, it may have excluded other more effective hyperparameter combinations. These results emphasize the importance of critically evaluating tuning results and underscore that automated hyperparameter optimization does not always guarantee better model performance on unseen data.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{TCSV_testing}
+	\caption{Testing Folds - Window Size 5}
+	\label{fig:tcsv_testing}
+\end{figure}
 
-
-\section*{Training and Testing Data Division for ARIMA and Seasonal Arima}
-Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
-\begin{itemize}
-	\item \textbf{Training Set}: 80\% of the data was used for training, allowing the models to learn underlying patterns in the dataset.
-	\item \textbf{Test Set}: 20\% of the data was reserved for testing, providing an unbiased assessment of the models' performance on unseen data.
-\end{itemize}
 \subsection{ARIMA Model}
+
+
 
 \begin{figure}[H]
 	\centering
@@ -207,16 +195,10 @@ Both models utilized an \textbf{80\%-20\% split} to evaluate generalizability:
 	\label{fig:Arima_result}
 \end{figure}
 
-The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution.
+The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Figure \ref{fig:Arima_result} illustrates the comparison between actual and predicted dengue cases in the test set. As shown in the plot, the ARIMA model struggled to capture the non-linear characteristics and abrupt spikes in the data. Consequently, it failed to accurately reflect the fluctuations and outbreak patterns seen in the actual case counts.
 
-The model's performance was assessed using regression metrics to evaluate its forecasting capability:
-\begin{itemize}
-	\item Mean Squared Error (MSE): Quantifies average squared prediction error.
-	\item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale.
-	\item Mean Absolute Error (MAE): Measures the average magnitude of the absolute errors between the predicted and actual values.
-\end{itemize}
+The model's performance was assessed using regression metrics to evaluate its forecasting capability. The ARIMA model yielded the following error metrics:
 
-The ARIMA model yielded the following error metrics:
 \begin{itemize}
 	\item \textbf{MSE (Mean Squared Error)}: 1521.48
 	\item \textbf{RMSE (Root Mean Squared Error)}: 39.01
@@ -225,6 +207,8 @@ The ARIMA model yielded the following error metrics:
 
 \subsection{Seasonal ARIMA (SARIMA) Model}
 
+To address the limitations of the ARIMA model, a Seasonal ARIMA (SARIMA) model was developed to capture both non-seasonal and seasonal variations in the data.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_Sarima}
@@ -232,14 +216,38 @@ The ARIMA model yielded the following error metrics:
 	\label{fig:Sarima_result}
 \end{figure}
 
-This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit.
+This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit. As shown in Figure \ref{fig:Sarima_result}, the SARIMA model demonstrates a notable improvement in performance. Unlike its non-seasonal counterpart, it effectively captures the general trend and aligns more closely with the peaks observed in the actual dengue cases, indicating its ability to model seasonal dynamics.
 
-The model's performance was assessed using regression metrics to evaluate its forecasting capability: \begin{itemize} \item Mean Squared Error (MSE): Quantifies average squared prediction error. \item Root Mean Squared Error (RMSE): Measures average prediction error on the data's original scale. \item Mean Absolute Error (MAE): Measures the average magnitude of the absolute errors between the predicted and actual values. \end{itemize}
+The model's performance was assessed using regression metrics to evaluate its forecasting capability. The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The lower error values, when compared to the ARIMA model, highlight the SARIMA model's superior capability in forecasting dengue cases. Its effectiveness in capturing seasonal patterns contributed to a more accurate representation of the actual cases.
 
-The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The SARIMA model outperformed the ARIMA model in terms of lower MSE and RMSE values, indicating its effectiveness in capturing the seasonal patterns in the data.
+After training the model, the SARIMA model was validated using the same Time Series Cross-Validation strategy employed in the LSTM model. Table \ref{tab:tcsv_sarima} presents the performance metrics for each fold, as well as the average metrics across all folds. The average RMSE and MAE values were close to those obtained during the initial training phase, indicating that the SARIMA model performed consistently across different time segments.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Fold} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\
+		\hline
+		1 & 659.68  & 25.68 & 16.00 \\
+		2 & 2127.49 & 46.12 & 21.30 \\
+		3 & 996.43  & 31.56 & 18.89 \\
+		\hline
+		\textbf{Average} & \textbf{1261.20} & \textbf{34.45} & \textbf{18.73} \\
+		\hline
+	\end{tabular}
+	\caption{Comparison of SARIMA performance for each fold}
+	\label{tab:tcsv_sarima}
+\end{table}
+
 
 \subsection{Kalman Filter Model}
 
+Figure \ref{fig:Kalman_result} shows the comparison between the actual dengue cases and the predicted values on the test set. As illustrated in the plot, the Kalman Filter model demonstrates a moderate ability to follow the general trend of the actual data. While it effectively captures some rising and falling patterns, it still struggles to accurately replicate the sharp peaks and extreme values found in the real case counts. This limitation is particularly noticeable during the large spikes in 2022 and 2024. The model’s performance was evaluated using standard regression metrics. The results are as follows:
+\[
+\text{MSE} = 1474.82, \quad
+\text{RMSE} = 38.40, \quad
+\text{MAE} = 22.34
+\]
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_Kalman}
@@ -247,92 +255,66 @@ The SARIMA model yielded the following error metrics: \begin{itemize} \item \tex
 	\label{fig:Kalman_result}
 \end{figure}
 
+The Kalman Filter was then combined with the LSTM model in order to see improvements in its predictions. Table \ref{tab:tcsv_kflstm} shows the metrics across three folds using the same Time Series Cross Validation Strategy employed in the previous models to see how it performed on different time segments.
 
-\textbf{Model Evaluation}:
-Upon testing, the Kalman Filter produced the following error metrics:
-\[
-\text{MSE} = 1474.82, \quad
-\text{RMSE} = 38.40, \quad
-\text{MAE} = 22.34
-\]
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Fold} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\
+		\hline
+		1 & 113.59  & 10.66 & 6.42 \\
+		2 & 752.51 & 27.43 & 12.11 \\
+		3 & 1489.95  & 38.60 & 25.13 \\
+		\hline
+		\textbf{Average} & \textbf{785.35} & \textbf{25.56} & \textbf{14.55} \\
+		\hline
+	\end{tabular}
+	\caption{Comparison of KF-LSTM performance for each fold}
+	\label{tab:tcsv_kflstm}
+\end{table}
 
-These results indicate the model's performance in predicting dengue cases, where lower errors suggest a better fit to the observed data.
+As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
 
+\section{Model Simulation}
+To evaluate the LSTM model's real-world forecasting ability, a simulation was conducted to predict dengue cases for the year 2025. The model was trained exclusively on data from 2011 to 2024, using both dengue cases and weather variables. Importantly, the actual dengue case values for 2025 were never included during training. Instead, only the weather variables collected for 2025 were input into the model to generate predictions for that year. After prediction, the forecasted dengue cases for 2025 were compared against the true observed cases to assess the model’s accuracy. Figure \ref{fig:modeltesting} shows that the predicted values closely follow the trend, although it may overestimate the dengue cases in some weeks. 
 
-\clearpage
-\section{Preliminary System Requirements}
-\subsection{Backend Requirements}
-\subsubsection{Database Structure Design}
-Determining how data flows and how it would be structured is crucial in creating the system as it defines how extendible and flexible it would be for future features and updates. Thus, creating a comprehensive map of data ensures proper normalization that eliminates data redundancy and improves data integrity. Figure \ref{fig:er_diagram} depicts the designed database schema that showcases the relationship between the application's entities. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{er_diagram}
-	\caption{Entity-Relationship Database Schema Hybrid Diagram for DengueDash Database Structure}
-	\label{fig:er_diagram}
+	\includegraphics[width=1\textwidth]{modeltesting}
+	\caption{Predicted vs Actual Dengue Cases 2025}
+	\label{fig:modeltesting}
 \end{figure}
-
-\subsection{User Interface Requirements}
-\subsubsection{Admin Interface}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{admin}
-	\caption{Use Case Diagram for Admin}
-	\label{fig:admin-use-case}
-\end{figure}
-Figure \ref{fig:admin-use-case} shows the possible tasks that the admin can do in the application. To protect the integrity of data, only the admins can register and delete accounts. Both account creation and deletion will be done within the application.
-
-\subsubsection{Encoder Interface}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{encoder}
-	\caption{Use Case Diagram for Encoder}
-	\label{fig:encoder-use-case}
-\end{figure}
-
-Figure \ref{fig:encoder-use-case}, on the other hand, illustrates the use cases for the system's primary users. Since only the admin accounts can register a user, the registration process is not part of it. Instead, the main features, which include reporting and viewing records, are the only permitted actions for this type of user. The said processes can be done in the application by filling out a form with details required for each dengue case. 
-As data is entered, it will be consolidated for model training and used for further forecasting of dengue cases.
-
-
-\subsection{Security and Validation Requirements}
-\subsubsection{Password Encryption}
-Storing passwords as plain text in the database is a disgrace and a mortal sin in production. It is important to implement precautionary methods such as hashing and salting, followed by encryption with a strong algorithm, to prevent bad actors from using the accounts for malicious transactions. By default, Django generates a unique random salt for each password and encrypts it with Password-Based Key Derivation Function 2 (PBKDF2) with a SHA256 hash function. Utilizing these techniques ensures that in the event of a data breach, cracking these passwords would be time-consuming and useless for the attackers. 
-
-\subsubsection{Authentication}
-DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the mechanism operates in a stateless manner, tokens are served only after a successful login, eliminating the need for the server to keep a record of the token, which is vulnerable to session hijacking. In addition, these tokens are signed with a secret key, ensuring they have not been tampered with. 
-
-\subsubsection{Data Validation}
-Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
-
-\subsection{Testing Process}
-\begin{figure}[H]
-	\centering
-	\includegraphics[height=10cm]{testing_process}
-	\caption{Testing Process for DengueWatch}
-	\label{fig:testing-process}
-\end{figure}
-
-As the system requirements and functionalities have been mentioned above, it is important to implement testing to validate the system's performance and efficacy. Since dengue reports include confidential information, anonymized historical dengue reports were used to train the model and create the foundational architecture of the system. By using functional tests, data validation and visualization can be ensured for further continual improvements. Security testing is also important as it is needed to safeguard confidential information when the system is deployed. It includes proper authentication, permission views, and mitigating common injection attacks. Finally, a user acceptance test from the prospected users, in this case, the Iloilo City Epidemiology and Surveillance Unit, is crucial to assess its performance and user experience. It enables the developers to confirm if the system meets the needs of the problem, and once confirmed, it will be deployed and further evaluated to ensure stability and reliability in live operation. 
 
 \section{System Prototype}
-\subsection{Guest Interface}
-The Guest Interface is intended for all visitors of the web application. It shows the related statistics for dengue cases in a particular area and time. As the system is still in its testing phase, the data converted into charts shown in Figure \ref{fig:guest_dashboard} are generated from Python's Faker library. 
+\subsection{Home Page}
+The Home Page is intended for all visitors of the web application. The Analytics Dashboard, which displays relevant statistics for dengue cases at a certain year and location, is the primary component highlighted, as seen in Figure \ref{fig:home_page}. This component includes a combo chart that graphs the number of dengue cases and deaths per week in a specific year, a choropleth map that tracks the number of dengue cases per location, and various bar charts that indicate the top locations affected by dengue. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{guest_dashboard}
-	\caption{Dashboard for Guests}
-	\label{fig:guest_dashboard}
+	\includegraphics[width=1\textwidth]{home_page}
+	\caption{Home Page}
+	\label{fig:home_page}
 \end{figure}
-\subsection{Personnel Interface}
-\subsubsection{User Authentication, and Login}
-To protect the data's integrity in production, it has been decided that the registration process will not be visible. Instead, an admin must register a user using a different interface. As of the moment, registering a user is done using API via Postman. In the login process, the system implements HTTP-only cookies that contains the JSON Web Tokens (JWT) to protect against XSS attacks. After proper credentials have been provided, it will redirect to the user's home page.
+
+\subsection{User Registration, Login, and Authentication}
+The registration page, as shown in Figure \ref{fig:registration_page}, serves as a gateway to access the authenticated pages of the web application. Only prospected encoders can create an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page the type of user belongs to. 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{login}
-	\caption{Login Page for Users}
+	\includegraphics[width=1\textwidth]{registration_page}
+	\caption{Sign Up Page}
+	\label{fig:registration_page}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{login_page}
+	\caption{Login Page}
 	\label{fig:login_page}
 \end{figure}
-\subsubsection{Encoder's View}
-Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the digitized counterpart of the form obtained from the Iloilo Provincial Epidemiology and Surveillance Unit. As the system aims to support expandability for future features, some fields were modified to accommodate more detailed input. It is worth noting that all of the included fields adhere to the latest Philippine Integrated Disease and Surveillance Response (PIDSR) Dengue Forms, which the referenced form was based on. By doing this, it is assumed that the targeted users will have a familiarity when deployed on a national scale. On a further note, the case form includes the patient's basic information, dengue vaccination status, consultation details, laboratory results, and the outcome. 
+
+\subsection{Encoder Interface}
+\subsubsection{Case Report Form}
+Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the digitized counterpart of the form obtained from the Iloilo Provincial Epidemiology and Surveillance Unit. As the system aims to support expandability for future features, some fields were modified to accommodate more detailed input. It is worth noting that all of the included fields adhere to the latest Philippine Integrated Disease and Surveillance Response (PIDSR) Dengue Forms, which the referenced form was based on. By doing this, if implemented on a national scale, the transition between targeted users will be easier. Moreover, the case form includes the patient's basic information, dengue vaccination status, consultation details, laboratory results, and the outcome. On the other hand, encoders can also create case records using a "bulk upload" feature that makes use of a formatted CSV file template. As shown in Figure \ref{fig:bulk_upload}, an encoder can download the template using the "Download Template" button, and insert multiple records inside the file, then upload it by clicking the "Click to upload" button. The web application automatically checks the file for data inconsistencies and validation. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{case_report_form_1}
@@ -345,9 +327,15 @@ Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the d
 	\caption{Second Part of Case Report Form}
 	\label{fig:case_report_form_2}
 \end{figure}
-\clearpage
-Once the data generated from the case report form is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. 
-It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that came from the same DRU. On the other hand, in a consolidated surveillance unit such as a regional and provincial quarter, its users can view all the records that came from all the DRUs that report to them. Moving forward, Figure \ref{fig:case_report} shows the detailed case report of the patient on a particular consultation date. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{bulk_upload}
+	\caption{Bulk Upload of Cases using CSV}
+	\label{fig:bulk_upload}
+\end{figure}
+
+\subsubsection{Browsing, Update, and Deletion of Records}
+Once the data generated from the case report form or the bulk upload is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{dengue_reports}
@@ -356,7 +344,135 @@ It is also worth noting that it only shows cases the user is permitted to view. 
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{case_report}
+	\includegraphics[width=1\textwidth]{detailed_case_report}
 	\caption{Detailed Case Report}
-	\label{fig:case_report}
+	\label{fig:detailed_case_report}
 \end{figure}
+
+To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show confirming the action of the user. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{update_report}
+	\caption{Update Report Dialog}
+	\label{fig:update_report}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{delete_report}
+	\caption{Delete Report Alert Dialog}
+	\label{fig:delete_report}
+\end{figure}
+
+\subsubsection{Forecasting}
+
+The piece de resistance of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next following weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. It requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) based on the window size. This allows the web application to display a line chart with the anticipated number of dengue cases over the following four weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the OpenWeather API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{forecasting}
+	\caption{Forecasting Page}
+	\label{fig:forecasting}
+\end{figure}
+
+\subsection{Admin Interface}
+
+\subsubsection{Retraining}
+
+With LSTM being the best-performing model among the models used in forecasting dengue cases, it is the model chosen to power the prediction and retraining of the consolidated data within the web application. Since the retraining process consumes a lot of processing power and requires a more advanced understanding of how it works, it was decided that the said feature should only be available to admin users. Furthermore, the retraining component in the Forecasting page includes three additional components that include the configuration of LSTM parameters (Figure \ref{fig:retraining_configs}), the actual retraining of the consolidated data from the database (Figure \ref{fig:retraining_train}), and the results of the retraining that shows the current and previous model metrics depending on the parameters entered (Figure \ref{fig:retraining_results}). It is also worth noting that when trained, the model used a seeded number to promote reproducibility. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{retraining_configs}
+	\caption{Retraining Configurations}
+	\label{fig:retraining_configs}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{retraining_train}
+	\caption{Start Retraining}
+	\label{fig:retraining_train}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{retraining_results}
+	\caption{Retraining Results}
+	\label{fig:retraining_results}
+\end{figure}
+
+\clearpage
+
+\subsubsection{Managing Accounts}
+
+Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. The same figure also shows the expanded details of the user, which include personal information and brief activity details within the system.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{verified_accounts}
+	\caption{List of Verified Accounts}
+	\label{fig:verified_accounts}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{pending_accounts}
+	\caption{List of Pending Accounts}
+	\label{fig:pending_accounts}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{account_details}
+	\caption{Account Details}
+	\label{fig:account_details}
+\end{figure}
+
+\subsubsection{Managing DRUs}
+
+Unlike the registration of encoder accounts, the creation of Disease Reporting Units can only be done within the web application, and the user performing the creation must be an administrator of a surveillance unit. Figure \ref{fig:register_dru} presents the fields the admin user must fill out, and once completed, the new entry will show as being managed by that unit, as shown in Figure \ref{fig:browse_drus}. Figure \ref{fig:dru_details}, on the other hand, shows the details provided in the registration form as well as its creation details. There is also an option to delete the DRU, and when invoked, all the accounts being managed by it, and the cases reported under those accounts will be soft-deleted.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{register_dru}
+	\caption{DRU Registration}
+	\label{fig:register_dru}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{browse_drus}
+	\caption{List of DRUs}
+	\label{fig:browse_drus}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{dru_details}
+	\caption{DRU details}
+	\label{fig:dru_details}
+\end{figure}
+
+
+\section{User Testing}
+To evaluate the usability of the system, the System Usability Scale (SUS) was utilized. SUS is a Likert-scale-based questionnaire comprising 10 items that are critical to assessing system usability. A total of five participants completed the survey. Their responses were processed following the step-by-step calculation method adopted from \cite{babich_sus_usability_website}. The resulting usability scores for each participant are shown in Table~\ref{tab:sus_scores}.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Participant} & \textbf{Usability Score} \\
+		\hline
+		1 & 95.0 \\
+		2 & 90.0 \\
+		3 & 85.0 \\
+		4 & 87.5 \\
+		5 & 85.0 \\
+		\hline
+		\textbf{Average} & \textbf{88.5} \\
+		\hline
+	\end{tabular}
+	\caption{Computed System Usability Scores per Participant}
+	\label{tab:sus_scores}
+\end{table}
+
+The average System Usability Scale (SUS) score across systems is typically 68~\cite{babich_sus_usability_website}. In this testing, the system achieved an average SUS score of 88.5, indicating a highly positive user experience. This score suggests that participants found the system not only enjoyable to use but also intuitive enough to recommend to others. Furthermore, it demonstrates that the system is suitable for real-world applications without presenting significant complexity for first-time users.
+
+
+
+
