@@ -76,7 +76,15 @@ Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients b
 	\label{fig:correlation_bar}
 \end{figure}
 
-Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as correlation metrics assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis. 
+Figure \ref{fig:pre_transform_distribution} shows the distributions of each feature while Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as Pearson correlation assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution \cite{bobbitt2021pearson}. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis. 
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=1\textwidth]{pre_transform_distribution}
+	\caption{Pre-Transform Feature Distributions}
+	\label{fig:pre_transform_distribution}
+\end{figure}
+
 
 \begin{figure}[hbt!]
 	\centering
@@ -85,7 +93,14 @@ Figure \ref{fig:scatterplots_features} shows scatterplots of each feature agains
 	\label{fig:scatterplots_features}
 \end{figure}
 
-After applying a log transformation, Figure \ref{fig:new_scatterplots} shows the new distributions for the previously skewed distributions. Now, all distributions exhibit a somewhat normal distribution which is ideal for computing linear computations such as correlation metrics.
+After applying a log transformation, Figure \ref{fig:post_transform_distribution} shows the new distributions for the previously skewed distributions, while Figure \ref{fig:new_scatterplots} shows the new scatterplots of each feature against the number of cases. Now, all distributions exhibit a somewhat normal distribution which is ideal for computing linear computations such as Pearson's correlation.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=1\textwidth]{post_transform_distribution}
+	\caption{Post-Transform Feature Distributions}
+	\label{fig:post_transform_distribution}
+\end{figure}
 
 \begin{figure}[hbt!]
 	\centering
@@ -94,7 +109,7 @@ After applying a log transformation, Figure \ref{fig:new_scatterplots} shows the
 	\label{fig:new_scatterplots}
 \end{figure}
 
-Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small and not considered meaningful. As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
+Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small and not considered meaningful. Although the individual correlations are weak, they provide valuable signals that, when combined in a multivariate model, may contribute meaningfully to predictive performance., As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
 
 \begin{figure}[hbt!]
 	\centering
