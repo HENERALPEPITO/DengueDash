@@ -183,6 +183,21 @@ The LSTM model was tuned for the following parameters: learning rate and units. 
 
 The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
 
+As shown in Table \ref{tab:tcsv_lstm_table}, the results from time series cross-validation indicate consistent performance trends, with a window size of 5 yielding the highest average RMSE across all folds compared to the other window sizes.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Window Size} & \textbf{Average RMSE} & \textbf{Average MAE} & \textbf{Average R²}\\ \hline
+		\textbf{5} & \textbf{16.69} & \textbf{9.06} & \textbf{0.79}\\ \hline
+		\textbf{10} & \textbf{17.08} & \textbf{10.40} & \textbf{0.75}\\ \hline
+		\textbf{20}& \textbf{16.93} & \textbf{8.75} & \textbf{0.81}\\ \hline
+	\end{tabular}
+	\caption{Time-Series Cross Validation Results: Comparison of Window Sizes}
+	\label{tab:tcsv_lstm_table}
+\end{table}
+
 Figure \ref{fig:tcsv_training} illustrates the model’s performance in predicting dengue cases for each fold using a window size of 5. As shown in the plot, the training set progressively increases with each fold, mimicking a real-world scenario where more data becomes available over time for dengue prediction. Figure \ref{fig:tcsv_testing} demonstrates that the predicted cases closely follow the trend of the actual cases, indicating that the LSTM model successfully captures the underlying patterns in the data. It is also evident that as the fold number increases and the training set grows, the accuracy of the predictions on the test set improves. Despite the test data being unseen, the model exhibits a strong ability to generalize, suggesting it effectively leverages past observations to predict future trends.
 
 \begin{figure}[H]
