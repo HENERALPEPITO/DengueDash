@@ -245,43 +245,5 @@ DengueWatch utilizes JSON Web Tokens (JWT) to authenticate the user. Since the m
 Both the backend and frontend should validate the input from the user to preserve data integrity. Thus, Zod is implemented in the latter to help catch invalid inputs from the user. By doing this, the user can only send proper requests to the server which streamlines the total workflow. On the other hand, Django has also a built-in validator that checks the data type and ensures that the input matches the expected format on the server side. These validation processes ensure that only valid and properly formatted data is accepted, which reduces the risk of errors and ensures consistency across the web application. 
 
 
-\section{Calendar of Activities}
-
-A Gantt chart showing the schedule of the activities is included below. Each bullet represents approximately one week of activity.
-
-\newcommand{\weekone}{\textbullet}
-\newcommand{\weektwo}{\textbullet \textbullet}
-\newcommand{\weekthree}{\textbullet \textbullet \textbullet}
-\newcommand{\weekfour}{\textbullet \textbullet \textbullet \textbullet}
-
-\begin{table}[ht]
-	\centering
-	\caption{Timetable of Activities for 2024} \vspace{0.25em}
-	\begin{tabular}{|p{2in}|c|c|c|c|c|c|c|c|c|c|c|} \hline
-		Activities & Aug & Sept & Oct & Nov & Dec \\ \hline
-		Project Initiation and Team Formation & \weektwo & & & & \\ \hline
-		Literature Review and Data Gathering & \weektwo & \weekfour & & & \\ \hline
-		Data Cleaning and Feature Selection & & \weektwo & & \weekone & \weekone \\ \hline
-		Creating System Dashboard & & \weektwo & \weekfour & \weekone & \\ \hline
-		Analysis and Interpretation of Results & & & \weekone & & \weekone  \\ \hline	
-		Documentation & \weektwo & \weekfour & \weekfour & \weekfour & \weekfour  \\ \hline	
-	\end{tabular}
-	\label{tab:timetableactivities2024}
-\end{table}
-
-\begin{table}[ht]
-	\centering
-	\caption{Timetable of Activities for 2025} \vspace{0.25em}
-	\begin{tabular}{|p{2in}|c|c|c|c|c|c|c|c|c|c|c|} \hline
-		Activities & Jan & Feb & Mar & Apr & May \\ \hline
-		Create Admin Dashboard & \weekone & \weekthree & & & \\ \hline
-		Integrate the Best Model to the System & \weekone & \weekfour & & & \\ \hline
-		Extend Features to Accommodate a National Setting & & \weekone & \weektwo & & \\ \hline
-		User Testing & & & \weektwo & \weekone & \\ \hline
-		Documentation & \weektwo & \weekfour & \weekfour & \weekfour & \weekfour  \\ \hline		
-	\end{tabular}
-	\label{tab:timetableactivities2025}
-\end{table}
-
 
 
