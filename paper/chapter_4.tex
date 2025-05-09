@@ -16,14 +16,7 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 
 \section{Exploratory Data Analysis}
 
-\begin{figure}[h!]
-	\centering
-	\includegraphics[width=0.75\textwidth]{data_summary}
-	\caption{Data Contents}
-	\label{fig:data_summary}
-\end{figure}
-
-From the summary above, the dataset consists of 720 weekly records with 8 columns:
+From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records with 8 columns:
 \begin{itemize}
 	\item \textbf{Time.} Weekly timestamps (e.g. "2011-w1")
 	\item \textbf{Rainfall.} Weekly average rainfall (mm)
@@ -35,27 +28,18 @@ From the summary above, the dataset consists of 720 weekly records with 8 column
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=1\textwidth]{data_stats2}
-	\caption{Dataset Statistics}
-	\label{fig:data_stats2}
+	\includegraphics[width=0.75\textwidth]{data_summary}
+	\caption{Data Contents}
+	\label{fig:data_summary}
 \end{figure}
 
 From the statistics in figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
 
-\begin{figure}[ht]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.75\textwidth]{data_stats}
-	\caption{Distribution of Dengue Cases}
-	\label{fig:data_stats}
-\end{figure}
-
-In figure \ref{fig:data_stats}, a histogram of dengue cases shows a right-skewed distribution, indicating that most weeks experience low case counts, while a few weeks record outbreaks. 
-\\To further analyze the distribution, dengue cases were categorized into different intervals (Figure \ref{fig:dengue_intervals}): 0-5 cases, 6-15 cases, 16-30 cases, 31-100 cases and 101+ cases. The majority of weeks falls within the 0-5 cases and 6-15 cases categories, indicating that most weeks have low dengue cases. Meanwhile, weeks with 101+ cases are rare, suggesting that extreme outbreaks are not frequent.
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.75\textwidth]{dengue_intervals}
-	\caption{Frequency of Dengue Cases in Different Intervals}
-	\label{fig:dengue_intervals}
+	\includegraphics[width=1\textwidth]{data_stats2}
+	\caption{Dataset Statistics}
+	\label{fig:data_stats2}
 \end{figure}
 
 Figure \ref{fig:data_trend} illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods approximately 3 years, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
@@ -92,6 +76,8 @@ Figure \ref{fig:pre_transform_distribution} shows the distributions of each feat
 	\caption{Scatterplots}
 	\label{fig:scatterplots_features}
 \end{figure}
+
+\clearpage 
 
 After applying a log transformation, Figure \ref{fig:post_transform_distribution} shows the new distributions for the previously skewed distributions, while Figure \ref{fig:new_scatterplots} shows the new scatterplots of each feature against the number of cases. Now, all distributions exhibit a somewhat normal distribution which is ideal for computing linear computations such as Pearson's correlation.
 
@@ -216,7 +202,7 @@ Figure \ref{fig:tcsv_training} illustrates the model’s performance in predicti
 
 \subsection{ARIMA Model}
 
-
+The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Figure \ref{fig:Arima_result} illustrates the comparison between actual and predicted dengue cases in the test set. As shown in the plot, the ARIMA model struggled to capture the non-linear characteristics and abrupt spikes in the data. Consequently, it failed to accurately reflect the fluctuations and outbreak patterns seen in the actual case counts.
 
 \begin{figure}[H]
 	\centering
@@ -224,8 +210,6 @@ Figure \ref{fig:tcsv_training} illustrates the model’s performance in predicti
 	\caption{ARIMA Prediction Results for Test Set}
 	\label{fig:Arima_result}
 \end{figure}
-
-The ARIMA model was developed to capture non-seasonal trends in the data. To determine the best model configuration, grid search was used to explore various combinations of ARIMA parameters, ultimately selecting \textbf{ARIMA(1, 2, 2)}. The model was iteratively refined over \textbf{400 iterations} to ensure convergence to an optimal solution. Figure \ref{fig:Arima_result} illustrates the comparison between actual and predicted dengue cases in the test set. As shown in the plot, the ARIMA model struggled to capture the non-linear characteristics and abrupt spikes in the data. Consequently, it failed to accurately reflect the fluctuations and outbreak patterns seen in the actual case counts.
 
 The model's performance was assessed using regression metrics to evaluate its forecasting capability. The ARIMA model yielded the following error metrics:
 
@@ -239,14 +223,14 @@ The model's performance was assessed using regression metrics to evaluate its fo
 
 To address the limitations of the ARIMA model, a Seasonal ARIMA (SARIMA) model was developed to capture both non-seasonal and seasonal variations in the data.
 
+This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit. As shown in Figure \ref{fig:Sarima_result}, the SARIMA model demonstrates a notable improvement in performance. Unlike its non-seasonal counterpart, it effectively captures the general trend and aligns more closely with the peaks observed in the actual dengue cases, indicating its ability to model seasonal dynamics.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{line_graph_Sarima}
 	\caption{Seasonal ARIMA Prediction Results for Test Set}
 	\label{fig:Sarima_result}
 \end{figure}
-
-This model incorporates seasonal parameters, which were tuned using grid search to find the best configuration: \textbf{SARIMA(2, 0, 2)(0, 1, 1)[52]}. As with ARIMA, \textbf{400 iterations} were applied to ensure a robust fit. As shown in Figure \ref{fig:Sarima_result}, the SARIMA model demonstrates a notable improvement in performance. Unlike its non-seasonal counterpart, it effectively captures the general trend and aligns more closely with the peaks observed in the actual dengue cases, indicating its ability to model seasonal dynamics.
 
 The model's performance was assessed using regression metrics to evaluate its forecasting capability. The SARIMA model yielded the following error metrics: \begin{itemize} \item \textbf{MSE}: 1109.69 \item \textbf{RMSE}: 33.31 \item \textbf{MAE}: 18.09 \end{itemize} The lower error values, when compared to the ARIMA model, highlight the SARIMA model's superior capability in forecasting dengue cases. Its effectiveness in capturing seasonal patterns contributed to a more accurate representation of the actual cases.
 
@@ -462,19 +446,19 @@ Unlike the registration of encoder accounts, the creation of Disease Reporting U
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{register_dru}
-	\caption{DRU Registration}
+	\caption{Disease Reporting Unit Registration}
 	\label{fig:register_dru}
 \end{figure}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{browse_drus}
-	\caption{List of DRUs}
+	\caption{List of Disease Reporting Units}
 	\label{fig:browse_drus}
 \end{figure}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{dru_details}
-	\caption{DRU details}
+	\caption{Disease Reporting Unit details}
 	\label{fig:dru_details}
 \end{figure}
 
