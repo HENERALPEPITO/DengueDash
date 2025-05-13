@@ -6,7 +6,7 @@ from core.models import BaseModel
 
 class Patient(models.Model):
     last_name = models.CharField(
-        max_length=100,
+        max_length=50,
         blank=False,
         null=False,
     )
