@@ -106,6 +106,7 @@ export default function CaseReportForm() {
         ? formatDate(values.date_igm_elisa)
         : null,
       pcr: values.pcr,
+      date_pcr: values.date_pcr ? formatDate(values.date_pcr) : null,
       case_class: values.case_class,
       outcome: values.outcome,
       date_death: values.date_death ? formatDate(values.date_death) : null,
