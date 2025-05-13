@@ -114,6 +114,23 @@ export const axiosClient = async (
   }
 };
 
+export const axiosClientUpload = async (endpoint: string, data: any = null) => {
+  try {
+    const config: any = {};
+
+    config.headers = {
+      ...config.headers,
+      "Content-Type": undefined, // Remove the header and let axios set it correctly
+    };
+
+    const response = await axiosProtected.post(endpoint, data, config);
+    return response.data;
+  } catch (error) {
+    console.error(`Error uploading ${endpoint}`, error);
+    throw error;
+  }
+};
+
 const login = async (email: string, password: string) => {
   try {
     const response = await axiosProtected.post("auth/login/", {
