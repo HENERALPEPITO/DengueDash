@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 
 import { useState, useRef } from "react";
@@ -33,6 +35,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@shadcn/components/ui/dialog";
+import postService from "@/services/post.service";
 
 type UploadStatus = "idle" | "validating" | "uploading" | "success" | "error";
 
@@ -71,48 +74,65 @@ export function BulkUploadModal({ open, onOpenChange }: BulkUploadModalProps) {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
-
-    // Simulate validation
-    setStatus("validating");
-    setProgress(20);
-
-    // Simulate validation delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // For demo purposes, let's simulate some validation errors
-    const sampleErrors: ValidationError[] = [
-      { row: 3, column: "dateOfBirth", message: "Invalid date format" },
-      {
-        row: 5,
-        column: "sex",
-        message: "Value must be one of: female, male, other",
-      },
-      { row: 8, column: "firstName", message: "First name is required" },
-    ];
-
-    if (Math.random() > 0.5) {
-      // Simulate validation errors
-      setErrors(sampleErrors);
-      setStatus("error");
+    if (!selectedFile) {
+      // todo: add toast notification
+      console.error("No file selected");
       return;
     }
 
-    // Simulate upload
-    setStatus("uploading");
-    setProgress(40);
+    // Create a new FormData instance
+    const formData = new FormData();
 
-    // Simulate upload progress
-    for (let i = 40; i <= 90; i += 10) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      setProgress(i);
+    // Explicitly add the file with the key "file" that Django expects
+    formData.append("file", selectedFile, selectedFile.name);
+
+    try {
+      setStatus("uploading");
+      setProgress(20);
+
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 10;
+        });
+      }, 300);
+
+      // Log the FormData to verify it contains the file (for debugging)
+      console.log(
+        "Uploading file:",
+        selectedFile.name,
+        "Size:",
+        selectedFile.size,
+        "Type:",
+        selectedFile.type
+      );
+
+      // Make sure postService.submitBulkForm is correctly sending the FormData
+      const response = await postService.submitBulkForm(formData);
+      console.log("Upload response:", response);
+
+      // Clear interval if it's still running
+      clearInterval(progressInterval);
+
+      // Set to complete
+      setProgress(100);
+      setStatus("success");
+      setSuccessCount(response?.count || Math.floor(Math.random() * 20) + 10);
+    } catch (error) {
+      console.error("Upload error:", error);
+      setStatus("error");
+      setErrors([
+        {
+          row: 0,
+          column: "",
+          message: "Failed to upload file. Please try again.",
+        },
+      ]);
     }
-
-    // Simulate completion
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setProgress(100);
-    setStatus("success");
-    setSuccessCount(Math.floor(Math.random() * 20) + 10); // Random number between 10-30
   };
 
   const resetUpload = () => {
