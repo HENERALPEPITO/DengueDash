@@ -60,8 +60,12 @@ export default function MyProfile() {
 
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="profile" className="px-6">
+            Profile
+          </TabsTrigger>
+          <TabsTrigger value="password" className="px-6">
+            Password
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="profile" className="space-y-4">
           <Card>
