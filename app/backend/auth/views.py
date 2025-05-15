@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework import permissions
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from auth.serializers import (
     LoginSerializer,
@@ -65,6 +66,50 @@ class LoginView(TokenObtainPairView):
             httponly=settings.SIMPLE_JWT["COOKIE_HTTP_ONLY"],
             samesite=settings.SIMPLE_JWT["COOKIE_SAMESITE"],
         )
+
+        return res
+
+
+class LogoutView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, _):
+        # Clear the cookies
+        res = JsonResponse(
+            {
+                "success": True,
+                "message": "Logged out successfully",
+            }
+        )
+
+        # Blacklist the refresh token
+        try:
+            refresh_token = self.request.COOKIES.get(
+                settings.SIMPLE_JWT["REFRESH_COOKIE"]
+            )
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+        except KeyError:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Refresh token not found in cookies",
+                },
+                status=400,
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred while blacklisting the token: {str(e)}",
+                },
+                status=500,
+            )
+
+        # Delete the cookies
+        res.delete_cookie(settings.SIMPLE_JWT["ACCESS_COOKIE"])
+        res.delete_cookie(settings.SIMPLE_JWT["REFRESH_COOKIE"])
 
         return res
 
