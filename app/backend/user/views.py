@@ -66,7 +66,6 @@ class PasswordUpdateView(APIView):
                     "success": False,
                     "message": f"Password update failed: {error_message}",
                 },
-                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return JsonResponse(
