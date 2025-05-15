@@ -48,6 +48,9 @@ export default function ManageAccounts() {
       <div className="flex flex-row justify-between gap-1">
         <div>
           <p className="text-2xl lg:text-4xl font-bold">Manage Accounts</p>
+          <p className="mt-1 lg:mt-2 text-sm lg:text-md text-gray-500">
+            View and manage registered and pending accounts
+          </p>
         </div>
       </div>
       <Separator className="mt-2" />
