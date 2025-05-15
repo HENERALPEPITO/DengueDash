@@ -11,7 +11,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shadcn/components/ui/breadcrumb";
 import { Separator } from "@/shadcn/components/ui/separator";
