@@ -34,7 +34,7 @@ export default function BlacklistedAccounts() {
 
   useEffect(() => {
     fetchBlacklistedAccounts(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const fetchBlacklistedAccounts = async (page: number) => {
     setIsLoading(true);
