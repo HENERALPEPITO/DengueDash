@@ -20,14 +20,6 @@ import {
 import { Progress } from "@shadcn/components/ui/progress";
 import { Separator } from "@shadcn/components/ui/separator";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@shadcn/components/ui/table";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -36,14 +28,9 @@ import {
   DialogFooter,
 } from "@shadcn/components/ui/dialog";
 import postService from "@/services/post.service";
+import { BaseServiceResponse } from "@/interfaces/services/services.interface";
 
 type UploadStatus = "idle" | "validating" | "uploading" | "success" | "error";
-
-interface ValidationError {
-  row: number;
-  column: string;
-  message: string;
-}
 
 interface BulkUploadModalProps {
   open: boolean;
@@ -54,8 +41,7 @@ export function BulkUploadModal({ open, onOpenChange }: BulkUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [progress, setProgress] = useState(0);
-  const [errors, setErrors] = useState<ValidationError[]>([]);
-  const [successCount, setSuccessCount] = useState(0);
+  const [message, setMessage] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,13 +49,11 @@ export function BulkUploadModal({ open, onOpenChange }: BulkUploadModalProps) {
     if (file && file.type === "text/csv") {
       setSelectedFile(file);
       setStatus("idle");
-      setErrors([]);
+      setMessage("");
     } else {
       setSelectedFile(null);
       setStatus("error");
-      setErrors([
-        { row: 0, column: "", message: "Please select a valid CSV file" },
-      ]);
+      setMessage("Please upload a valid CSV file.");
     }
   };
 
@@ -80,10 +64,7 @@ export function BulkUploadModal({ open, onOpenChange }: BulkUploadModalProps) {
       return;
     }
 
-    // Create a new FormData instance
     const formData = new FormData();
-
-    // Explicitly add the file with the key "file" that Django expects
     formData.append("file", selectedFile, selectedFile.name);
 
     try {
@@ -101,37 +82,25 @@ export function BulkUploadModal({ open, onOpenChange }: BulkUploadModalProps) {
         });
       }, 300);
 
-      // Log the FormData to verify it contains the file (for debugging)
-      console.log(
-        "Uploading file:",
-        selectedFile.name,
-        "Size:",
-        selectedFile.size,
-        "Type:",
-        selectedFile.type
-      );
-
-      // Make sure postService.submitBulkForm is correctly sending the FormData
-      const response = await postService.submitBulkForm(formData);
-      console.log("Upload response:", response);
+      const response: BaseServiceResponse =
+        await postService.submitBulkForm(formData);
+      // console.log("Upload response:", response);
 
       // Clear interval if it's still running
       clearInterval(progressInterval);
 
-      // Set to complete
+      if (response.success) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+
+      setMessage(response.message);
       setProgress(100);
-      setStatus("success");
-      setSuccessCount(response?.count || Math.floor(Math.random() * 20) + 10);
     } catch (error) {
       console.error("Upload error:", error);
       setStatus("error");
-      setErrors([
-        {
-          row: 0,
-          column: "",
-          message: "Failed to upload file. Please try again.",
-        },
-      ]);
+      setMessage("Upload failed. Please try again.");
     }
   };
 
@@ -139,8 +108,7 @@ export function BulkUploadModal({ open, onOpenChange }: BulkUploadModalProps) {
     setSelectedFile(null);
     setStatus("idle");
     setProgress(0);
-    setErrors([]);
-    setSuccessCount(0);
+    setMessage("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -207,7 +175,7 @@ John,,Doe,,male,single,1990-01-01,region1,province1,city1,barangay1,Main St,123,
                   {selectedFile ? selectedFile.name : "Click to upload"}
                 </p>
                 <p className="text-xs text-gray-500">
-                  CSV files only (max 5MB)
+                  CSV files only (max 10MB)
                 </p>
               </div>
             </div>
@@ -251,48 +219,21 @@ John,,Doe,,male,single,1990-01-01,region1,province1,city1,barangay1,Main St,123,
                 Upload Successful
               </AlertTitle>
               <AlertDescription className="text-green-700">
-                Successfully processed {successCount} patient cases.
+                {message}
               </AlertDescription>
             </Alert>
           )}
 
           {/* Error Display */}
-          {status === "error" && errors.length > 0 && (
+          {status === "error" && (
             <div className="space-y-3">
               <Alert className="bg-red-50 border-red-200">
                 <AlertCircle className="h-4 w-4 text-red-500" />
                 <AlertTitle className="text-red-800">Upload Failed</AlertTitle>
                 <AlertDescription className="text-red-700">
-                  Please fix the following errors and try again.
+                  {message}
                 </AlertDescription>
               </Alert>
-
-              {errors[0].row === 0 ? (
-                <p className="text-red-600 text-sm">{errors[0].message}</p>
-              ) : (
-                <div className="border rounded-md overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-16">Row</TableHead>
-                        <TableHead className="w-32">Column</TableHead>
-                        <TableHead>Error</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {errors.map((error, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{error.row}</TableCell>
-                          <TableCell>{error.column}</TableCell>
-                          <TableCell className="text-red-600">
-                            {error.message}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
             </div>
           )}
 
@@ -304,17 +245,32 @@ John,,Doe,,male,single,1990-01-01,region1,province1,city1,barangay1,Main St,123,
             <Separator className="my-2" />
             <ul className="text-xs text-gray-600 space-y-1 list-disc pl-5">
               <li>First row must contain column headers</li>
-              <li>Dates should be in YYYY-MM-DD format</li>
+              <li>Dates should be in YYYY/MM/DD format</li>
               <li>
-                Required fields: firstName, lastName, sex, dateOfBirth, region,
+                Required fields: First Name, Last Name, Sex, Date of Birth,
+                Civil Status, Region, Province, City, Barangay, Date of
+                Consultation, Is Admitted, Date of Onset of Illness, Clinical
+                Classification, Lab Result, Case Classification, Outcome
                 province, city, barangay
               </li>
-              <li>Sex values: male, female, other</li>
-              <li>Civil status values: single, married, divorced, widowed</li>
+              <li>Sex values: M (Male) F (Female)</li>
               <li>
-                Test results: PR (Pending), P (Positive), N (Negative), E
+                Civil Status values: S (Single), M (Married), W (Widowed) SEP
+                (Separated)
+              </li>
+              <li>
+                Clinical Classification values: N (No Warning Signs), W (Warning
+                Signs), S (Severe Dengue)
+              </li>
+              <li>
+                Lab Results values: PR (Pending), P (Positive), N (Negative), E
                 (Equivocal)
               </li>
+              <li>
+                Case Classification values: C (Confirmed), S (Suspected), P
+                (Probable)
+              </li>
+              <li>Outcome values A (Alive), D (Dead)</li>
             </ul>
           </div>
         </div>
