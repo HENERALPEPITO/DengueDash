@@ -1,0 +1,95 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: DengueWatch.aux
+Reallocating 'name_of_file' (item size: 1) to 8 items.
+The style file: apacite.bst
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: title_page.aux
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+A level-1 auxiliary file: approval.aux
+Reallocating 'name_of_file' (item size: 1) to 16 items.
+A level-1 auxiliary file: declaration.aux
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: dedication.aux
+Reallocating 'name_of_file' (item size: 1) to 19 items.
+A level-1 auxiliary file: acknowledgment.aux
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+A level-1 auxiliary file: abstract.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_1.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_2.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_3.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_4.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_5.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: chapter_6.aux
+Illegal, another \bibstyle command---line 2 of file chapter_6.aux
+ : \bibstyle
+ :          {apacite}
+I'm skipping whatever remains of this command
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: appendix_A.aux
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Database file #1: myreferences.bib
+Warning--entry type for "bosano2023who" isn't style-file defined
+--line 19 of file myreferences.bib
+Warning--entry type for "lena2024" isn't style-file defined
+--line 35 of file myreferences.bib
+Warning--entry type for "rabdash" isn't style-file defined
+--line 67 of file myreferences.bib
+apacite.bst [2013/07/21 v6.03 APA bibliography style]
+You've used 30 entries,
+            6951 wiz_defined-function locations,
+            1438 strings with 16036 characters,
+and the built_in function-call counts, 55168 in all, are:
+= -- 6879
+> -- 424
+< -- 2564
++ -- 2682
+- -- 58
+* -- 3400
+:= -- 9665
+add.period$ -- 116
+call.type$ -- 30
+change.case$ -- 407
+chr.to.int$ -- 0
+cite$ -- 60
+duplicate$ -- 1492
+empty$ -- 2337
+format.name$ -- 740
+if$ -- 10702
+int.to.chr$ -- 0
+int.to.str$ -- 90
+missing$ -- 0
+newline$ -- 705
+num.names$ -- 192
+pop$ -- 1379
+preamble$ -- 1
+purify$ -- 112
+quote$ -- 0
+skip$ -- 3422
+stack$ -- 0
+substring$ -- 2898
+swap$ -- 777
+text.length$ -- 69
+text.prefix$ -- 0
+top$ -- 1
+type$ -- 2824
+warning$ -- 0
+while$ -- 256
+width$ -- 0
+write$ -- 886
+(There was 1 error message)
