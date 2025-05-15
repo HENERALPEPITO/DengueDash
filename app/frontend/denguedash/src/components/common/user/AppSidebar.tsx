@@ -50,6 +50,8 @@ import {
 } from "@shadcn/components/ui/sidebar";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/UserContext";
+import authService from "@/services/auth.service";
+import { redirect } from "next/navigation";
 
 type AppSidebarProps = {
   sectionSegment: string;
@@ -191,6 +193,11 @@ export default function AppSidebar({
 
   const [activeTeam] = React.useState(teams[0]);
 
+  const logoutUser = async () => {
+    await authService.logout();
+    redirect("/login");
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -328,7 +335,7 @@ export default function AppSidebar({
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => logoutUser()}>
                   <LogOut />
                   Log out
                 </DropdownMenuItem>
