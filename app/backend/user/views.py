@@ -2,17 +2,18 @@ from rest_framework import permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from api.pagination import APIPagination
 from user.serializers import (
-    AdminBrowseUserSerializer,
-    MyUserSerializer,
+    UserFullInfoSerializer,
     UsersListSerializer,
     UsersUnverifiedListSerializer,
     RegisterUserSerializer,
     BlacklistedUsersSerializer,
+    PasswordUpdateSerializer,
 )
 from auth.permission import IsUserAdmin
 from user.models import BlacklistedUsers
@@ -24,8 +25,56 @@ class MyUserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        serializer = MyUserSerializer(request.user)
+        serializer = UserFullInfoSerializer(request.user)
         return Response(serializer.data)
+
+
+class PasswordUpdateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request):
+        serializer = PasswordUpdateSerializer(
+            data=request.data, context={"request": request}
+        )
+        try:
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": "Password updated successfully",
+                    }
+                )
+        except ValidationError as e:
+            error_message = "Validation failed."
+
+            if isinstance(e.detail, dict):
+                first_field = list(e.detail.keys())[0] if e.detail else None
+                if (
+                    first_field
+                    and isinstance(e.detail[first_field], list)
+                    and e.detail[first_field]
+                ):
+                    error_message = str(e.detail[first_field][0])
+                else:
+                    error_message = str(e.detail)
+            else:
+                error_message = str(e.detail)
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"Password update failed: {error_message}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An unexpected error occurred: {str(e)}",
+                },
+            )
 
 
 class AdminBrowseUserView(APIView):
@@ -48,7 +97,7 @@ class AdminBrowseUserView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = AdminBrowseUserSerializer(user)
+        serializer = UserFullInfoSerializer(user)
         return Response(serializer.data)
 
 
