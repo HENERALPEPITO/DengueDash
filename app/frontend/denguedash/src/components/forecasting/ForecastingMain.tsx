@@ -23,10 +23,10 @@ import { Info, Shield, BarChartHorizontal } from "lucide-react";
 import { formatDateTime } from "@/lib/utils/format-datetime.util";
 import fetchService from "@/services/fetch.service";
 import { ByLocationInterface } from "@/interfaces/stat/stat.interfaces";
-import TrendAndPredictionLineChart from "@/components/forecasting/cases-line-chart";
-import CasesCards from "@/components/forecasting/cases-cards";
-import WeatherCards from "@/components/forecasting/weather-cards";
-import CasesRiskLocations from "@/components/forecasting/cases-risk-locations";
+import TrendAndPredictionLineChart from "@/components/forecasting/CasesLIneChart";
+import CasesCards from "@/components/forecasting/CasesCards";
+import WeatherCards from "@/components/forecasting/WeatherCards";
+import CasesRiskLocations from "@/components/forecasting/CasesRiskLocations";
 import { toast } from "sonner";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 

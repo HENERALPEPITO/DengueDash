@@ -1,6 +1,6 @@
 "use client";
 
-import ForecastingMain from "@/components/forecasting/forecasting-main";
+import ForecastingMain from "@/components/forecasting/ForecastingMain";
 import RetrainingMain from "@/components/retraining/retraining-main";
 import { Separator } from "@/shadcn/components/ui/separator";
 import {
