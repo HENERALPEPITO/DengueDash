@@ -56,10 +56,10 @@ export default function StatDashboard() {
     new Date().getFullYear().toString()
   );
 
-  const getTopDataMetric = (
-    data: any[],
-    metricKey: string,
-    labelKey: string,
+  const getTopDataMetric = <T extends Record<string, any>>(
+    data: T[],
+    metricKey: keyof T,
+    labelKey: keyof T,
     topCount: number = 5 // Default number of bars
   ) => {
     const sortedData = [...data].sort((a, b) => b[metricKey] - a[metricKey]);
@@ -73,7 +73,7 @@ export default function StatDashboard() {
       Math.min(topCount, filteredData.length)
     );
 
-    return transformData(topData, labelKey, metricKey);
+    return transformData(topData, labelKey as string, metricKey as string);
   };
 
   const topBarangays = useMemo(() => {
