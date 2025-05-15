@@ -56,26 +56,38 @@ export default function StatDashboard() {
     new Date().getFullYear().toString()
   );
 
+  const getTopDataMetric = (
+    data: any[],
+    metricKey: string,
+    labelKey: string,
+    topCount: number = 5 // Default number of bars
+  ) => {
+    const sortedData = [...data].sort((a, b) => b[metricKey] - a[metricKey]);
+
+    // Keep only the data with metricKey > 0
+    const filteredData = sortedData.filter((item) => item[metricKey] > 0);
+
+    // Slice the top N items
+    const topData = filteredData.slice(
+      0,
+      Math.min(topCount, filteredData.length)
+    );
+
+    return transformData(topData, labelKey, metricKey);
+  };
+
   const topBarangays = useMemo(() => {
-    const TOP_BARANGAYS_COUNT = 5;
     const LABEL_KEY = "location";
     const VALUE_KEY = "case_count";
-    const sortedTopData = [...mapData]
-      .sort((a, b) => b.case_count - a.case_count)
-      .slice(0, TOP_BARANGAYS_COUNT);
 
-    return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
+    return getTopDataMetric(mapData, VALUE_KEY, LABEL_KEY);
   }, [mapData]);
 
   const topBarangaysDeaths = useMemo(() => {
-    const TOP_BARANGAYS_COUNT = 5;
     const LABEL_KEY = "location";
     const VALUE_KEY = "death_count";
-    const sortedTopData = [...mapData]
-      .sort((a, b) => b.death_count - a.death_count)
-      .slice(0, TOP_BARANGAYS_COUNT);
 
-    return transformData(sortedTopData, LABEL_KEY, VALUE_KEY);
+    return getTopDataMetric(mapData, VALUE_KEY, LABEL_KEY);
   }, [mapData]);
 
   // todo: add try catch
