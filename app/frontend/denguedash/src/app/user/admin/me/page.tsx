@@ -1,5 +1,5 @@
 import MyProfile from "@/components/me/MyProfile";
 
-export default function Me() {
+export default function EncodedMyProfile() {
   return <MyProfile />;
 }
