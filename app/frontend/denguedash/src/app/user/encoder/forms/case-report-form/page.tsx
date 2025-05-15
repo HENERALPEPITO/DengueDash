@@ -1,8 +1,5 @@
 "use client";
 
-// import { cookies } from "next/headers";
-// import { getDataFromToken } from "@/lib/token";
-// import { TokenData } from "@/interfaces/auth/token-data-interface";
 import { Separator } from "@/shadcn/components/ui/separator";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,12 +13,12 @@ import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 import { Form } from "@/shadcn/components/ui/form";
 import { Card, CardContent } from "@/shadcn/components/ui/card";
 import { Button } from "@/shadcn/components/ui/button";
-import { PersonalDetailSection } from "@/components/case-report-form/personal-detail-section";
-import { AddressSection } from "@/components/case-report-form/address-section";
-import { VaccinationSection } from "@/components/case-report-form/vaccination-section";
-import { LaboratoryResultsSection } from "@/components/case-report-form/laboratory-results-section";
-import { ConsultationSection } from "@/components/case-report-form/consultation-section";
-import { OutcomeSection } from "@/components/case-report-form/outcome-section";
+import { PersonalDetailSection } from "@/components/case-report-form/PersonalDetailSection";
+import { AddressSection } from "@/components/case-report-form/AddressSection";
+import { VaccinationSection } from "@/components/case-report-form/VaccinationSection";
+import { LaboratoryResultsSection } from "@/components/case-report-form/LaboratoryResultsSection";
+import { ConsultationSection } from "@/components/case-report-form/ConsultationSection";
+import { OutcomeSection } from "@/components/case-report-form/OutcomeSection";
 import postService from "@/services/post.service";
 import {
   BaseErrorResponse,
@@ -29,7 +26,7 @@ import {
   ReportFormResponse,
 } from "@/interfaces/services/services.interface";
 import { Upload } from "lucide-react";
-import { BulkUploadModal } from "@/components/case-report-form/bulk-upload.modal";
+import { BulkUploadModal } from "@/components/case-report-form/BulkUploadModal";
 
 export default function CaseReportForm() {
   const [currentPage, setCurrentPage] = useState<"personal" | "clinical">(
