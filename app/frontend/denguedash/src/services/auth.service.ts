@@ -145,6 +145,10 @@ const login = async (email: string, password: string) => {
   }
 };
 
-const authService = { login };
+const logout = async () => {
+  await axiosProtected.post("auth/logout/");
+};
+
+const authService = { login, logout };
 
 export default authService;
