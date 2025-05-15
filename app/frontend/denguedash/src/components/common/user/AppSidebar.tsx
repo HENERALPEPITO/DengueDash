@@ -307,9 +307,24 @@ export default function AppSidebar({
                 <DropdownMenuSeparator />
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
+                  <DropdownMenuItem asChild>
+                    {isAdmin ? (
+                      <a
+                        href="/user/admin/me"
+                        className="flex flex-row gap-2 items-center"
+                      >
+                        <BadgeCheck />
+                        Account
+                      </a>
+                    ) : (
+                      <a
+                        href="/user/encoder/me"
+                        className="flex flex-row gap-2 items-center"
+                      >
+                        <BadgeCheck />
+                        Account
+                      </a>
+                    )}
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
