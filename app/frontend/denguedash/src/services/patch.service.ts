@@ -1,6 +1,6 @@
 import { CaseUpdateForm } from "@/components/dengue-reports/UpdateCaseDialog";
 import { axiosClient } from "./auth.service";
-import { UpdatePasswordInterface } from "@/interfaces/account/my-profile.interface";
+import { UpdatePasswordInterface } from "@/interfaces/account/user-interface";
 
 const OPERATION = "PATCH";
 const DEFAULT_DATA = null;
