@@ -2,17 +2,13 @@ import * as React from "react";
 import {
   AudioWaveform,
   BadgeCheck,
-  Bell,
   ChevronRight,
   ChevronsUpDown,
   Command,
-  CreditCard,
   FolderMinus,
   GalleryVerticalEnd,
   Hospital,
   LogOut,
-  Settings2,
-  Sparkles,
   Table,
   TrendingUpDown,
   UserPlus,
@@ -54,6 +50,8 @@ import {
 } from "@shadcn/components/ui/sidebar";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/UserContext";
+import authService from "@/services/auth.service";
+import { redirect } from "next/navigation";
 
 type AppSidebarProps = {
   sectionSegment: string;
@@ -139,18 +137,6 @@ export default function AppSidebar({
     ],
   };
 
-  const settingsNav: NavItem = {
-    title: "Settings",
-    url: "#",
-    icon: Settings2,
-    items: [
-      { title: "General", url: "#" },
-      { title: "Team", url: "#" },
-      { title: "Billing", url: "#" },
-      { title: "Limits", url: "#" },
-    ],
-  };
-
   // Items that differ by role.
   const adminNav: NavItem[] = [
     {
@@ -202,11 +188,15 @@ export default function AppSidebar({
           : []),
         analyticsNav,
         dataTablesNav,
-        settingsNav,
       ].filter(Boolean) // Filter out any false values
-    : [analyticsNav, ...userNav, dataTablesNav, settingsNav];
+    : [analyticsNav, ...userNav, dataTablesNav];
 
   const [activeTeam] = React.useState(teams[0]);
+
+  const logoutUser = async () => {
+    await authService.logout();
+    redirect("/login");
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -322,29 +312,30 @@ export default function AppSidebar({
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <Sparkles />
-                    Upgrade to Pro
+                  <DropdownMenuItem asChild>
+                    {isAdmin ? (
+                      <a
+                        href="/user/admin/me"
+                        className="flex flex-row gap-2 items-center"
+                      >
+                        <BadgeCheck />
+                        Account
+                      </a>
+                    ) : (
+                      <a
+                        href="/user/encoder/me"
+                        className="flex flex-row gap-2 items-center"
+                      >
+                        <BadgeCheck />
+                        Account
+                      </a>
+                    )}
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => logoutUser()}>
                   <LogOut />
                   Log out
                 </DropdownMenuItem>

@@ -4,23 +4,17 @@ import { Separator } from "@/shadcn/components/ui/separator";
 import { useEffect, useState } from "react";
 import { Trash2, UserCog } from "lucide-react";
 import { Button } from "@shadcn/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@shadcn/components/ui/card";
+import { Card, CardFooter } from "@shadcn/components/ui/card";
 import { CustomAlertDialog } from "@/components/common/CustomAlertDialog";
 import { toast } from "sonner";
 import { UserDetailInterface } from "@/interfaces/account/user-interface";
 import fetchService from "@/services/fetch.service";
-import { formatDateTime } from "@/lib/utils/format-datetime.util";
 import { BaseServiceResponse } from "@/interfaces/services/services.interface";
 import deleteService from "@/services/delete.service";
 import { useRouter } from "next/navigation";
 import { defaultToastSettings } from "@/lib/utils/common-variables.util";
 import patchService from "@/services/patch.service";
-import { Skeleton } from "@/shadcn/components/ui/skeleton";
+import ProfileInformation from "@/components/common/user/profile/ProfileInformation";
 
 export default function UserProfileView({ params }: any) {
   const router = useRouter();
@@ -97,7 +91,6 @@ export default function UserProfileView({ params }: any) {
   };
 
   return (
-    // Todo: Add skeleton loader
     <div className="flex flex-col gap-3">
       <div className="flex flex-row justify-between gap-1">
         <div>
@@ -110,107 +103,7 @@ export default function UserProfileView({ params }: any) {
       <Separator className="mt-2" />
       <div className="container py-5">
         <Card className="shadow-md">
-          <CardContent className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2 mt-6">
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Name
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">{userData?.full_name}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Email
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">{userData?.email}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Sex
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">{userData?.sex_display}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Role
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">{userData?.role}</p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Hospital (DRU)
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">{userData?.dru}</p>
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Created At
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">
-                    {userData?.created_at
-                      ? formatDateTime(userData.created_at)
-                      : "N/A"}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Updated At
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">
-                    {userData?.updated_at
-                      ? formatDateTime(userData.updated_at)
-                      : "N/A"}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Last Login
-                </h3>
-                {isLoading ? (
-                  <Skeleton className="h-5" />
-                ) : (
-                  <p className="font-medium">
-                    {userData?.last_login
-                      ? formatDateTime(userData.last_login)
-                      : "N/A"}
-                  </p>
-                )}
-              </div>
-            </div>
-          </CardContent>
+          {ProfileInformation(isLoading, userData)}
           <CardFooter className="flex justify-between gap-2 pt-4">
             <CustomAlertDialog
               title="Update User Role"

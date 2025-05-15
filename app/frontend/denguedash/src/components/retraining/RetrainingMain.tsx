@@ -14,9 +14,9 @@ import {
 } from "@/shadcn/components/ui/tabs";
 import { Brain, LineChart, Settings } from "lucide-react";
 import { useState } from "react";
-import { TrainingStatus } from "./training-status";
-import { ModelResults } from "./model-results";
-import TrainingConfigForm from "./training-config-form";
+import { TrainingStatus } from "./TrainingStatus";
+import { ModelResults } from "./ModelResults";
+import TrainingConfigForm from "./TrainingConfigForm";
 import {
   TrainingConfig,
   TrainingResponse,

@@ -1,6 +1,6 @@
 "use client";
 
-import ForecastingMain from "@/components/forecasting/forecasting-main";
+import ForecastingMain from "@/components/forecasting/ForecastingMain";
 import { Separator } from "@/shadcn/components/ui/separator";
 
 export default function EncoderForecastingDashboard() {

@@ -1,5 +1,6 @@
 import { CaseUpdateForm } from "@/components/dengue-reports/UpdateCaseDialog";
 import { axiosClient } from "./auth.service";
+import { UpdatePasswordInterface } from "@/interfaces/account/my-profile.interface";
 
 const OPERATION = "PATCH";
 const DEFAULT_DATA = null;
@@ -32,10 +33,20 @@ const updateCaseStatus = async (caseId: number, formData: CaseUpdateForm) => {
   );
 };
 
+const updatePassword = async (formData: UpdatePasswordInterface) => {
+  return axiosClient(
+    "user/me/update/password/",
+    OPERATION,
+    formData,
+    DEFAULT_PARAMS
+  );
+};
+
 const patchService = {
   approveUserVerification,
   toggleUserRole,
   updateCaseStatus,
+  updatePassword,
 };
 
 export default patchService;

@@ -2,17 +2,22 @@ from rest_framework import permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.token_blacklist.models import (
+    OutstandingToken,
+    BlacklistedToken,
+)
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from api.pagination import APIPagination
 from user.serializers import (
-    AdminBrowseUserSerializer,
-    MyUserSerializer,
+    UserFullInfoSerializer,
     UsersListSerializer,
     UsersUnverifiedListSerializer,
     RegisterUserSerializer,
     BlacklistedUsersSerializer,
+    PasswordUpdateSerializer,
 )
 from auth.permission import IsUserAdmin
 from user.models import BlacklistedUsers
@@ -24,8 +29,55 @@ class MyUserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        serializer = MyUserSerializer(request.user)
+        serializer = UserFullInfoSerializer(request.user)
         return Response(serializer.data)
+
+
+class PasswordUpdateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request):
+        serializer = PasswordUpdateSerializer(
+            data=request.data, context={"request": request}
+        )
+        try:
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": "Password updated successfully",
+                    }
+                )
+        except ValidationError as e:
+            error_message = "Validation failed."
+
+            if isinstance(e.detail, dict):
+                first_field = list(e.detail.keys())[0] if e.detail else None
+                if (
+                    first_field
+                    and isinstance(e.detail[first_field], list)
+                    and e.detail[first_field]
+                ):
+                    error_message = str(e.detail[first_field][0])
+                else:
+                    error_message = str(e.detail)
+            else:
+                error_message = str(e.detail)
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"Password update failed: {error_message}",
+                },
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An unexpected error occurred: {str(e)}",
+                },
+            )
 
 
 class AdminBrowseUserView(APIView):
@@ -48,7 +100,7 @@ class AdminBrowseUserView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = AdminBrowseUserSerializer(user)
+        serializer = UserFullInfoSerializer(user)
         return Response(serializer.data)
 
 
@@ -179,6 +231,27 @@ class ToggleUserRoleView(APIView):
 class DeleteUserView(APIView):
     permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
+    def revoke_tokens(self, user):
+        try:
+            outstanding_tokens = OutstandingToken.objects.filter(
+                user=user,
+            )
+
+            for token in outstanding_tokens:
+                BlacklistedToken.objects.create(
+                    token=token,
+                )
+
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred while revoking tokens: {str(e)}",
+                },
+            )
+
+        return None
+
     def delete(self, request, user_id):
         current_user = request.user
 
@@ -207,11 +280,15 @@ class DeleteUserView(APIView):
             )
 
         # Blacklist the user before deleting
+        revoke_reponse = self.revoke_tokens(user_to_delete)
+        if revoke_reponse:
+            return revoke_reponse
         BlacklistedUsers.objects.create(
             email=user_to_delete.email,
             dru=user_to_delete.dru,
         )
         user_to_delete.delete()
+
         return JsonResponse(
             {
                 "success": True,

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from user.models import BlacklistedUsers
+from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
 
@@ -32,7 +33,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
         ]
 
 
-class AdminBrowseUserSerializer(BaseUserSerializer):
+class UserFullInfoSerializer(BaseUserSerializer):
     dru = serializers.StringRelatedField()
     created_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
     updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
@@ -46,11 +47,27 @@ class AdminBrowseUserSerializer(BaseUserSerializer):
         ]
 
 
-class MyUserSerializer(BaseUserSerializer):
-    dru = serializers.StringRelatedField()
+class PasswordUpdateSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
 
-    class Meta(BaseUserSerializer.Meta):
-        fields = BaseUserSerializer.Meta.fields
+    def validate_old_password(self, value):
+        user = self.context.get("request").user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect.")
+        return value
+
+    def validate_new_password(self, value):
+        try:
+            validate_password(value, self.context.get("request").user)
+        except Exception as e:
+            raise serializers.ValidationError(e)
+        return value
+
+    def save(self):
+        user = self.context.get("request").user
+        user.set_password(self.validated_data["new_password"])
+        user.save()
 
 
 class UsersListSerializer(BaseUserSerializer):
