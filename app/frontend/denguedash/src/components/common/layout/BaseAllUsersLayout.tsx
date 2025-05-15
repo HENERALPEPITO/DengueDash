@@ -70,10 +70,15 @@ export default function LayoutComponents({
                     <BreadcrumbItem className="hidden md:block">
                       <BreadcrumbLink>{toTitleCase(segment)}</BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{toTitleCase(page)}</BreadcrumbPage>
-                    </BreadcrumbItem>
+
+                    {page && (
+                      <>
+                        <BreadcrumbSeparator className="hidden md:block" />
+                        <BreadcrumbItem>
+                          <BreadcrumbLink>{toTitleCase(page)}</BreadcrumbLink>
+                        </BreadcrumbItem>
+                      </>
+                    )}
                   </BreadcrumbList>
                 </Breadcrumb>
               </div>
