@@ -69,6 +69,10 @@ const getDRUHierarchy = async () => {
 };
 
 // Requests that must need authentication
+const getMyProfile = async () => {
+  return axiosClient("user/me/", OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
+};
+
 const getDengueAuthByDateStats = async (params: FetchDateStatParams) => {
   return axiosClient("cases/stat/auth/date/", OPERATION, DEFAULT_DATA, params);
 };
@@ -163,6 +167,7 @@ const fetchService = {
   getDengueReports,
   getCaseViewDetails,
   getDRUHierarchy,
+  getMyProfile,
   getUsersList,
   getUsersUnverifiedList,
   getBlacklistedAccounts,
