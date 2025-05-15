@@ -9,7 +9,6 @@ import {
   GalleryVerticalEnd,
   Hospital,
   LogOut,
-  Settings2,
   Table,
   TrendingUpDown,
   UserPlus,
@@ -136,18 +135,6 @@ export default function AppSidebar({
     ],
   };
 
-  const settingsNav: NavItem = {
-    title: "Settings",
-    url: "#",
-    icon: Settings2,
-    items: [
-      { title: "General", url: "#" },
-      { title: "Team", url: "#" },
-      { title: "Billing", url: "#" },
-      { title: "Limits", url: "#" },
-    ],
-  };
-
   // Items that differ by role.
   const adminNav: NavItem[] = [
     {
@@ -199,9 +186,8 @@ export default function AppSidebar({
           : []),
         analyticsNav,
         dataTablesNav,
-        settingsNav,
       ].filter(Boolean) // Filter out any false values
-    : [analyticsNav, ...userNav, dataTablesNav, settingsNav];
+    : [analyticsNav, ...userNav, dataTablesNav];
 
   const [activeTeam] = React.useState(teams[0]);
 
