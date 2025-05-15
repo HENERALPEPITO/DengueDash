@@ -3,6 +3,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.token_blacklist.models import (
+    OutstandingToken,
+    BlacklistedToken,
+)
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
@@ -227,6 +231,27 @@ class ToggleUserRoleView(APIView):
 class DeleteUserView(APIView):
     permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
+    def revoke_tokens(self, user):
+        try:
+            outstanding_tokens = OutstandingToken.objects.filter(
+                user=user,
+            )
+
+            for token in outstanding_tokens:
+                BlacklistedToken.objects.create(
+                    token=token,
+                )
+
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred while revoking tokens: {str(e)}",
+                },
+            )
+
+        return None
+
     def delete(self, request, user_id):
         current_user = request.user
 
@@ -255,11 +280,15 @@ class DeleteUserView(APIView):
             )
 
         # Blacklist the user before deleting
+        revoke_reponse = self.revoke_tokens(user_to_delete)
+        if revoke_reponse:
+            return revoke_reponse
         BlacklistedUsers.objects.create(
             email=user_to_delete.email,
             dru=user_to_delete.dru,
         )
         user_to_delete.delete()
+
         return JsonResponse(
             {
                 "success": True,
