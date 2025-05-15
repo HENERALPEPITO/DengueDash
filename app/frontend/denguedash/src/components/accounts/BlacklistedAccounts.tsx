@@ -5,7 +5,7 @@ import {
   BlacklistedAccountListPagination,
 } from "@/interfaces/account/user-interface";
 import fetchService from "@/services/fetch.service";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CustomPagination from "../common/CustomPagination";
 import {
   Table,
@@ -32,27 +32,30 @@ export default function BlacklistedAccounts() {
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
 
+  const fetchBlacklistedAccounts = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      try {
+        const response: BlacklistedAccountListPagination =
+          await fetchService.getBlacklistedAccounts(page, itemsPerPage);
+        const data: BlacklistedAccount[] = response.results;
+        setBlacklistedAccounts(data);
+
+        const totalCount = parseInt(response.count.toString() || "0", 10);
+        setTotalPages(Math.ceil(totalCount / itemsPerPage));
+        console.log(totalPages);
+      } catch (error) {
+        console.error("Failed to fetch blacklisted accounts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [itemsPerPage, totalPages]
+  );
+
   useEffect(() => {
     fetchBlacklistedAccounts(currentPage);
-  }, [currentPage]);
-
-  const fetchBlacklistedAccounts = async (page: number) => {
-    setIsLoading(true);
-    try {
-      const response: BlacklistedAccountListPagination =
-        await fetchService.getBlacklistedAccounts(page, itemsPerPage);
-      const data: BlacklistedAccount[] = response.results;
-      setBlacklistedAccounts(data);
-
-      const totalCount = parseInt(response.count.toString() || "0", 10);
-      setTotalPages(Math.ceil(totalCount / itemsPerPage));
-      console.log(totalPages);
-    } catch (error) {
-      console.error("Failed to fetch blacklisted accounts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [currentPage, fetchBlacklistedAccounts]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
