@@ -31,11 +31,22 @@ export default function LayoutComponents({
 }: LayoutComponentsProps) {
   // Make the segments update in the sidebar
   const [segment, setSegment] = useState<string | null>(null);
+  const [page, setPage] = useState<string | null>(null);
   useEffect(() => {
     // Index 3 is the segment
     // Examples: account, analytics, data-tables
-    setSegment(window.location.pathname.split("/")[3]);
+    const pathname = window.location.pathname;
+    setSegment(pathname.split("/")[3]);
+    setPage(pathname.split("/")[4]);
   }, []);
+
+  const toTitleCase = (str: string | null) => {
+    if (str === null) return "";
+    return str
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   if (segment == null) {
     return null;
@@ -58,13 +69,11 @@ export default function LayoutComponents({
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem className="hidden md:block">
-                      <BreadcrumbLink href="#">
-                        Building Your Application
-                      </BreadcrumbLink>
+                      <BreadcrumbLink>{toTitleCase(segment)}</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator className="hidden md:block" />
                     <BreadcrumbItem>
-                      <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                      <BreadcrumbPage>{toTitleCase(page)}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>

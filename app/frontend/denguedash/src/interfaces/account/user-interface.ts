@@ -48,3 +48,8 @@ export interface UserDetailInterface extends MyUserInterface {
   updated_at: string | null;
   last_login: string | null;
 }
+
+export interface UpdatePasswordInterface {
+  old_password: string;
+  new_password: string;
+}
