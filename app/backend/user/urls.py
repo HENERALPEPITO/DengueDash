@@ -10,6 +10,7 @@ from .views import (
     RegisterUserView,
     BlacklistedUsersListView,
     UnbanUserView,
+    PasswordUpdateView,
 )
 
 urlpatterns = [
@@ -17,6 +18,11 @@ urlpatterns = [
         "me/",
         MyUserView.as_view(),
         name="user-me",
+    ),
+    path(
+        "me/update/password/",
+        PasswordUpdateView.as_view(),
+        name="user-update-password",
     ),
     path(
         "list/",
