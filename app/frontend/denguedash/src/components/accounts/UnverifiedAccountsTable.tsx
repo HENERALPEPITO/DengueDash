@@ -13,7 +13,7 @@ import {
   UnverifiedUserListPagination,
 } from "@/interfaces/account/user-interface";
 import fetchService from "@/services/fetch.service";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CustomPagination from "../common/CustomPagination";
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
 import { Button } from "@/shadcn/components/ui/button";
@@ -31,27 +31,30 @@ export default function UnverifiedAccountsTable() {
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
 
+  const fetchUsers = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      try {
+        const response: UnverifiedUserListPagination =
+          await fetchService.getUsersUnverifiedList(page, itemsPerPage);
+        const data: UnverifiedUserBriefDetail[] = response.results;
+        setUsers(data);
+
+        const totalCount = parseInt(response.count.toString() || "0", 10);
+        setTotalPages(Math.ceil(totalCount / itemsPerPage));
+        console.log(totalPages);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [itemsPerPage, totalPages]
+  );
+
   useEffect(() => {
     fetchUsers(currentPage);
-  }, []);
-
-  const fetchUsers = async (page: number) => {
-    setIsLoading(true);
-    try {
-      const response: UnverifiedUserListPagination =
-        await fetchService.getUsersUnverifiedList(page, itemsPerPage);
-      const data: UnverifiedUserBriefDetail[] = response.results;
-      setUsers(data);
-
-      const totalCount = parseInt(response.count.toString() || "0", 10);
-      setTotalPages(Math.ceil(totalCount / itemsPerPage));
-      console.log(totalPages);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [currentPage, fetchUsers]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
