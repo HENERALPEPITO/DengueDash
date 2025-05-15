@@ -321,7 +321,7 @@ class PatientCaseBulkUploadView(APIView):
     def save_data(self):
         try:
             with transaction.atomic():
-                for validated_entry in self.valid_data:
+                for curr_row, validated_entry in enumerate(self.valid_data):
                     serializer = CaseSerializer(data=validated_entry)
                     if serializer.is_valid():
                         serializer.save()
@@ -336,7 +336,7 @@ class PatientCaseBulkUploadView(APIView):
             return JsonResponse(
                 {
                     "success": False,
-                    "message": f"An unexpected error occurred while saving data: {str(e)}",
+                    "message": f"An unexpected error occurred: {str(e)} at row {curr_row + 2}.",  # +2 because of header row
                 }
             )
 
@@ -364,7 +364,7 @@ class PatientCaseBulkUploadView(APIView):
             )
 
         save_response = self.save_data()
-        if not save_response:
+        if save_response:
             return save_response
 
         return JsonResponse(
