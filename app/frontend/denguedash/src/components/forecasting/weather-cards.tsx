@@ -67,7 +67,7 @@ export default function WeatherCards(props: WeatherCardsProps) {
       // }
       {
         year: 2024,
-        week: 44,
+        week: 38,
       }
     );
     setCurrentWeekWeatherData(response);

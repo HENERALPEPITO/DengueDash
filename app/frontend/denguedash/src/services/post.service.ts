@@ -1,13 +1,20 @@
 import { SignUpUserInterface } from "@/interfaces/account/sign-up.interface";
-import { axiosClient } from "./auth.service";
+import { axiosClient, axiosClientUpload } from "./auth.service";
 import { RegisterDRUInterface } from "@/interfaces/dru/dru.interface";
 import { TrainingConfig } from "@/interfaces/forecasting/training.interface";
 
 const OPERATION = "POST";
 const DEFAULT_PARAMS = {};
 
+// todo: be more specific with the type
+// todo: do not use any
 const submitForm = async (formData: any) => {
   return axiosClient("cases/create/", OPERATION, formData, DEFAULT_PARAMS);
+};
+
+const submitBulkForm = async (formData: any) => {
+  // return axiosClient("cases/create/bulk/", OPERATION, formData, DEFAULT_PARAMS);
+  return axiosClientUpload("cases/create/bulk/", formData);
 };
 
 const signUpUser = async (formData: SignUpUserInterface) => {
@@ -63,6 +70,7 @@ const retrainModel = async (formData: TrainingConfig) => {
 
 const postService = {
   submitForm,
+  submitBulkForm,
   predictCases,
   retrainModel,
   signUpUser,
