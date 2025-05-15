@@ -8,6 +8,8 @@ import { Input } from "@shadcn/components/ui/input";
 import { Label } from "@shadcn/components/ui/label";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription } from "@shadcn/components/ui/alert";
+import { BaseServiceResponse } from "@/interfaces/services/services.interface";
+import patchService from "@/services/patch.service";
 
 export function UpdatePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -32,14 +34,25 @@ export function UpdatePassword() {
       return;
     }
 
-    // This would typically call an API to update the password
-    // For this example, we'll simulate a successful update
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (currentPassword === newPassword) {
+      setStatus("error");
+      setMessage("New password cannot be the same as the current password");
+      return;
+    }
 
-      setStatus("success");
-      setMessage("Password updated successfully");
+    try {
+      const response: BaseServiceResponse = await patchService.updatePassword({
+        old_password: currentPassword,
+        new_password: newPassword,
+      });
+
+      if (response.success) {
+        setStatus("success");
+        setMessage("Password updated successfully");
+      } else {
+        setStatus("error");
+        setMessage(response.message);
+      }
 
       // Reset form
       setCurrentPassword("");
