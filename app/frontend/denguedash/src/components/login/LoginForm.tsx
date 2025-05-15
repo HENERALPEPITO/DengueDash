@@ -5,15 +5,10 @@ import type React from "react";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { Button } from "@shadcn/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@shadcn/components/ui/card";
+import { Card, CardContent, CardFooter } from "@shadcn/components/ui/card";
 import { Input } from "@shadcn/components/ui/input";
 import { Label } from "@shadcn/components/ui/label";
 import { UserLoggedIn } from "@/interfaces/auth/user-auth.interface";
@@ -66,15 +61,8 @@ export function LoginForm() {
 
   return (
     <Card className="w-full border-teal-100 shadow-lg transition-all hover:shadow-xl dark:border-teal-900">
-      <CardHeader className="pb-0">
-        <div className="flex items-center justify-center">
-          <div className="rounded-full bg-teal-100 p-2 dark:bg-teal-900/30">
-            <AlertCircle className="h-6 w-6 text-teal-700 dark:text-teal-400" />
-          </div>
-        </div>
-      </CardHeader>
       <form onSubmit={loginUser}>
-        <CardContent className="pt-4">
+        <CardContent className="pt-6">
           <div className="grid gap-5">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
