@@ -89,7 +89,7 @@ const getDengueAuthLocationStats = async (params: Record<string, any>) => {
 const getDengueReports = async (
   page: number,
   itemsPerPage: number = 8,
-  search: string
+  search: string = ""
 ) => {
   return axiosClient("cases/reports/", OPERATION, DEFAULT_DATA, {
     page,
