@@ -57,9 +57,8 @@ export default function DengueReportTable() {
 
   // Tracking search
   useEffect(() => {
-    const PAGE_ONE = 1;
-    setCurrentPage(PAGE_ONE);
-    // fetchCases(PAGE_ONE);
+    // Reset to the first page when search query changes
+    setCurrentPage(1);
   }, [searchQuery, fetchCases]);
 
   const handlePageChange = (page: number) => {
