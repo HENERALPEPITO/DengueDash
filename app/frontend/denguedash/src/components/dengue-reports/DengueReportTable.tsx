@@ -21,6 +21,7 @@ import { Separator } from "@/shadcn/components/ui/separator";
 import CustomPagination from "../common/CustomPagination";
 import { Search } from "lucide-react";
 import { Input } from "@/shadcn/components/ui/input";
+import { Skeleton } from "@/shadcn/components/ui/skeleton";
 
 export default function DengueReportTable() {
   const [cases, setCases] = useState<Case[]>([]);
@@ -105,10 +106,17 @@ export default function DengueReportTable() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
+              Array.from({ length: itemsPerPage }, (_, index) => (
+                <TableRow key={index}>
+                  <TableCell colSpan={8} className="text-center">
+                    <Skeleton className="h-5" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : cases.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center">
-                  {/* Todo: Add skeleton Loader */}
-                  Loading...
+                <TableCell colSpan={8} className="text-center">
+                  No Cases Found
                 </TableCell>
               </TableRow>
             ) : (
