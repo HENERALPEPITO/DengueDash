@@ -203,7 +203,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_file_path = os.path.join(base_dir, "csv", "test_data.csv")
+        csv_file_path = os.path.join(base_dir, "csv", "no_barangays_data.csv")
 
         with open(csv_file_path, mode="r") as file:
             reader = csv.DictReader(file)
