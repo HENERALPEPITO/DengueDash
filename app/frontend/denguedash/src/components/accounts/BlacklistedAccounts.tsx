@@ -43,14 +43,13 @@ export default function BlacklistedAccounts() {
 
         const totalCount = parseInt(response.count.toString() || "0", 10);
         setTotalPages(Math.ceil(totalCount / itemsPerPage));
-        console.log(totalPages);
       } catch (error) {
         console.error("Failed to fetch blacklisted accounts:", error);
       } finally {
         setIsLoading(false);
       }
     },
-    [itemsPerPage, totalPages]
+    [itemsPerPage]
   );
 
   useEffect(() => {
