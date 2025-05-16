@@ -47,6 +47,12 @@ export default function ForecastingMain() {
   //   return Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
   // };
 
+  // Todo: use this in the future to fetch real data
+  // const currentYear = new Date().getFullYear();
+  // const currentWeek = getWeekNumber(new Date());
+  const currentYear = 2024;
+  const currentWeek = 52;
+
   const thisWeekCases: number = useMemo(() => {
     return (
       currentWeekDengueData?.reduce(
@@ -103,8 +109,8 @@ export default function ForecastingMain() {
         //   group_by: "barangay",
         // }
         {
-          year: 2024,
-          week: 38,
+          year: currentYear,
+          week: currentWeek,
         }
       );
     setCurrentWeekDengueData(response);
@@ -193,7 +199,11 @@ export default function ForecastingMain() {
         </Card>
 
         {/* Weather variables */}
-        <WeatherCards predictions={predictions} />
+        <WeatherCards
+          predictions={predictions}
+          year={currentYear}
+          week={currentWeek}
+        />
 
         {/* Additional helpful components */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
