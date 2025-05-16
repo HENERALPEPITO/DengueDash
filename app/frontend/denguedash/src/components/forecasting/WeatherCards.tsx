@@ -20,6 +20,8 @@ import { useEffect, useState } from "react";
 
 type WeatherCardsProps = {
   predictions: ModelPredictions;
+  year: number;
+  week: number;
 };
 
 // todo: use weather data from openweatherapi
@@ -58,24 +60,17 @@ export default function WeatherCards(props: WeatherCardsProps) {
     WeatherInterface[]
   >([]);
 
-  const fetchCurrentWeekWeatherData = async () => {
-    const response: WeatherInterface[] = await fetchService.getWeatherData(
-      // todo: same with this
-      // {
-      //   year: new Date().getFullYear(),
-      //   week: getWeekNumber(new Date()),
-      // }
-      {
-        year: 2024,
-        week: 38,
-      }
-    );
-    setCurrentWeekWeatherData(response);
-  };
-
   useEffect(() => {
+    const fetchCurrentWeekWeatherData = async () => {
+      const response: WeatherInterface[] = await fetchService.getWeatherData({
+        year: props.year,
+        week: props.week,
+      });
+      setCurrentWeekWeatherData(response);
+    };
     fetchCurrentWeekWeatherData();
-  }, []);
+  }, [props.year, props.week]);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       <Card>
