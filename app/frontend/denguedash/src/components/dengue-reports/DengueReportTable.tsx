@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -30,26 +30,29 @@ export default function DengueReportTable() {
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
 
+  const fetchCases = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      try {
+        const response: DengueReportPagination =
+          await fetchService.getDengueReports(page, itemsPerPage, searchQuery);
+
+        const data: Case[] = response.results;
+        setCases(data);
+        const totalCount = parseInt(response.count.toString() || "0", 10);
+        setTotalPages(Math.ceil(totalCount / itemsPerPage));
+      } catch (error) {
+        console.error("Failed to fetch dengue cases:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [itemsPerPage, searchQuery]
+  );
+
   useEffect(() => {
     fetchCases(currentPage);
-  }, [currentPage, searchQuery]);
-
-  const fetchCases = async (page: number) => {
-    setIsLoading(true);
-    try {
-      const response: DengueReportPagination =
-        await fetchService.getDengueReports(page, itemsPerPage, searchQuery);
-      const data: Case[] = response.results;
-      setCases(data);
-
-      const totalCount = parseInt(response.count.toString() || "0", 10);
-      setTotalPages(Math.ceil(totalCount / itemsPerPage));
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [currentPage, fetchCases]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
