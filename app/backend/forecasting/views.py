@@ -561,7 +561,7 @@ class LstmPredictionView(APIView):
         for i in range(len(predictions)):
             predictons_dict.append(
                 {
-                    "week": current_week_number + i + 1,
+                    "week": ((current_week_number + i) % 52) + 1,
                     "predicted_cases": math.ceil(predictions[i]),
                     "confidence_interval": {
                         "lower": math.ceil(predictions[i] * 0.9),
