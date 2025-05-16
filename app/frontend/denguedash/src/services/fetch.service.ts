@@ -86,10 +86,15 @@ const getDengueAuthLocationStats = async (params: Record<string, any>) => {
   );
 };
 
-const getDengueReports = async (page: number, itemsPerPage: number = 8) => {
+const getDengueReports = async (
+  page: number,
+  itemsPerPage: number = 8,
+  search: string = ""
+) => {
   return axiosClient("cases/reports/", OPERATION, DEFAULT_DATA, {
     page,
     itemsPerPage,
+    search,
   });
 };
 
