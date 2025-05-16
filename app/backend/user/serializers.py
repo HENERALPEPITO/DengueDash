@@ -10,6 +10,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
     sex_display = serializers.SerializerMethodField()
+    dru_type = serializers.SerializerMethodField()
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.middle_name} {obj.last_name}".strip()
@@ -19,6 +20,9 @@ class BaseUserSerializer(serializers.ModelSerializer):
 
     def get_sex_display(self, obj):
         return obj.get_sex_display()
+
+    def get_dru_type(self, obj):
+        return obj.dru.dru_type.dru_classification if obj.dru else None
 
     class Meta:
         model = User
@@ -30,6 +34,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
             "sex_display",
             "role",
             "dru",
+            "dru_type",
         ]
 
 

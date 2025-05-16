@@ -41,6 +41,7 @@ export interface MyUserInterface {
   sex_display: string;
   role: string;
   dru: string;
+  dru_type: string;
 }
 
 export interface UserDetailInterface extends MyUserInterface {
