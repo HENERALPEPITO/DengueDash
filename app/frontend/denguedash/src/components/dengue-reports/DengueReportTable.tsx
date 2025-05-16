@@ -19,23 +19,26 @@ import Link from "next/link";
 import fetchService from "@/services/fetch.service";
 import { Separator } from "@/shadcn/components/ui/separator";
 import CustomPagination from "../common/CustomPagination";
+import { Search } from "lucide-react";
+import { Input } from "@/shadcn/components/ui/input";
 
-export default function Component() {
+export default function DengueReportTable() {
   const [cases, setCases] = useState<Case[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 8;
 
   useEffect(() => {
     fetchCases(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   const fetchCases = async (page: number) => {
     setIsLoading(true);
     try {
       const response: DengueReportPagination =
-        await fetchService.getDengueReports(page, itemsPerPage);
+        await fetchService.getDengueReports(page, itemsPerPage, searchQuery);
       const data: Case[] = response.results;
       setCases(data);
 
@@ -60,6 +63,22 @@ export default function Component() {
         </div>
       </div>
       <Separator className="mt-2" />
+
+      {/* Search Bar */}
+      <div className="relative mt-2 mb-3">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <Search className="h-4 w-4 text-gray-500" />
+        </div>
+        <Input
+          type="text"
+          placeholder="Search by name, location, date of consultation, or classification"
+          className="pl-10"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      {/* Table */}
       <div className="container mx-auto p-4 border border-gray-200 rounded-lg">
         <Table>
           <TableHeader>
