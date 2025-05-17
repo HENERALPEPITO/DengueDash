@@ -3,11 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000  --timeout 300
     volumes:
-      # Mount your project code (Windows path)
-      # Adjust /mnt/f/Projects/DengueDash/app/backend if needed
-      - /mnt/f/Projects/DengueDash/app/backend:/denguedash-api
+      - ./../backend:/denguedash-api
 
       # Mount named volumes for persistence
       - sqlite_data:/data/db
@@ -17,6 +15,7 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    shm_size: '4g'
 
 volumes:
   sqlite_data:
