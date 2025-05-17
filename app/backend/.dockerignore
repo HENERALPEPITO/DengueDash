@@ -45,3 +45,6 @@ docker-compose*.yml
 dist/
 build/
 *.egg-info/
+
+# Database files
+db.sqlite3

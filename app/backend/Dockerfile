@@ -1,4 +1,5 @@
-FROM python:3.12 AS builder
+FROM python:3.12-slim
+FROM tensorflow/tensorflow:2.19.0-gpu
 
 # Create the app directory
 RUN mkdir /denguedash-api
@@ -17,31 +18,13 @@ RUN pip install --upgrade pip
 
 # Copy the django project and install dependencies
 COPY requirements.txt /denguedash-api/
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --resume-retries 10 -r requirements.txt
 
-# Production stage
-FROM python:3.12
-
-RUN useradd -m -r appuser && \
-    mkdir -p /denguedash-api && \
-    chown -R appuser:appuser /denguedash-api
-
-# Copy the dependencies from the builder stage
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
-
-# Set the working directory
-WORKDIR /denguedash-api
-
-# Copy the application code
-COPY --chown=appuser:appuser . .
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Switch to the non-root user
-USER appuser
+# Copy the rest of the project code into the container
+COPY . /denguedash-api/
 
 # Expose the port the app runs on
 EXPOSE 8000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
+
