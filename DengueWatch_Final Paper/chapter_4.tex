@@ -302,7 +302,7 @@ To evaluate the LSTM model's real-world forecasting ability, a simulation was co
 
 \section{System Prototype}
 \subsection{Home Page}
-The Home Page is intended for all visitors of the web application. The Analytics Dashboard, which displays relevant statistics for dengue cases at a certain year and location, is the primary component highlighted, as seen in Figure \ref{fig:home_page}. This component includes a combo chart that graphs the number of dengue cases and deaths per week in a specific year, a choropleth map that tracks the number of dengue cases per location, and various bar charts that indicate the top locations affected by dengue. 
+The Home Page is intended for all visitors to the web application. The Analytics Dashboard, which displays relevant statistics for dengue cases at a certain time and location, is the primary component highlighted, as seen in Figure \ref{fig:home_page}. This component includes a combo chart that graphs the number of dengue cases and deaths per week in a specific year, a choropleth map that tracks the number of dengue cases per barangay in Iloilo Cityl and various bar charts that indicate the top barangaylocatected by dengue. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{home_page}
@@ -311,7 +311,8 @@ The Home Page is intended for all visitors of the web application. The Analytics
 \end{figure}
 
 \subsection{User Registration, Login, and Authentication}
-The registration page, as shown in Figure \ref{fig:registration_page}, serves as a gateway to access the authenticated pages of the web application. Only prospected encoders can create an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page the type of user belongs to. 
+The registration page, as shown in \ref{fig:registration_page}  serves as a gateway to access the authenticated pages of the web application. Only prospective encoders can create an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}4.16. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page for the type of user it belongs to. Logging out on the other hand, will remove both the access and refresh tokens from the browser, and will blacklist the latter token to make it unusable for security purposes. 
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{registration_page}
@@ -349,7 +350,7 @@ Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the d
 \end{figure}
 
 \subsubsection{Browsing, Update, and Deletion of Records}
-Once the data generated from the case report form or the bulk upload is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
+Once the data generated from the case report form or the bulk upload is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. It is also worth noting that it only shows cases that the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. In addition, the user can also search for a case using the name, location, date of consultation, or classifications that are associated with the specific query, making it easier to find pertinent information quickly and efficiently. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{dengue_reports}
@@ -363,7 +364,7 @@ Once the data generated from the case report form or the bulk upload is validate
 	\label{fig:detailed_case_report}
 \end{figure}
 
-To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show confirming the action of the user. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently.
+To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show confirming the user's action. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently.
 
 \begin{figure}[H]
 	\centering
@@ -380,7 +381,7 @@ To update the case, the user can click the "Update Case" button, where a dialog 
 
 \subsubsection{Forecasting}
 
-The piece de resistance of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next following weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. It requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) based on the window size. This allows the web application to display a line chart with the anticipated number of dengue cases over the following four weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the OpenWeather API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
+The piece de resistance of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next few weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. The said file stores the model's architecture and the learned parameters, which include the weights and biases, so that it can predict cases without training the data again.  Furthermore, it requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) to form a sequence based on the window size. This allows the web application to display a line chart with the anticipated number of dengue cases over the following four weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the OpenWeather API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
 
 \begin{figure}[H]
 	\centering
@@ -393,7 +394,7 @@ The piece de resistance of the web application's feature is the Forecasting Page
 
 \subsubsection{Retraining}
 
-With LSTM being the best-performing model among the models used in forecasting dengue cases, it is the model chosen to power the prediction and retraining of the consolidated data within the web application. Since the retraining process consumes a lot of processing power and requires a more advanced understanding of how it works, it was decided that the said feature should only be available to admin users. Furthermore, the retraining component in the Forecasting page includes three additional components that include the configuration of LSTM parameters (Figure \ref{fig:retraining_configs}), the actual retraining of the consolidated data from the database (Figure \ref{fig:retraining_train}), and the results of the retraining that shows the current and previous model metrics depending on the parameters entered (Figure \ref{fig:retraining_results}). It is also worth noting that when trained, the model used a seeded number to promote reproducibility. 
+With LSTM being the best-performing model among the models used in forecasting dengue cases, it is the model chosen to power the prediction and retraining of the consolidated data within the web application. Since the retraining process consumes a lot of processing power and requires a more advanced understanding of how it works, it was decided that the said feature should only be available to admin users of surveillance units. Furthermore, the retraining component in the Forecasting page includes three additional components that include the configuration of LSTM parameters (Figure \ref{fig:retraining_configs}), the actual retraining of the consolidated data from the database (Figure \ref{fig:retraining_train}), and the results of the retraining that shows the current and previous model metrics depending on the parameters entered (Figure \ref{fig:retraining_results}). It is also worth noting that when training, the model used a seeded number to promote reproducibility. 
 
 \begin{figure}[H]
 	\centering
@@ -418,7 +419,7 @@ With LSTM being the best-performing model among the models used in forecasting d
 
 \subsubsection{Managing Accounts}
 
-Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. The same figure also shows the expanded details of the user, which include personal information and brief activity details within the system.
+Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance unit have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. The same figure also shows the expanded details of the user, which include personal information and brief activity details within the system. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. However, the blacklist status can be reverted by clicking the "Unban" button, which would make the user of the email be able to register to the web application again as shown in Figure \ref{fig:blacklisted_accounts}. 
 
 \begin{figure}[H]
 	\centering
@@ -437,6 +438,12 @@ Proper management of accounts is important to protect the integrity and confiden
 	\includegraphics[width=1\textwidth]{account_details}
 	\caption{Account Details}
 	\label{fig:account_details}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{blacklisted_accounts}
+	\caption{List of Blacklisted Accounts}
+	\label{fig:blacklisted_accounts}
 \end{figure}
 
 \subsubsection{Managing DRUs}
