@@ -1,5 +1,4 @@
 FROM python:3.12-slim
-FROM tensorflow/tensorflow:2.19.0-gpu
 
 # Create the app directory
 RUN mkdir /denguedash-api
