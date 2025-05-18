@@ -104,21 +104,6 @@ Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation
 	\label{fig:transformed_correlation_bar}
 \end{figure}
 
-\section{Outbreak Detection}  
-To identify outbreaks, we calculated the outbreak threshold value using the historical mean as the endemic channel. The threshold is determined using the formula:  
-
-\begin{align}  
-	\text{Outbreak Threshold Value} &= \mu + 2\sigma \\  
-	&= 23.744444 + 2(37.144813) \\  
-	&= 23.744444 + 74.289626 \\  
-	&= 98.03407  
-\end{align}  
-
-where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
-
-This result indicates that dengue cases exceeding 98 in Iloilo City can be considered an outbreak. However, it is important to note that this threshold serves only as a baseline. Additional parameters, such as the number of hospital beds available in the city, must be considered to compute a more effective threshold and develop an appropriate response strategy.
-
-
 \section{Model Training Results}
 
 The models were evaluated using three metrics: MSE, RMSE, and MAE. The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The lower values of the three metrics indicate better forecasting performance. Table \ref{tab:comparison_of_models} shows that the models performed differently on testing data. LSTM outperformed the other models with the lowest RMSE, MSE, and MAE while the other three models had relatively higher values for the three metrics.
@@ -291,7 +276,7 @@ The Kalman Filter was then combined with the LSTM model in order to see improvem
 As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
 
 \section{Model Simulation}
-To evaluate the LSTM model's real-world forecasting ability, a simulation was conducted to predict dengue cases for the year 2025. The model was retrained exclusively, using the parameters found from the initial training, on data from 2011 to 2024, using both dengue cases and weather variables. Importantly, the actual dengue case values for 2025 were never included during training. Instead, only the weather variables collected for 2025 were input into the model to generate predictions for that year. After prediction, the forecasted dengue cases for 2025 were compared against the true observed cases to assess the model’s accuracy. Figure \ref{fig:modeltesting} shows that the predicted values closely follow the trend, although it may overestimate the dengue cases in some weeks. 
+To evaluate the LSTM model's real-world forecasting ability, a simulation was conducted to predict dengue cases for the year 2025. The model was retrained exclusively, using the parameters found from the initial training, on data from 2011 to January 2025, using both dengue cases and weather variables. Importantly, the actual dengue case values for 2025 were never included during training. Instead, only the weather variables collected for 2025 were input into the model to generate predictions for that year. After prediction, the forecasted dengue cases for 2025 were compared against the true observed cases to assess the model’s accuracy. Figure \ref{fig:modeltesting} shows that the predicted values closely follow the trend, although it may overestimate the dengue cases in some weeks. 
 
 \begin{figure}[H]
 	\centering

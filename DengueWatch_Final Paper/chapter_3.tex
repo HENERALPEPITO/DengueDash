@@ -47,15 +47,6 @@ and the target variable (dengue cases).
 	\item Created visualizations like time series plots and scatterplots to highlight relationships and patterns in the data.
 \end{itemize}
 
-\subsubsection{Outbreak Detection}
-To detect outbreaks, we computed the outbreak threshold value of dengue cases using the formula, 
-
-\begin{equation}
-	\text{Outbreak Threshold Value} = \mu + 2\sigma
-\end{equation}
-
-where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
-
 \subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
 The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, wind, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
 \subsubsection{Data Preprocessing}
@@ -123,6 +114,8 @@ The SARIMA modeling process began with data preprocessing, which included handli
 
 The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
+\subsubsection{Model Simulation:}
+After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025.
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 
