@@ -1,5 +1,5 @@
 %   Filename    : chapter_4.tex 
-\chapter{Results and Discussion/System Prototype}
+\chapter{Results and Discussion}
 \section{Data Gathering}
 The data for dengue case prediction was gathered from a variety of reliable sources, enabling a comprehensive dataset spanning from January 2011 to October 2024. This dataset includes 720 rows of data, each containing weekly records of dengue cases along with corresponding meteorological variables, such as rainfall, temperature, and humidity.
 \begin{enumerate}
@@ -18,9 +18,9 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 
 From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records with 8 columns:
 \begin{itemize}
-	\item \textbf{Time.} Weekly timestamps (e.g. "2011-w1")
+	\item \textbf{Time.} Weekly timestamps (e.g. ``2011-w1'')
 	\item \textbf{Rainfall.} Weekly average rainfall (mm)
-	\item \textbf{MaxTemperature, AverageTemperature, MinTemperature.} Weekly temperature data (C)
+	\item \textbf{MaxTemperature, AverageTemperature, MinTemperature.} Weekly temperature data (°C)
 	\item \textbf{Wind.} Wind speed (m/s)
 	\item \textbf{Humidity.} Weekly average humidity (\%)
 	\item \textbf{Cases.} Reported dengue cases
@@ -33,12 +33,12 @@ From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records w
 	\label{fig:data_summary}
 \end{figure}
 
-From the statistics in figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
+From the statistics in Figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=1\textwidth]{data_stats2}
-	\caption{Dataset Statistics}
+	\caption{Summary Statistics for the Aggregated Dataset}
 	\label{fig:data_stats2}
 \end{figure}
 
@@ -73,7 +73,7 @@ Figure \ref{fig:pre_transform_distribution} shows the distributions of each feat
 \begin{figure}[hbt!]
 	\centering
 	\includegraphics[width=1\textwidth]{scatterplots_features}
-	\caption{Scatterplots}
+	\caption{Pre-Transform Scatterplots}
 	\label{fig:scatterplots_features}
 \end{figure}
 

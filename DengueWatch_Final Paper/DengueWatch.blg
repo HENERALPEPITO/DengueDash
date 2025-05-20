@@ -53,43 +53,43 @@ Warning--entry type for "rabdash" isn't style-file defined
 apacite.bst [2013/07/21 v6.03 APA bibliography style]
 You've used 31 entries,
             6951 wiz_defined-function locations,
-            1445 strings with 16222 characters,
-and the built_in function-call counts, 56926 in all, are:
-= -- 7096
-> -- 434
-< -- 2659
-+ -- 2767
-- -- 60
-* -- 3512
-:= -- 10010
+            1446 strings with 16289 characters,
+and the built_in function-call counts, 56123 in all, are:
+= -- 6986
+> -- 417
+< -- 2629
++ -- 2698
+- -- 62
+* -- 3465
+:= -- 9917
 add.period$ -- 121
 call.type$ -- 31
-change.case$ -- 428
+change.case$ -- 415
 chr.to.int$ -- 0
 cite$ -- 62
-duplicate$ -- 1529
-empty$ -- 2405
-format.name$ -- 754
-if$ -- 11035
+duplicate$ -- 1481
+empty$ -- 2391
+format.name$ -- 718
+if$ -- 10885
 int.to.chr$ -- 0
 int.to.str$ -- 93
 missing$ -- 0
-newline$ -- 729
+newline$ -- 723
 num.names$ -- 200
-pop$ -- 1450
+pop$ -- 1439
 preamble$ -- 1
-purify$ -- 120
+purify$ -- 119
 quote$ -- 0
-skip$ -- 3491
+skip$ -- 3454
 stack$ -- 0
-substring$ -- 2990
-swap$ -- 792
+substring$ -- 2913
+swap$ -- 775
 text.length$ -- 75
 text.prefix$ -- 0
 top$ -- 1
 type$ -- 2904
 warning$ -- 0
-while$ -- 265
+while$ -- 253
 width$ -- 0
-write$ -- 912
+write$ -- 895
 (There was 1 error message)
