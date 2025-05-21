@@ -115,11 +115,11 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 			\hline
 			\textbf{Method} & \textbf{LSTM} & \textbf{Seasonal ARIMA} & \textbf{ARIMA} & \textbf{Kalman Filter} & \textbf{KF-LSTM} \\ 
 			\hline
-			\textbf{Testing MSE}   & 285.54 & 1261.20 & 1521.48 & 1474.82 & 785.35 \\ 
+			\textbf{Testing MSE}   & 406.03 & 1261.20 & 1521.48 & 1474.82 & 785.35 \\ 
 			\hline
-			\textbf{Testing RMSE}  & 16.90  & 34.45  & 39.00 & 38.40 & 25.56 \\ 
+			\textbf{Testing RMSE}  & 20.15  & 34.45  & 39.00 & 38.40 & 25.56 \\ 
 			\hline
-			\textbf{Testing MAE}   & 9.45  & 18.73  & 25.80 & 22.33 & 14.55 \\ 
+			\textbf{Testing MAE}   & 12.61  & 18.73  & 25.80 & 22.33 & 14.55 \\ 
 			\hline
 			\textbf{Best Parameters}   
 			& \begin{tabular}[c]{@{}c@{}}Window Size: 5\\ Learning Rate: 0.01\\ Units: 64\end{tabular}  
@@ -144,15 +144,15 @@ The LSTM model was tuned for the following parameters: learning rate and units. 
 	\begin{tabular}{|l|c|c|c|c|}
 		\hline
 		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
-		\textbf{5} & \textbf{285.54} & \textbf{16.90} & \textbf{9.45} & \textbf{0.83}\\ \hline
-		\textbf{10} & \textbf{334.63} & \textbf{18.29} & \textbf{9.85} & \textbf{0.80}\\ \hline
-		\textbf{20} & \textbf{294.85} & \textbf{17.17} & \textbf{9.35} & \textbf{0.83}\\ \hline
+		\textbf{5} & \textbf{406.03} & \textbf{20.15} & \textbf{12.61} & \textbf{0.76}\\ \hline
+		\textbf{10} & \textbf{1037.77} & \textbf{32.21} & \textbf{26.79} & \textbf{0.39}\\ \hline
+		\textbf{20} & \textbf{427.39} & \textbf{20.67} & \textbf{13.61} & \textbf{0.75}\\ \hline
 	\end{tabular}
 	\caption{Comparison of Window Sizes}
 	\label{tab:comparison_of_lstm}
 \end{table}
 
-The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
+The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.76 indicates that 76\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
 
 As shown in Table \ref{tab:tcsv_lstm_table}, the results from time series cross-validation indicate consistent performance trends, with a window size of 5 yielding the highest average RMSE across all folds compared to the other window sizes.
 

@@ -115,7 +115,14 @@ The SARIMA modeling process began with data preprocessing, which included handli
 The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
 \subsubsection{Model Simulation:}
-After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025.
+After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025. Figure \ref{fig:lstm_model_testing_snippet} shows a code snippet of the model training.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{lstm_model_testing_snippet}
+	\caption{Testing Folds - Window Size 5}
+	\label{fig:lstm_model_testing_snippet}
+\end{figure}
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 
