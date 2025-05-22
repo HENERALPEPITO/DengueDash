@@ -452,6 +452,7 @@ class LstmPredictionView(APIView):
 
         self.scaler_features = MinMaxScaler()
         self.scaler_target = MinMaxScaler()
+        self.scaler_future_weather = MinMaxScaler()
 
         self.location_filter = None
         self.weather_filter = None
@@ -535,6 +536,7 @@ class LstmPredictionView(APIView):
         normalized_future_weather,
         n_weeks=2,
     ):
+
         predictions = []
 
         for i in range(n_weeks):
@@ -550,7 +552,10 @@ class LstmPredictionView(APIView):
             current_step_normalized_features = normalized_future_weather[i]
 
             new_observation_normalized = np.concatenate(
-                (current_step_normalized_features, np.array([pred_normalized_scalar]))
+                (
+                    current_step_normalized_features,
+                    np.array([pred_normalized_scalar]),
+                )
             )
 
             # Shift the sequence to the left
@@ -603,9 +608,7 @@ class LstmPredictionView(APIView):
 
             weather_data = Weather.objects.filter(
                 **self.weather_filter,
-            ).order_by(
-                "-start_day"
-            )[: self.window_size]
+            ).order_by("-start_day")
             weather_data = list(reversed(weather_data))
 
             features_last_n_weeks = np.empty((0, 3))
@@ -642,14 +645,14 @@ class LstmPredictionView(APIView):
             normalized_target = self.scaler_target.fit_transform(
                 target_last_n_weeks.reshape(-1, 1)
             )
-            normalized_future_weather = self.scaler_features.fit_transform(
+            normalized_future_weather = self.scaler_future_weather.fit_transform(
                 future_weather
             )
 
             normalized_data = np.hstack(
                 [
-                    normalized_features,
-                    normalized_target,
+                    normalized_features[-self.window_size :],
+                    normalized_target[-self.window_size :],
                 ]
             )
 
