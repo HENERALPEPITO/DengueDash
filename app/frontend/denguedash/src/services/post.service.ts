@@ -30,14 +30,14 @@ const predictCases = async () => {
   const futureWeather = {
     future_weather: [
       {
-        rainfall: 45.5,
-        max_temperature: 32.1,
-        humidity: 85.0,
+        rainfall: 9.652,
+        max_temperature: 32.77777778,
+        humidity: 82.38571429,
       },
       {
-        rainfall: 43.2,
-        max_temperature: 31.8,
-        humidity: 83.5,
+        rainfall: 25.4,
+        max_temperature: 33.33333333,
+        humidity: 84.32857143,
       },
       {
         rainfall: 41.8,
