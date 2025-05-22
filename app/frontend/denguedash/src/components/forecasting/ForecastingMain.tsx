@@ -50,8 +50,8 @@ export default function ForecastingMain() {
   // Todo: use this in the future to fetch real data
   // const currentYear = new Date().getFullYear();
   // const currentWeek = getWeekNumber(new Date());
-  const currentYear = 2024;
-  const currentWeek = 52;
+  const currentYear = 2025;
+  const currentWeek = 11;
 
   const thisWeekCases: number = useMemo(() => {
     return (
