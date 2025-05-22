@@ -51,7 +51,7 @@ export default function ForecastingMain() {
   // const currentYear = new Date().getFullYear();
   // const currentWeek = getWeekNumber(new Date());
   const currentYear = 2024;
-  const currentWeek = 52;
+  const currentWeek = 40;
 
   const thisWeekCases: number = useMemo(() => {
     return (
