@@ -145,7 +145,7 @@ export default function StatDashboard() {
               Iloilo City Dengue Dashboard
             </p>
             <p className="mt-1 lg:mt-2 text-sm lg:text-md text-gray-500">
-              As of May 2025
+              As of March 2025
             </p>
           </div>
           <Dialog>
