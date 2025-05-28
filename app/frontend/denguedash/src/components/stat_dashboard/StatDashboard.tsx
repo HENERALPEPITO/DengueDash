@@ -133,7 +133,7 @@ export default function StatDashboard() {
 
   // Load initial data
   useEffect(() => {
-    fetchAllData("2024");
+    fetchAllData(new Date().getFullYear().toString());
   }, [fetchAllData]);
 
   return (
@@ -145,7 +145,7 @@ export default function StatDashboard() {
               Iloilo City Dengue Dashboard
             </p>
             <p className="mt-1 lg:mt-2 text-sm lg:text-md text-gray-500">
-              As of October 19, 2024
+              As of March 2025
             </p>
           </div>
           <Dialog>

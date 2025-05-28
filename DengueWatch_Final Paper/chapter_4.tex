@@ -1,5 +1,5 @@
 %   Filename    : chapter_4.tex 
-\chapter{Results and Discussion/System Prototype}
+\chapter{Results and Discussion}
 \section{Data Gathering}
 The data for dengue case prediction was gathered from a variety of reliable sources, enabling a comprehensive dataset spanning from January 2011 to October 2024. This dataset includes 720 rows of data, each containing weekly records of dengue cases along with corresponding meteorological variables, such as rainfall, temperature, and humidity.
 \begin{enumerate}
@@ -18,9 +18,9 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 
 From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records with 8 columns:
 \begin{itemize}
-	\item \textbf{Time.} Weekly timestamps (e.g. "2011-w1")
+	\item \textbf{Time.} Weekly timestamps (e.g. ``2011-w1'')
 	\item \textbf{Rainfall.} Weekly average rainfall (mm)
-	\item \textbf{MaxTemperature, AverageTemperature, MinTemperature.} Weekly temperature data (C)
+	\item \textbf{MaxTemperature, AverageTemperature, MinTemperature.} Weekly temperature data (°C)
 	\item \textbf{Wind.} Wind speed (m/s)
 	\item \textbf{Humidity.} Weekly average humidity (\%)
 	\item \textbf{Cases.} Reported dengue cases
@@ -33,12 +33,12 @@ From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records w
 	\label{fig:data_summary}
 \end{figure}
 
-From the statistics in figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
+From the statistics in Figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=1\textwidth]{data_stats2}
-	\caption{Dataset Statistics}
+	\caption{Summary Statistics for the Aggregated Dataset}
 	\label{fig:data_stats2}
 \end{figure}
 
@@ -60,7 +60,7 @@ Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients b
 	\label{fig:correlation_bar}
 \end{figure}
 
-Figure \ref{fig:pre_transform_distribution} shows the distributions of each feature while Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as Pearson correlation assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution \cite{bobbitt2021pearson}. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis. 
+Figure \ref{fig:pre_transform_distribution} shows the distributions of each feature while Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as Pearson correlation assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution \cite{bobbitt2021pearson}. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis \cite{htoon2021log}. 
 
 \begin{figure}[hbt!]
 	\centering
@@ -73,7 +73,7 @@ Figure \ref{fig:pre_transform_distribution} shows the distributions of each feat
 \begin{figure}[hbt!]
 	\centering
 	\includegraphics[width=1\textwidth]{scatterplots_features}
-	\caption{Scatterplots}
+	\caption{Pre-Transform Scatterplots}
 	\label{fig:scatterplots_features}
 \end{figure}
 
@@ -95,7 +95,7 @@ After applying a log transformation, Figure \ref{fig:post_transform_distribution
 	\label{fig:new_scatterplots}
 \end{figure}
 
-Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small and not considered meaningful. Although the individual correlations are weak, they provide valuable signals that, when combined in a multivariate model, may contribute meaningfully to predictive performance., As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
+Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small. Although the individual correlations are weak, they provide valuable signals that, when combined in a multivariate model, may contribute meaningfully to predictive performance., As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
 
 \begin{figure}[hbt!]
 	\centering
@@ -103,21 +103,6 @@ Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation
 	\caption{Ranking of Correlations with New Distributions}
 	\label{fig:transformed_correlation_bar}
 \end{figure}
-
-\section{Outbreak Detection}  
-To identify outbreaks, we calculated the outbreak threshold value using the historical mean as the endemic channel. The threshold is determined using the formula:  
-
-\begin{align}  
-	\text{Outbreak Threshold Value} &= \mu + 2\sigma \\  
-	&= 23.744444 + 2(37.144813) \\  
-	&= 23.744444 + 74.289626 \\  
-	&= 98.03407  
-\end{align}  
-
-where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
-
-This result indicates that dengue cases exceeding 98 in Iloilo City can be considered an outbreak. However, it is important to note that this threshold serves only as a baseline. Additional parameters, such as the number of hospital beds available in the city, must be considered to compute a more effective threshold and develop an appropriate response strategy.
-
 
 \section{Model Training Results}
 
@@ -130,11 +115,11 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 			\hline
 			\textbf{Method} & \textbf{LSTM} & \textbf{Seasonal ARIMA} & \textbf{ARIMA} & \textbf{Kalman Filter} & \textbf{KF-LSTM} \\ 
 			\hline
-			\textbf{Testing MSE}   & 285.54 & 1261.20 & 1521.48 & 1474.82 & 785.35 \\ 
+			\textbf{Testing MSE}   & 406.03 & 1261.20 & 1521.48 & 1474.82 & 785.35 \\ 
 			\hline
-			\textbf{Testing RMSE}  & 16.90  & 34.45  & 39.00 & 38.40 & 25.56 \\ 
+			\textbf{Testing RMSE}  & 20.15  & 34.45  & 39.00 & 38.40 & 25.56 \\ 
 			\hline
-			\textbf{Testing MAE}   & 9.45  & 18.73  & 25.80 & 22.33 & 14.55 \\ 
+			\textbf{Testing MAE}   & 12.61  & 18.73  & 25.80 & 22.33 & 14.55 \\ 
 			\hline
 			\textbf{Best Parameters}   
 			& \begin{tabular}[c]{@{}c@{}}Window Size: 5\\ Learning Rate: 0.01\\ Units: 64\end{tabular}  
@@ -159,15 +144,15 @@ The LSTM model was tuned for the following parameters: learning rate and units. 
 	\begin{tabular}{|l|c|c|c|c|}
 		\hline
 		\textbf{Window Size} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R²}\\ \hline
-		\textbf{5} & \textbf{285.54} & \textbf{16.90} & \textbf{9.45} & \textbf{0.83}\\ \hline
-		\textbf{10} & \textbf{334.63} & \textbf{18.29} & \textbf{9.85} & \textbf{0.80}\\ \hline
-		\textbf{20} & \textbf{294.85} & \textbf{17.17} & \textbf{9.35} & \textbf{0.83}\\ \hline
+		\textbf{5} & \textbf{406.03} & \textbf{20.15} & \textbf{12.61} & \textbf{0.76}\\ \hline
+		\textbf{10} & \textbf{1037.77} & \textbf{32.21} & \textbf{26.79} & \textbf{0.39}\\ \hline
+		\textbf{20} & \textbf{427.39} & \textbf{20.67} & \textbf{13.61} & \textbf{0.75}\\ \hline
 	\end{tabular}
 	\caption{Comparison of Window Sizes}
 	\label{tab:comparison_of_lstm}
 \end{table}
 
-The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.83 indicates that 83\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
+The results indicate that a window size of 5 weeks provides the most accurate predictions, as evidenced by the lowest MSE and RMSE values. Furthermore, the R² score of 0.76 indicates that 76\% of the variability in the target variable (cases) is explained by the independent variables (the inputs) in the model, making it a reliable configuration overall.
 
 As shown in Table \ref{tab:tcsv_lstm_table}, the results from time series cross-validation indicate consistent performance trends, with a window size of 5 yielding the highest average RMSE across all folds compared to the other window sizes.
 
@@ -291,7 +276,7 @@ The Kalman Filter was then combined with the LSTM model in order to see improvem
 As can be seen in the table above, the performance of the hybrid model demonstrated improvements in all metrics as compared to just using the Kalman Filter alone.
 
 \section{Model Simulation}
-To evaluate the LSTM model's real-world forecasting ability, a simulation was conducted to predict dengue cases for the year 2025. The model was trained exclusively on data from 2011 to 2024, using both dengue cases and weather variables. Importantly, the actual dengue case values for 2025 were never included during training. Instead, only the weather variables collected for 2025 were input into the model to generate predictions for that year. After prediction, the forecasted dengue cases for 2025 were compared against the true observed cases to assess the model’s accuracy. Figure \ref{fig:modeltesting} shows that the predicted values closely follow the trend, although it may overestimate the dengue cases in some weeks. 
+To evaluate the LSTM model's real-world forecasting ability, a simulation was conducted to predict dengue cases for the year 2025. The model was retrained exclusively, using the parameters found from the initial training, on data from 2011 to January 2025, using both dengue cases and weather variables. Importantly, the actual dengue case values for 2025 were never included during training. Instead, only the weather variables collected for 2025 were input into the model to generate predictions for that year. After prediction, the forecasted dengue cases for 2025 were compared against the true observed cases to assess the model’s accuracy. Figure \ref{fig:modeltesting} shows that the predicted values closely follow the trend, although it may overestimate the dengue cases in some weeks. 
 
 \begin{figure}[H]
 	\centering
@@ -302,7 +287,7 @@ To evaluate the LSTM model's real-world forecasting ability, a simulation was co
 
 \section{System Prototype}
 \subsection{Home Page}
-The Home Page is intended for all visitors of the web application. The Analytics Dashboard, which displays relevant statistics for dengue cases at a certain year and location, is the primary component highlighted, as seen in Figure \ref{fig:home_page}. This component includes a combo chart that graphs the number of dengue cases and deaths per week in a specific year, a choropleth map that tracks the number of dengue cases per location, and various bar charts that indicate the top locations affected by dengue. 
+The Home Page is intended for all visitors to the web application. The Analytics Dashboard, which displays relevant statistics for dengue cases at a certain time and location, is the primary component highlighted, as seen in Figure \ref{fig:home_page}. This component includes a combo chart that graphs the number of dengue cases and deaths per week in a specific year, a choropleth map that tracks the number of dengue cases per barangay in a location, and various bar charts that indicate the top constituent places affected by dengue. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{home_page}
@@ -311,7 +296,8 @@ The Home Page is intended for all visitors of the web application. The Analytics
 \end{figure}
 
 \subsection{User Registration, Login, and Authentication}
-The registration page, as shown in Figure \ref{fig:registration_page}, serves as a gateway to access the authenticated pages of the web application. Only prospected encoders can create an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page the type of user belongs to. 
+The registration page, as shown in \ref{fig:registration_page}  serves as a gateway to access the authenticated pages of the web application. Only prospective encoders can create an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page for the type of user it belongs to. Logging out on the other hand, will remove both the access and refresh tokens from the browser, and will blacklist the latter token to make it unusable for security purposes. 
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{registration_page}
@@ -349,7 +335,7 @@ Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the d
 \end{figure}
 
 \subsubsection{Browsing, Update, and Deletion of Records}
-Once the data generated from the case report form or the bulk upload is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. It is also worth noting that it only shows cases the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
+Once the data generated from the case report form or the bulk upload is validated, it will be assigned as a new case and can be accessed through the Dengue Reports page, as shown in Figure \ref{fig:dengue_reports}. The said page displays basic information about the patient related to a specific case, including their name, address, date of consultation, and clinical and case classifications. It is also worth noting that it only shows cases that the user is permitted to view. For example, in a local Disease Reporting Unit (DRU) setting, the user can only access records that belong to the same DRU. On the other hand, in a consolidated surveillance unit such as a regional, provincial, or city quarter, its users can view all the records from all the DRUs that report to them. In addition, the user can also search for a case using the name, location, date of consultation, or classifications that are associated with the specific query, making it easier to find pertinent information quickly and efficiently. Moving forward, Figure \ref{fig:detailed_case_report} shows the detailed case report of the patient on a particular consultation date. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{dengue_reports}
@@ -363,7 +349,7 @@ Once the data generated from the case report form or the bulk upload is validate
 	\label{fig:detailed_case_report}
 \end{figure}
 
-To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show confirming the action of the user. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently.
+To update the case, the user can click the "Update Case" button, where a dialog will appear, and the updateable fields will be shown. It is worth noting that in this case, only fields under Laboratory Results and Outcome are included since they are the only ones that are time-based, where the result may change in the future. After updating, a prompt will show confirming the user's action. Moving forward, to delete a case record, the user must click the "Delete Case" button, and a prompt verifying the action will appear. After confirming, the case will be deleted permanently.
 
 \begin{figure}[H]
 	\centering
@@ -380,7 +366,7 @@ To update the case, the user can click the "Update Case" button, where a dialog 
 
 \subsubsection{Forecasting}
 
-The piece de resistance of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next following weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. It requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) based on the window size. This allows the web application to display a line chart with the anticipated number of dengue cases over the following four weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the OpenWeather API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
+The piece de resistance of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next few weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. The said file stores the model's architecture and the learned parameters, which include the weights and biases, so that it can predict cases without training the data again.  Furthermore, it requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) to form a sequence based on the window size. This allows the web application to display a line chart with the anticipated number of dengue cases over the following four weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the OpenWeather API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
 
 \begin{figure}[H]
 	\centering
@@ -393,7 +379,7 @@ The piece de resistance of the web application's feature is the Forecasting Page
 
 \subsubsection{Retraining}
 
-With LSTM being the best-performing model among the models used in forecasting dengue cases, it is the model chosen to power the prediction and retraining of the consolidated data within the web application. Since the retraining process consumes a lot of processing power and requires a more advanced understanding of how it works, it was decided that the said feature should only be available to admin users. Furthermore, the retraining component in the Forecasting page includes three additional components that include the configuration of LSTM parameters (Figure \ref{fig:retraining_configs}), the actual retraining of the consolidated data from the database (Figure \ref{fig:retraining_train}), and the results of the retraining that shows the current and previous model metrics depending on the parameters entered (Figure \ref{fig:retraining_results}). It is also worth noting that when trained, the model used a seeded number to promote reproducibility. 
+With LSTM being the best-performing model among the models used in forecasting dengue cases, it is the model chosen to power the prediction and retraining of the consolidated data within the web application. Since the retraining process consumes a lot of processing power and requires a more advanced understanding of how it works, it was decided that the said feature should only be available to admin users of surveillance units. Furthermore, the retraining component in the Forecasting page includes three additional components that include the configuration of LSTM parameters (Figure \ref{fig:retraining_configs}), the actual retraining of the consolidated data from the database (Figure \ref{fig:retraining_train}), and the results of the retraining that shows the current and previous model metrics depending on the parameters entered (Figure \ref{fig:retraining_results}). It is also worth noting that when training, the model used a seeded number to promote reproducibility. 
 
 \begin{figure}[H]
 	\centering
@@ -418,7 +404,7 @@ With LSTM being the best-performing model among the models used in forecasting d
 
 \subsubsection{Managing Accounts}
 
-Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. The same figure also shows the expanded details of the user, which include personal information and brief activity details within the system.
+Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance unit have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. The same figure also shows the expanded details of the user, which include personal information and brief activity details within the system. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. However, the blacklist status can be reverted by clicking the "Unban" button, which would make the user of the email be able to register to the web application again as shown in Figure \ref{fig:blacklisted_accounts}. 
 
 \begin{figure}[H]
 	\centering
@@ -437,6 +423,12 @@ Proper management of accounts is important to protect the integrity and confiden
 	\includegraphics[width=1\textwidth]{account_details}
 	\caption{Account Details}
 	\label{fig:account_details}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{blacklisted_accounts}
+	\caption{List of Blacklisted Accounts}
+	\label{fig:blacklisted_accounts}
 \end{figure}
 
 \subsubsection{Managing DRUs}

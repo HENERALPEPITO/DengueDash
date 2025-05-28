@@ -452,6 +452,7 @@ class LstmPredictionView(APIView):
 
         self.scaler_features = MinMaxScaler()
         self.scaler_target = MinMaxScaler()
+        self.scaler_future_weather = MinMaxScaler()
 
         self.location_filter = None
         self.weather_filter = None
@@ -531,29 +532,36 @@ class LstmPredictionView(APIView):
 
     def predict_n_weeks(
         self,
-        X,
-        n_weeks=4,
+        sequence,
+        normalized_future_weather,
+        n_weeks=2,
     ):
-        sequence = X[-1]
+
         predictions = []
 
-        for _ in range(n_weeks):
-
-            next_week_pred = self.model.predict(
+        for i in range(n_weeks):
+            pred_normalized_scalar = self.model.predict(
                 sequence.reshape(1, self.window_size, -1)
+            )[0][0]
+
+            actual_pred = self.scaler_target.inverse_transform(
+                [[pred_normalized_scalar]]
+            )[0][0]
+            predictions.append(actual_pred)
+
+            current_step_normalized_features = normalized_future_weather[i]
+
+            new_observation_normalized = np.concatenate(
+                (
+                    current_step_normalized_features,
+                    np.array([pred_normalized_scalar]),
+                )
             )
 
-            predictions.append(
-                self.scaler_target.inverse_transform(next_week_pred)[0][0]
-            )
-
-            # Update the sequence with the new prediction
-            sequence = np.roll(
-                sequence,
-                -1,
-                axis=0,
-            )
-            sequence[-1] = next_week_pred
+            # Shift the sequence to the left
+            # Update the sequence with the new observation
+            sequence = np.roll(sequence, -1, axis=0)
+            sequence[-1] = new_observation_normalized
 
         # Return the predictions in json format
         predictons_dict = []
@@ -586,12 +594,17 @@ class LstmPredictionView(APIView):
 
             self.initialize_paths_filters(request)
 
-            # weather_last_n_weeks = Weather.objects.filter(
-            #     **self.weather_filter,
-            # ).order_by("-start_day")[: self.window_size]
-
-            # # To mitigate negative indexing
-            # weather_last_n_weeks = list(reversed(weather_last_n_weeks))
+            # Get the data from the request
+            future_weather_dict = serializer.validated_data.get("future_weather")
+            future_weather = []
+            for week in future_weather_dict:
+                future_weather.append(
+                    [
+                        week["rainfall"],
+                        week["max_temperature"],
+                        week["humidity"],
+                    ]
+                )
 
             weather_data = Weather.objects.filter(
                 **self.weather_filter,
@@ -600,6 +613,7 @@ class LstmPredictionView(APIView):
 
             features_last_n_weeks = np.empty((0, 3))
             target_last_n_weeks = np.empty((0, 1))
+            future_weather = np.array(future_weather)
 
             for week in weather_data:
                 cases_for_week = fetch_cases_for_week(
@@ -625,23 +639,27 @@ class LstmPredictionView(APIView):
                     target_last_n_weeks, [[cases_for_week]], axis=0
                 )
 
-            normalized_fetures = self.scaler_features.fit_transform(
+            normalized_features = self.scaler_features.fit_transform(
                 features_last_n_weeks
             )
             normalized_target = self.scaler_target.fit_transform(
                 target_last_n_weeks.reshape(-1, 1)
             )
+            normalized_future_weather = self.scaler_future_weather.fit_transform(
+                future_weather
+            )
 
             normalized_data = np.hstack(
                 [
-                    normalized_fetures,
-                    normalized_target,
+                    normalized_features[-self.window_size :],
+                    normalized_target[-self.window_size :],
                 ]
             )
 
-            X = self.create_X_sequence(normalized_data)
-
-            predicted_cases = self.predict_n_weeks(X)
+            predicted_cases = self.predict_n_weeks(
+                normalized_data,
+                normalized_future_weather,
+            )
 
             # Add start date
             for i, pred in enumerate(predicted_cases):
