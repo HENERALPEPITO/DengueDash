@@ -52,7 +52,9 @@ export default function ChoroplethMap({ dengueData }: ChoroplethMapProps) {
                 ? "#FEB24C"
                 : cases > 5
                   ? "#FED976"
-                  : "#FFEDA0";
+                  : cases == 0
+                    ? "#A9A9A9"
+                    : "#FFEDA0";
   };
 
   const highlightFeature: LeafletEventHandlerFn = (e: any) => {
