@@ -6,17 +6,31 @@ The data for dengue case prediction was gathered from a variety of reliable sour
 	\item Dengue Case Data: The primary source of historical dengue cases came from the Humanitarian Data Exchange and the Western Visayas Center for Health Development (WVCHD). The dataset, accessed through Freedom of Information (FOI) requests, provided robust case numbers for the Western Visayas region. The systematic collection of these data points was essential for establishing a reliable baseline for model training and evaluation.
 	\item Weather Data: Weekly weather data was obtained by web scraping from Weather Underground, allowing access to rainfall, temperature, wind, and humidity levels that correlate with dengue prevalence.
 \end{enumerate}
-
-\begin{figure}[ht]
+\begin{table}[h!]
 	\centering
-	\includegraphics[width=0.95\textwidth]{data_snippet}
-	\caption{Snippet of the Combined Dataset}
-	\label{fig:data_snippet}
-\end{figure}
-
+	\resizebox{1\textwidth}{!}{%
+		\begin{tabular}{|l|c|c|c|c|c|c|c|}
+			\hline
+			\textbf{Time} & \textbf{Rainfall} & \textbf{MaxTemperature} & \textbf{AverageTemperature} & \textbf{MinTemperature} & \textbf{Wind} & \textbf{Humidity} & \textbf{Cases} \\ 
+			\hline
+			2011-01-03 & 9.938571 & 29.444400 & 25.888890 & 23.888900 & 11.39 & 86.242857 & 5 \\ 
+			\hline
+			2011-01-10 & 8.587143 & 30.000000 & 26.705556 & 24.444444 & 7.32 & 88.028571 & 4 \\ 
+			\hline
+			2011-01-17 & 5.338571 & 30.000000 & 26.616667 & 25.000000 & 7.55 & 84.028571 & 2 \\ 
+			\hline
+			2011-01-24 & 5.410000 & 30.555556 & 26.483333 & 20.555556 & 10.67 & 80.971429 & 7 \\ 
+			\hline
+			2011-01-31 & 2.914286 & 28.333333 & 25.283333 & 18.650000 & 11.01 & 74.885714 & 2 \\ 
+			\hline
+		\end{tabular}%
+	}
+	\caption{Snippet of the combined dataset}
+	\label{tab:data_snippet}
+\end{table}
 \section{Exploratory Data Analysis}
 
-From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records with 8 columns:
+From Table \ref{tab:data_schema}, the dataset consists of 720 weekly records with 8 columns:
 \begin{itemize}
 	\item \textbf{Time.} Weekly timestamps (e.g. ``2011-w1'')
 	\item \textbf{Rainfall.} Weekly average rainfall (mm)
@@ -26,21 +40,65 @@ From Figure \ref{fig:data_summary}, the dataset consists of 720 weekly records w
 	\item \textbf{Cases.} Reported dengue cases
 \end{itemize}
 
-\begin{figure}[h!]
+\begin{table}[h!]
 	\centering
-	\includegraphics[width=0.75\textwidth]{data_summary}
-	\caption{Data Contents}
-	\label{fig:data_summary}
-\end{figure}
+	\begin{tabular}{|c|l|c|c|}
+		\hline
+		\textbf{\#} & \textbf{Column} & \textbf{Non-Null Count} & \textbf{Data Type} \\
+		\hline
+		0 & Time & 720 non-null & datetime64[ns] \\
+		\hline
+		1 & Rainfall & 720 non-null & float64 \\
+		\hline
+		2 & MaxTemperature & 720 non-null & float64 \\
+		\hline
+		3 & AverageTemperature & 720 non-null & float64 \\
+		\hline
+		4 & MinTemperature & 720 non-null & float64 \\
+		\hline
+		5 & Wind & 720 non-null & float64 \\
+		\hline
+		6 & Humidity & 720 non-null & float64 \\
+		\hline
+		7 & Cases & 720 non-null & int64 \\
+		\hline
+	\end{tabular}
+	\caption{Data Schema: Column Names, Non-Null Counts, and Data Types}
+	\label{tab:data_schema}
+\end{table}
 
-From the statistics in Figure \ref{fig:data_stats2}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
 
-\begin{figure}[h!]
+From the statistics in Table \ref{tab:summary_statistics}, the number of cases ranges from 0 to 319. The average number of dengue cases per week is 23.74, with a median of 12 cases and a standard deviation of 37.14. The distribution is highly skewed, with some weeks experiencing significant number of cases (up to 319 cases). Rainfall shows a wide variation (0 to 445mm), while temperature remains relatively stable, with an average of 28.1 degree celsius. Humidity levels ranges from 73\% to 89\% with a mean of 81.6\%.
+
+\begin{table}[h!]
 	\centering
-	\includegraphics[width=1\textwidth]{data_stats2}
-	\caption{Summary Statistics for the Aggregated Dataset}
-	\label{fig:data_stats2}
-\end{figure}
+	\resizebox{1\textwidth}{!}{%
+		\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+			\hline
+			\textbf{Statistic} & \textbf{Time} & \textbf{Rainfall} & \textbf{MaxTemperature} & \textbf{AverageTemperature} & \textbf{MinTemperature} & \textbf{Wind} & \textbf{Humidity} & \textbf{Cases} \\
+			\hline
+			\textbf{Count} & 720 & 720.000000 & 720.000000 & 720.000000 & 720.000000 & 720.000000 & 720.000000 & 720.000000 \\
+			\hline
+			\textbf{Mean} & 2017-12-02 11:22:00 & 13.957499 & 32.191142 & 28.110319 & 25.038472 & 6.172417 & 81.609442 & 23.744444 \\
+			\hline
+			\textbf{Min} & 2011-01-03 00:00:00 & 0.000000 & -14.600000 & 24.494444 & 12.222222 & 1.910000 & 73.185714 & 0.000000 \\
+			\hline
+			\textbf{25\%} & 2014-06-21 06:00:00 & 1.270000 & 31.666667 & 27.504167 & 25.000000 & 4.117500 & 79.885713 & 5.000000 \\
+			\hline
+			\textbf{50\% (Median)} & 2017-12-07 12:00:00 & 4.318000 & 32.222222 & 28.161111 & 25.000000 & 5.725000 & 81.771429 & 12.000000 \\
+			\hline
+			\textbf{75\%} & 2021-05-11 18:00:00 & 10.414000 & 32.777778 & 28.751389 & 25.555556 & 7.860000 & 83.503571 & 26.000000 \\
+			\hline
+			\textbf{Max} & 2024-10-28 00:00:00 & 445.008000 & 58.333333 & 30.916667 & 32.222222 & 19.200000 & 89.571429 & 319.000000 \\
+			\hline
+			\textbf{Std Dev} & N/A & 35.448846 & 2.616379 & 0.999800 & 1.291659 & 2.446703 & 2.831674 & 37.144813 \\
+			\hline
+		\end{tabular}%
+	}
+	\caption{Descriptive Statistics of the Combined Dataset}
+	\label{tab:summary_statistics}
+\end{table}
+
 
 Figure \ref{fig:data_trend} illustrates the trend of weekly dengue cases over time. The data reveals periodic spikes in the number of cases, suggesting a seasonal pattern in dengue cases. Notably, peak cases are observed during certain periods approximately 3 years, potentially aligning with specific climatic conditions such as increased rainfall or temperature changes. This underscores the importance of incorporating climate variables into the forecasting model.
 
@@ -51,58 +109,23 @@ Figure \ref{fig:data_trend} illustrates the trend of weekly dengue cases over ti
 	\label{fig:data_trend}
 \end{figure}
 
-Figure \ref{fig:correlation_bar} shows the ranking of correlation coefficients between dengue cases and selected features, including rainfall, humidity, maximum temperature, average temperature, minimum temperature, and wind speed. Among these, rainfall exhibits the highest positive correlation with dengue cases (correlation coefficient ~0.13), indicating that increased rainfall may contribute to higher cases counts. This aligns with existing studies suggesting that stagnant water from heavy rainfall creates breeding grounds for mosquitos. It is followed by humidity (~0.10), suggesting that higher humidity levels may enhance mosquito reproduction, leading to more dengue cases. Temperature has a weak to moderate positive correlation with dengue cases, with maximum temperature (0.09) showing a stronger relationship than average and minimum temperature. 
+Figure \ref{fig:time-series-relationship} shows the subplots of each features against dengue cases to display possible non-linear relationships. Each subplot shows: 
+\begin{itemize}
+	\item Raw values (scatter dots) of a weather feature (blue, left y-axis).
+	\item Smoothed trends (blue line) via a 4-week rolling average.
+	\item Smoothed dengue cases (red dashed line, right y-axis).
+\end{itemize}
 
-\begin{figure}[hbt!]
+The subplots reveal that dengue cases tend to increase following peaks in rainfall, indicating that heavy rainfall may create favorable breeding conditions for mosquitoes. This suggests a nonlinear relationship between rainfall and dengue incidence. Regarding Max Temperature, dengue case peaks appear to correspond with either peaks or troughs in maximum temperature, implying a potential connection between these variables. In contrast, Average Temperature and Min Temperature remain relatively stable over time, showing no clear association with spikes in dengue cases. Similarly, wind speed does not exhibit a noticeable relationship with case fluctuations. Lastly, periods of high dengue incidence coincide with sustained high humidity levels, indicating a stronger potential correlation compared to wind or temperature alone. Based on these observations, rainfall, maximum temperature, and humidity emerge as the most promising features to include in the model training.
+
+\begin{figure}[p]
 	\centering
-	\includegraphics[width=0.75\textwidth]{correlation_bar}
-	\caption{Ranking of Correlations}
-	\label{fig:correlation_bar}
+	\includegraphics[width=0.7\textwidth]{time-series-relationship-features}
+	\caption{Feature-Cases Vs Time}
+	\label{fig:time-series-relationship}
 \end{figure}
 
-Figure \ref{fig:pre_transform_distribution} shows the distributions of each feature while Figure \ref{fig:scatterplots_features} shows scatterplots of each feature against the number of cases. The distributions of Rainfall, Max Temperature, Min Temperature, and Wind appear skewed, which is common for many real-world variables. This skewness can distort correlation estimates, as Pearson correlation assume linear relationships and are more reliable when variables follow a symmetric or approximately normal distribution \cite{bobbitt2021pearson}. Applying a log transformation can help normalize these distributions, improve linearity, and thus lead to more meaningful and accurate correlation analysis \cite{htoon2021log}. 
-
-\begin{figure}[hbt!]
-	\centering
-	\includegraphics[width=1\textwidth]{pre_transform_distribution}
-	\caption{Pre-Transform Feature Distributions}
-	\label{fig:pre_transform_distribution}
-\end{figure}
-
-
-\begin{figure}[hbt!]
-	\centering
-	\includegraphics[width=1\textwidth]{scatterplots_features}
-	\caption{Pre-Transform Scatterplots}
-	\label{fig:scatterplots_features}
-\end{figure}
-
-\clearpage 
-
-After applying a log transformation, Figure \ref{fig:post_transform_distribution} shows the new distributions for the previously skewed distributions, while Figure \ref{fig:new_scatterplots} shows the new scatterplots of each feature against the number of cases. Now, all distributions exhibit a somewhat normal distribution which is ideal for computing linear computations such as Pearson's correlation.
-
-\begin{figure}[hbt!]
-	\centering
-	\includegraphics[width=1\textwidth]{post_transform_distribution}
-	\caption{Post-Transform Feature Distributions}
-	\label{fig:post_transform_distribution}
-\end{figure}
-
-\begin{figure}[hbt!]
-	\centering
-	\includegraphics[width=1\textwidth]{new_scatterplots}
-	\caption{Transformed Distributions: Scatterplots}
-	\label{fig:new_scatterplots}
-\end{figure}
-
-Figure \ref{fig:transformed_correlation_bar} presents the recomputed correlation coefficients between dengue cases and the log-transformed weather features. Rainfall shows the strongest correlation at 0.16, followed by Max Temperature at 0.12, and Humidity at 0.10. While other features are included, their correlation values are very small. Although the individual correlations are weak, they provide valuable signals that, when combined in a multivariate model, may contribute meaningfully to predictive performance., As a result, Rainfall, Max Temperature, and Humidity are selected as the key features for model training.
-
-\begin{figure}[hbt!]
-	\centering
-	\includegraphics[width=0.75\textwidth]{transformed_correlation_bar}
-	\caption{Ranking of Correlations with New Distributions}
-	\label{fig:transformed_correlation_bar}
-\end{figure}
+\clearpage
 
 \section{Model Training Results}
 

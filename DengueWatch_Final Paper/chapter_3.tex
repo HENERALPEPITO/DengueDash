@@ -59,22 +59,28 @@ The dataset was split into training and test sets to evaluate the model’s perf
 	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
 \end{itemize}
 
-To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting. To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
+To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting. To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. Table \ref{tab:search_space} summarizes the search space below:
 
-\textbf{LSTM units:}
-\begin{itemize}
-	\item  min value: 32 
-	\item	max value: 128
-	\item	step: 16
-	\item	sampling: linear
-\end{itemize}
-\textbf{Learning Rate:}
-\begin{itemize}
-	\item  min value: 0.0001 
-	\item	max value: 0.01
-	\item	step: None
-	\item	sampling: log
-\end{itemize}
+\begin{table}[h!]
+	\centering
+	\resizebox{0.5\textwidth}{!}{%
+		\begin{tabular}{|l|c|c|}
+			\hline
+			\textbf{Search Space} & \textbf{LSTM Units} & \textbf{Learning Rate} \\ 
+			\hline
+			\textbf{Min Value}   & 32 & 0.0001 \\
+			\hline
+			\textbf{Max Value}  & 128  & 0.01  \\
+			\hline
+			\textbf{Step}   & 16  & None  \\
+			\hline
+			\textbf{Sampling}   & Linear  & Log  \\ 
+			\hline
+		\end{tabular}%
+	}
+	\caption{Hyperparameter Tuning: Search Space}
+	\label{tab:search_space}
+\end{table}
 
 
 
@@ -115,14 +121,28 @@ The SARIMA modeling process began with data preprocessing, which included handli
 The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
 \subsubsection{Model Simulation:}
-After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025. Figure \ref{fig:lstm_model_testing_snippet} shows a code snippet of the model training.
+After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025. Listing \ref{lst:modeltraining} shows a code snippet of the model training.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{lstm_model_testing_snippet}
-	\caption{Code Snippet for Model Training}
-	\label{fig:lstm_model_testing_snippet}
-\end{figure}
+\begin{lstlisting}[language=Python, 
+	basicstyle=\ttfamily\small, 
+	keywordstyle=\color{blue}, 
+	caption={Code Snippet for Model Training}, 
+	label={lst:modeltraining}]
+	# Fit on train set
+	history = model.fit(
+	X_train, y_train,
+	epochs=100,
+	batch_size=1,
+	validation_split=0.2,
+	callbacks=[early_stop],
+	verbose=1
+	)
+	
+	# Predict on 2025
+	y_pred_test = model.predict(X_test, verbose=0)
+\end{lstlisting}
+
+
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 
