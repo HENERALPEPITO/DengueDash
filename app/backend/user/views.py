@@ -238,9 +238,11 @@ class DeleteUserView(APIView):
             )
 
             for token in outstanding_tokens:
-                BlacklistedToken.objects.create(
-                    token=token,
-                )
+                # Check if token is already blacklisted
+                if not BlacklistedToken.objects.filter(token=token).exists():
+                    BlacklistedToken.objects.create(
+                        token=token,
+                    )
 
         except Exception as e:
             return JsonResponse(
