@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from user.models import BlacklistedUsers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework.validators import UniqueValidator
 
 User = get_user_model()
 
@@ -112,6 +113,17 @@ class BlacklistedUsersSerializer(serializers.ModelSerializer):
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
+
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.all_objects.all(),
+                message="A user with this email address already exists.",
+            )
+        ],
+    )
+
     password = serializers.CharField(write_only=True, required=True)
     password_confirm = serializers.CharField(write_only=True, required=True)
     is_verified = serializers.BooleanField(required=False)
@@ -164,15 +176,10 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         validated_data["is_verified"] = False
         validated_data["is_admin"] = False
 
-        # todo: delete this
-        # request = self.context.get("request")
-        # if request and request.user.is_authenticated and request.user.is_admin:
-        #     validated_data.setdefault("is_verified", True)
-        # else:
-        #     validated_data["is_verified"] = False
-        #     validated_data["is_admin"] = False
-
-        return User.objects.create_user(password=password, **validated_data)
+        return User.objects.create_user(
+            password=password,
+            **validated_data,
+        )
 
 
 class VerifyUserSerializer(serializers.ModelSerializer):
