@@ -50,7 +50,7 @@ urlpatterns = [
         name="user-verify",
     ),
     path(
-        "unban/<int:user_id>/",
+        "unban/<int:blacklist_id>/",
         UnbanUserView.as_view(),
         name="user-unban",
     ),

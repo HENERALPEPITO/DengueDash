@@ -7,6 +7,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
     OutstandingToken,
     BlacklistedToken,
 )
+from django.db import transaction
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
@@ -21,6 +22,7 @@ from user.serializers import (
 )
 from auth.permission import IsUserAdmin
 from user.models import BlacklistedUsers
+from case.models import Case
 
 User = get_user_model()
 
@@ -161,7 +163,12 @@ class RegisterUserView(APIView):
                 }
             )
 
-        return JsonResponse({"success": False, "message": serializer.errors})
+        return JsonResponse(
+            {
+                "success": False,
+                "message": serializer.errors,
+            }
+        )
 
 
 class VerifiyUserView(APIView):
@@ -228,31 +235,41 @@ class ToggleUserRoleView(APIView):
         )
 
 
-class DeleteUserView(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+class SoftDeleteRecordsUnderInterviewerView(APIView):
 
-    def revoke_tokens(self, user):
+    def soft_delete_related_records(self, user):
+        """Soft delete all records related to this user"""
         try:
-            outstanding_tokens = OutstandingToken.objects.filter(
-                user=user,
-            )
-
-            for token in outstanding_tokens:
-                # Check if token is already blacklisted
-                if not BlacklistedToken.objects.filter(token=token).exists():
-                    BlacklistedToken.objects.create(
-                        token=token,
-                    )
+            cases = Case.objects.filter(interviewer=user)
+            for case in cases:
+                case.soft_delete()
 
         except Exception as e:
             return JsonResponse(
                 {
                     "success": False,
-                    "message": f"An error occurred while revoking tokens: {str(e)}",
-                },
+                    "message": f"An error occurred while soft deleting related records: {str(e)}",
+                }
             )
-
         return None
+
+    def revoke_tokens(self, user):
+        try:
+            outstanding_tokens = OutstandingToken.objects.filter(user=user)
+            for token in outstanding_tokens:
+                BlacklistedToken.objects.get_or_create(token=token)
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred while revoking tokens: {str(e)}",
+                }
+            )
+        return None
+
+
+class DeleteUserView(SoftDeleteRecordsUnderInterviewerView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
     def delete(self, request, user_id):
         current_user = request.user
@@ -271,32 +288,44 @@ class DeleteUserView(APIView):
                 {
                     "success": False,
                     "message": "User not found",
-                },
+                }
             )
+
         if user_to_delete.dru_id != current_user.dru.id:
             return JsonResponse(
                 {
                     "success": False,
                     "message": "You are not allowed to perform this action",
-                },
+                }
             )
 
-        # Blacklist the user before deleting
-        revoke_reponse = self.revoke_tokens(user_to_delete)
-        if revoke_reponse:
-            return revoke_reponse
-        BlacklistedUsers.objects.create(
-            email=user_to_delete.email,
-            dru=user_to_delete.dru,
-        )
-        user_to_delete.delete()
+        # Revoke tokens
+        revoke_response = self.revoke_tokens(user_to_delete)
+        if revoke_response:
+            return revoke_response
 
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "User deleted successfully",
-            }
-        )
+        # Soft delete related records first
+        soft_delete_response = self.soft_delete_related_records(user_to_delete)
+
+        with transaction.atomic():
+            if soft_delete_response:
+                return soft_delete_response
+
+            # Blacklist the user before soft deleting
+            BlacklistedUsers.objects.get_or_create(
+                email=user_to_delete.email,
+                dru=current_user.dru,
+            )
+
+            # Soft delete the user instead of hard delete
+            user_to_delete.soft_delete()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message": "User and related records soft deleted successfully",
+                }
+            )
 
 
 class BlacklistedUsersListView(BaseUserListView):
@@ -312,9 +341,38 @@ class BlacklistedUsersListView(BaseUserListView):
 class UnbanUserView(APIView):
     permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
-    def delete(self, request, user_id):
+    def restore_blacklisted_user(self, user_id):
+        try:
+            user = User.all_objects.filter(id=user_id).first()
+            if user:
+                user.restore()
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred while restoring blacklisted user: {str(e)}",
+                }
+            )
+        return None
+
+    def restore_soft_deleted_records(self, user_id):
+        try:
+            cases = Case.all_objects.filter(interviewer=user_id)
+            for case in cases:
+                case.restore()
+
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"An error occurred while restoring related records: {str(e)}",
+                }
+            )
+        return None
+
+    def delete(self, request, blacklist_id):
         current_user = request.user
-        id_to_find = BlacklistedUsers.objects.filter(id=user_id).first()
+        id_to_find = BlacklistedUsers.objects.filter(id=blacklist_id).first()
         if id_to_find is None:
             return JsonResponse(
                 {
@@ -331,6 +389,13 @@ class UnbanUserView(APIView):
             )
 
         id_to_find.delete()
+
+        user = User.all_objects.filter(
+            email=id_to_find.email, dru_id=current_user.dru.id
+        ).first()
+        self.restore_blacklisted_user(user.id)
+        self.restore_soft_deleted_records(user.id)
+
         return JsonResponse(
             {
                 "success": True,

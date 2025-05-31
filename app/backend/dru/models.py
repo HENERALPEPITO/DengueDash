@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import BaseModel
+from auth.models import SoftDeleteMixin
 
 
 class DRUType(models.Model):
@@ -12,7 +13,10 @@ class DRUType(models.Model):
         return self.dru_classification
 
 
-class DRU(BaseModel):
+class DRU(
+    BaseModel,
+    SoftDeleteMixin,
+):
 
     region = models.CharField(
         max_length=50,

@@ -1,10 +1,11 @@
 from django.db import models
 from datetime import datetime
 from user.models import User
+from auth.models import SoftDeleteMixin
 from core.models import BaseModel
 
 
-class Patient(models.Model):
+class Patient(SoftDeleteMixin):
     last_name = models.CharField(
         max_length=50,
         blank=False,
@@ -29,16 +30,15 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
-    sex_choices = [
-        ("M", "Male"),
-        ("F", "Female"),
-    ]
+
+    sex_choices = [("M", "Male"), ("F", "Female")]
     sex = models.CharField(
         max_length=1,
         choices=sex_choices,
         blank=False,
         null=False,
     )
+
     addr_house_no = models.IntegerField(
         blank=True,
         null=True,
@@ -68,6 +68,7 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
+
     civil_status_choices = [
         ("S", "Single"),
         ("M", "Married"),
@@ -80,6 +81,7 @@ class Patient(models.Model):
         blank=False,
         null=False,
     )
+
     date_first_vax = models.DateField(
         blank=False,
         null=True,
@@ -93,7 +95,7 @@ class Patient(models.Model):
         return f"{self.first_name} {self.middle_name} {self.last_name}".strip()
 
 
-class Case(BaseModel):
+class Case(BaseModel, SoftDeleteMixin):
     case_id = models.BigIntegerField(
         primary_key=True,
         editable=False,
@@ -110,6 +112,7 @@ class Case(BaseModel):
         blank=False,
         null=False,
     )
+
     clinical_class_choices = [
         ("N", "No warning signs"),
         ("W", "With warning signs"),
@@ -121,12 +124,14 @@ class Case(BaseModel):
         blank=False,
         null=False,
     )
+
     lab_result_choices = [
         ("P", "Positive"),
         ("N", "Negative"),
         ("E", "Equivocal"),
         ("PR", "Pending Result"),
     ]
+
     ns1_result = models.CharField(
         max_length=100,
         choices=lab_result_choices,
@@ -171,6 +176,7 @@ class Case(BaseModel):
         null=True,
         default=None,
     )
+
     case_class_choices = [
         ("S", "Suspected"),
         ("P", "Probable"),
@@ -182,10 +188,8 @@ class Case(BaseModel):
         blank=False,
         null=False,
     )
-    outcome_choices = [
-        ("A", "Alive"),
-        ("D", "Dead"),
-    ]
+
+    outcome_choices = [("A", "Alive"), ("D", "Dead")]
     outcome = models.CharField(
         max_length=1,
         choices=outcome_choices,
@@ -197,13 +201,15 @@ class Case(BaseModel):
         null=True,
         default=None,
     )
+
     interviewer = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        blank=False,
+        blank=True,
         null=True,
         related_name="user",
     )
+
     patient = models.ForeignKey(
         Patient,
         on_delete=models.CASCADE,
@@ -213,13 +219,12 @@ class Case(BaseModel):
     )
 
     def save(self, *args, **kwargs):
-        # Only generate a new case_id if this is a new record (not an update)
         if not self.pk:
             current_year = datetime.now().year % 100
             prefix = current_year * 1000000
 
             if last_record := (
-                Case.objects.filter(case_id__startswith=str(current_year))
+                Case.all_objects.filter(case_id__startswith=str(current_year))
                 .order_by("case_id")
                 .last()
             ):
@@ -231,4 +236,4 @@ class Case(BaseModel):
         super(Case, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.case_id
+        return str(self.case_id)
