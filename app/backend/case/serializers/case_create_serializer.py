@@ -351,7 +351,7 @@ class CaseSerializer(BasePatientCaseSerializer):
 
         # Check if a case with the same patient and date_onset already exists
         date_con = validated_data["date_con"]
-        if Case.objects.filter(
+        if Case.all_objects.filter(
             patient=patient,
             date_con=date_con,
         ).exists():
@@ -360,7 +360,7 @@ class CaseSerializer(BasePatientCaseSerializer):
             )
 
         # Check if a case with the same patient that is already dead
-        if Case.objects.filter(
+        if Case.all_objects.filter(
             patient=patient,
             outcome="D",
         ).exists():
