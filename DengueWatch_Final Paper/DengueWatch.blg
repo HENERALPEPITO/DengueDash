@@ -1,95 +1,80 @@
-This is BibTeX, Version 0.99d
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: DengueWatch.aux
-Reallocating 'name_of_file' (item size: 1) to 8 items.
 The style file: apacite.bst
-Reallocating 'name_of_file' (item size: 1) to 15 items.
 A level-1 auxiliary file: title_page.aux
-Reallocating 'name_of_file' (item size: 1) to 13 items.
 A level-1 auxiliary file: approval.aux
-Reallocating 'name_of_file' (item size: 1) to 16 items.
 A level-1 auxiliary file: declaration.aux
-Reallocating 'name_of_file' (item size: 1) to 15 items.
 A level-1 auxiliary file: dedication.aux
-Reallocating 'name_of_file' (item size: 1) to 19 items.
 A level-1 auxiliary file: acknowledgment.aux
-Reallocating 'name_of_file' (item size: 1) to 13 items.
 A level-1 auxiliary file: abstract.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_1.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_2.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_3.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_4.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_5.aux
-Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: chapter_6.aux
 Illegal, another \bibstyle command---line 2 of file chapter_6.aux
  : \bibstyle
  :          {apacite}
 I'm skipping whatever remains of this command
-Reallocating 'name_of_file' (item size: 1) to 13 items.
-Reallocating 'name_of_file' (item size: 1) to 15 items.
 A level-1 auxiliary file: appendix_A.aux
-Reallocating 'glb_str_end' (item size: 4) to 20 items.
-Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
-Reallocating 'global_strs' (item size: 1) to 4000000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'wiz_functions' (item size: 4) to 6000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
-Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: myreferences.bib
 Warning--entry type for "bosano2023who" isn't style-file defined
---line 19 of file myreferences.bib
+--line 10 of file myreferences.bib
 Warning--entry type for "lena2024" isn't style-file defined
---line 35 of file myreferences.bib
+--line 18 of file myreferences.bib
 Warning--entry type for "rabdash" isn't style-file defined
---line 67 of file myreferences.bib
+--line 34 of file myreferences.bib
 apacite.bst [2013/07/21 v6.03 APA bibliography style]
-You've used 31 entries,
+You've used 29 entries,
             6951 wiz_defined-function locations,
-            1446 strings with 16289 characters,
-and the built_in function-call counts, 56123 in all, are:
-= -- 6986
-> -- 417
-< -- 2629
-+ -- 2698
-- -- 62
-* -- 3465
-:= -- 9917
-add.period$ -- 121
-call.type$ -- 31
-change.case$ -- 415
+            1433 strings with 15946 characters,
+and the built_in function-call counts, 52717 in all, are:
+= -- 6570
+> -- 397
+< -- 2450
++ -- 2538
+- -- 58
+* -- 3251
+:= -- 9253
+add.period$ -- 112
+call.type$ -- 29
+change.case$ -- 375
 chr.to.int$ -- 0
-cite$ -- 62
-duplicate$ -- 1481
-empty$ -- 2391
-format.name$ -- 718
-if$ -- 10885
+cite$ -- 58
+duplicate$ -- 1409
+empty$ -- 2251
+format.name$ -- 690
+if$ -- 10237
 int.to.chr$ -- 0
-int.to.str$ -- 93
+int.to.str$ -- 87
 missing$ -- 0
-newline$ -- 723
-num.names$ -- 200
-pop$ -- 1439
+newline$ -- 675
+num.names$ -- 184
+pop$ -- 1300
 preamble$ -- 1
-purify$ -- 119
+purify$ -- 105
 quote$ -- 0
-skip$ -- 3454
+skip$ -- 3312
 stack$ -- 0
-substring$ -- 2913
-swap$ -- 775
-text.length$ -- 75
+substring$ -- 2741
+swap$ -- 744
+text.length$ -- 65
 text.prefix$ -- 0
 top$ -- 1
-type$ -- 2904
+type$ -- 2744
 warning$ -- 0
-while$ -- 253
+while$ -- 237
 width$ -- 0
-write$ -- 895
+write$ -- 843
 (There was 1 error message)
