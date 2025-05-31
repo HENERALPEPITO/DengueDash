@@ -8,7 +8,7 @@ Figure \ref{fig:data_summarized_snippet} summarizes the workflow for forecasting
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.75\textwidth]{Model Diagram}
+	\includegraphics[width=1\textwidth]{Model Diagram}
 	\caption{Workflow for forecasting the number of weekly dengue cases}
 	\label{fig:data_summarized_snippet}
 \end{figure}
@@ -47,8 +47,20 @@ and the target variable (dengue cases).
 \subsubsection{Exploratory Data Analysis (EDA)}
 Trends, seasonality, and correlations between reported dengue cases and weather factors were thoroughly analyzed to identify potential relationships in the dataset. To support and illustrate these findings, a series of visualizations, including time-series plots and scatterplots, were developed, to highlight key patterns and relationships within the dataset. 
 
+\subsubsection{Outbreak Detection}
+To detect outbreaks, we computed the outbreak threshold value of dengue cases using the formula, 
+
+\begin{equation}
+	\text{Outbreak Threshold Value} = \mu + 2\sigma
+\end{equation}
+
+where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
+
+It is important to take note that definitions of dengue outbreaks differ significantly across regions and time. This computation is subject to changes depending on how the surveillance units detect outbreaks themselves.
+
 \subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
 The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, wind, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
+
 \subsubsection{Data Preprocessing}
 The raw dataset included weekly aggregated weather variables (rainfall, temperature, wind, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
 
@@ -59,31 +71,36 @@ The dataset was split into training and test sets to evaluate the model’s perf
 	\item \textbf{Test Set:} The remaining 20\% of the data (148 sequences) was reserved for testing
 \end{itemize}
 
-To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting. To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. The search space is summarized below:
+To prepare the data for LSTM, a sliding window approach was utilized. Sequences of weeks of normalized features were constructed as input, while the dengue case count for the subsequent week was set as the target variable. This approach ensured that the model leveraged temporal dependencies in the data for forecasting. To enhance the performance of the LSTM model in predicting dengue cases, Bayesian Optimization was employed using the Keras Tuner library. The tuning process aimed to minimize the validation loss (mean squared error) by adjusting key model hyper-parameters. Table \ref{tab:search_space} summarizes the search space below:
 
-\textbf{LSTM units:}
-\begin{itemize}
-	\item  min value: 32 
-	\item	max value: 128
-	\item	step: 16
-	\item	sampling: linear
-\end{itemize}
-\textbf{Learning Rate:}
-\begin{itemize}
-	\item  min value: 0.0001 
-	\item	max value: 0.01
-	\item	step: None
-	\item	sampling: log
-\end{itemize}
-
-
-
-The tuner was instanstiated with:
-\begin{itemize}
-	\item \textbf{max trials = 10:} Limiting the search to 10 different configurations
-	\item \textbf{executions per trial = 3:} Running each configuration thrice to reduce variance
-	\item \textbf{validation split = 0.2:} Reserving 20\% of the training data for validation
-\end{itemize}
+\begin{table}[h!]
+	\centering
+	\resizebox{0.6\textwidth}{!}{%
+		\begin{tabular}{|l|c|c|}
+			\hline
+			\textbf{Search Space} & \textbf{LSTM Units} & \textbf{Learning Rate} \\ 
+			\hline
+			\textbf{Min Value}   & 32 & 0.0001 \\
+			\hline
+			\textbf{Max Value}  & 128  & 0.01  \\
+			\hline
+			\textbf{Step}   & 16  & None  \\
+			\hline
+			\textbf{Sampling}   & Linear  & Log  \\ 
+			\hline
+			\multicolumn{3}{|c|}{\textbf{Tuner Configuration}} \\
+			\hline
+			\textbf{Max Trials} & \multicolumn{2}{c|}{10} \\
+			\hline
+			\textbf{Executions per Trial} & \multicolumn{2}{c|}{3} \\
+			\hline
+			\textbf{Validation Split} & \multicolumn{2}{c|}{0.2} \\
+			\hline
+		\end{tabular}%
+	}
+	\caption{Hyperparameter Tuning: Search Space and Tuner Configuration}
+	\label{tab:search_space}
+\end{table}
 
 The hyperparameter tuning was conducted for three different window sizes of data: 5, 10, and 20. This allows the model to have the optimal hyperparameters used for each window size. Training was conducted over 100 epochs with early stopping to prevent overfitting while maintaining computational efficiency. A batch size of 1 was used, enabling the model to process individual sequences, which is suitable for smaller datasets but results in longer training times. The Adam optimizer, known for its adaptive learning capabilities and stability was employed.
 
@@ -115,14 +132,28 @@ The SARIMA modeling process began with data preprocessing, which included handli
 The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
 \subsubsection{Model Simulation:}
-After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025. Figure \ref{fig:lstm_model_testing_snippet} shows a code snippet of the model training.
+After identifying the best-performing model among all the trained deep learning models, a simulation was conducted. Using the same parameters from the initial training, the selected model was retrained with the original dataset along with new data up to January 2025. The retrained model was then used to forecast dengue cases for the period from February 2025 to May 2025. Listing \ref{lst:modeltraining} shows a code snippet of the model training.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{lstm_model_testing_snippet}
-	\caption{Code Snippet for Model Training}
-	\label{fig:lstm_model_testing_snippet}
-\end{figure}
+\begin{lstlisting}[language=Python, 
+	basicstyle=\ttfamily\small, 
+	keywordstyle=\color{blue}, 
+	caption={Code Snippet for Model Training}, 
+	label={lst:modeltraining}]
+	# Fit on train set
+	history = model.fit(
+	X_train, y_train,
+	epochs=100,
+	batch_size=1,
+	validation_split=0.2,
+	callbacks=[early_stop],
+	verbose=1
+	)
+	
+	# Predict on 2025
+	y_pred_test = model.predict(X_test, verbose=0)
+\end{lstlisting}
+
+
 
 \subsection{Integrate the Predictive Model into a Web-Based Data Analytics Dashboard}
 
