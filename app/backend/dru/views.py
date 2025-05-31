@@ -260,14 +260,6 @@ class DeleteDRUView(APIView):
     def delete(self, request, dru_id):
         current_user = request.user
 
-        # if not current_user.is_admin:
-        #     return JsonResponse(
-        #         {
-        #             "success": False,
-        #             "message": "You are not authorized to perform this action",
-        #         },
-        #     )
-
         is_superuser = current_user.is_superuser
         dru_to_delete = DRU.objects.filter(id=dru_id).first()
 
