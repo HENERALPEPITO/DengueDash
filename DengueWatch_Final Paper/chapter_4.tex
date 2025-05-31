@@ -109,26 +109,31 @@ Figure \ref{fig:data_trend} illustrates the trend of weekly dengue cases over ti
 	\label{fig:data_trend}
 \end{figure}
 
-Figure \ref{fig:time-series-relationship} shows the subplots of each features against dengue cases to display possible non-linear relationships. Each subplot shows: 
-\begin{itemize}
-	\item Raw values (scatter dots) of a weather feature (blue, left y-axis).
-	\item Smoothed trends (blue line) via a 4-week rolling average.
-	\item Smoothed dengue cases (red dashed line, right y-axis).
-\end{itemize}
+Figure \ref{fig:rainfallVScases} presents a time series subplot that combines rainfall and dengue cases to highlight potential non-linear associations between the two variables. In this figure, raw rainfall data is represented by blue scatter points (aligned with the left y-axis), while a blue solid line traces its 4-week rolling average to reveal underlying trends. Simultaneously, the red dashed line illustrates the smoothed trajectory of dengue cases (aligned with the right y-axis), also using a 4-week rolling average to reduce short-term fluctuations and emphasize longer-term patterns.
 
-The subplots reveal that dengue cases tend to increase following peaks in rainfall, indicating that heavy rainfall may create favorable breeding conditions for mosquitoes. This suggests a nonlinear relationship between rainfall and dengue incidence. Regarding Max Temperature, dengue case peaks appear to correspond with either peaks or troughs in maximum temperature, implying a potential connection between these variables. In contrast, Average Temperature and Min Temperature remain relatively stable over time, showing no clear association with spikes in dengue cases. Similarly, wind speed does not exhibit a noticeable relationship with case fluctuations. Lastly, periods of high dengue incidence coincide with sustained high humidity levels, indicating a stronger potential correlation compared to wind or temperature alone. Based on these observations, rainfall, maximum temperature, and humidity emerge as the most promising features to include in the model training.
+Notably, the plot suggests a recurring pattern. Periods of increased rainfall often precede or coincide with spikes in dengue cases. This observed relationship supports existing literature which proposes that higher rainfall contributes to the proliferation of mosquito breeding sites, particularly in stagnant water, thereby elevating the risk of dengue transmission.
 
-\begin{figure}[p]
+\begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.7\textwidth]{time-series-relationship-features}
-	\caption{Feature-Cases Vs Time}
-	\label{fig:time-series-relationship}
+	\includegraphics[width=0.7\textwidth]{rainfallVScases}
+	\caption{Rainfall and Dengue Cases Over Time}
+	\label{fig:rainfallVScases}
+\end{figure}
+
+The KDE plots in Figure \ref{fig:KDE} illustrate the distributions of meteorological variables during outbreak and normal dengue weeks. The x-axes represent the actual values of each feature, while the y-axes show density, indicating how frequently values occur within each category. The graphs reveal that outbreak weeks tend to have moderately higher rainfall than weeks with no outbreak. This is evident in the way the curve for outbreak weeks is positioned slightly to the right of the curve for normal weeks. In terms of temperature, the distributions for both normal and outbreak weeks appear very similar; however, upon closer inspection, the curve for maximum temperature shows a slightly higher density at higher values during outbreak weeks. The same is true for humidity, with outbreak weeks showing greater density at higher humidity levels. These patterns suggest that dengue outbreaks are more likely to occur during warm, humid periods with relatively high rainfall. Based on these observations, rainfall, maximum temperature, and humidity were selected as the meteorological features for training the predictive models.
+
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\textwidth]{KDE}
+	\caption{Kernel Density Estimate Plots of Meteorological Features}
+	\label{fig:KDE}
 \end{figure}
 
 \clearpage
 
-\section{Outbreak Detection}  Add commentMore actions
-To identify outbreaks, we calculated the outbreak threshold value using the historical mean as the endemic channel. The threshold is determined using the formula:  
+\section{Outbreak Detection}
+To identify outbreaks, the researchers calculated the outbreak threshold value using the historical mean as the endemic channel. The threshold is determined using the formula:  
 
 \begin{align}  
 	\text{Outbreak Threshold Value} &= \mu + 2\sigma \\  
