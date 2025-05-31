@@ -253,10 +253,6 @@ class SoftDeleteRecordsUnderInterviewerView(APIView):
             )
         return None
 
-
-class DeleteUserView(SoftDeleteRecordsUnderInterviewerView):
-    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
-
     def revoke_tokens(self, user):
         try:
             outstanding_tokens = OutstandingToken.objects.filter(user=user)
@@ -270,6 +266,10 @@ class DeleteUserView(SoftDeleteRecordsUnderInterviewerView):
                 }
             )
         return None
+
+
+class DeleteUserView(SoftDeleteRecordsUnderInterviewerView):
+    permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
     def delete(self, request, user_id):
         current_user = request.user
