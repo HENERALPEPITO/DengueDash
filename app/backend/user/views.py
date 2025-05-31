@@ -7,6 +7,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
     OutstandingToken,
     BlacklistedToken,
 )
+from django.db import transaction
 from rest_framework import status
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
@@ -298,23 +299,25 @@ class DeleteUserView(APIView):
 
         # Soft delete related records first
         soft_delete_response = self.soft_delete_related_records(user_to_delete)
-        if soft_delete_response:
-            return soft_delete_response
 
-        # Blacklist the user before soft deleting
-        BlacklistedUsers.objects.get_or_create(
-            email=user_to_delete.email, defaults={"dru": user_to_delete.dru}
-        )
+        with transaction.atomic():
+            if soft_delete_response:
+                return soft_delete_response
 
-        # Soft delete the user instead of hard delete
-        user_to_delete.soft_delete()
+            # Blacklist the user before soft deleting
+            BlacklistedUsers.objects.get_or_create(
+                email=user_to_delete.email, defaults={"dru": user_to_delete.dru}
+            )
 
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "User and related records soft deleted successfully",
-            }
-        )
+            # Soft delete the user instead of hard delete
+            user_to_delete.soft_delete()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message": "User and related records soft deleted successfully",
+                }
+            )
 
 
 class BlacklistedUsersListView(BaseUserListView):
