@@ -121,13 +121,18 @@ class User(
         ("F", "Female"),
         ("N/A", "Not Applicable"),
     ]
-    sex = models.CharField(max_length=3, choices=sex_choices, blank=False, null=False)
+    sex = models.CharField(
+        max_length=3,
+        choices=sex_choices,
+        blank=False,
+        null=False,
+    )
 
     dru = models.ForeignKey(
         DRU,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=False,
-        null=False,
+        null=True,
         related_name="user",
     )
 
