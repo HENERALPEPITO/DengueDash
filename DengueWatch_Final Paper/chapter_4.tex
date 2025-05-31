@@ -127,9 +127,30 @@ The subplots reveal that dengue cases tend to increase following peaks in rainfa
 
 \clearpage
 
+\section{Outbreak Detection}  Add commentMore actions
+To identify outbreaks, we calculated the outbreak threshold value using the historical mean as the endemic channel. The threshold is determined using the formula:  
+
+\begin{align}  
+	\text{Outbreak Threshold Value} &= \mu + 2\sigma \\  
+	&= 23.744444 + 2(37.144813) \\  
+	&= 23.744444 + 74.289626 \\  
+	&= 98.03407  
+\end{align}  
+
+where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
+
+This result indicates that dengue cases exceeding 98 in Iloilo City can be considered an outbreak. However, it is important to note that this threshold serves only as a baseline. 
+
 \section{Model Training Results}
 
-The models were evaluated using three metrics: MSE, RMSE, and MAE. The table below provides a summary and comparative analysis of each model’s results across these metrics, offering insights into the strengths and limitations of each forecasting technique for dengue case prediction in Iloilo City. The lower values of the three metrics indicate better forecasting performance. Table \ref{tab:comparison_of_models} shows that the models performed differently on testing data. LSTM outperformed the other models with the lowest RMSE, MSE, and MAE while the other three models had relatively higher values for the three metrics.
+The models were evaluated using three commonly used regression metrics: Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE). These metrics help assess how accurately each model forecasts dengue cases based on historical data. Table \ref{tab:comparison_of_models} presents a comparative analysis of the models using these metrics.
+\begin{itemize}
+	\item \textbf{MSE} represents the average of the squared differences between predicted and actual values. It penalizes larger errors more heavily.
+	\item \textbf{RMSE}, the square root of MSE, provides a more interpretable value in the same units as the target (i.e., number of dengue cases).
+	\item \textbf{MAE} calculates the average magnitude of the errors without considering their direction, giving a more straightforward understanding of the average prediction error.
+\end{itemize}
+
+In simpler terms, lower values in these metrics indicate that the model is making more accurate predictions.
 
 \begin{table}[h!]
 	\centering
@@ -157,8 +178,13 @@ The models were evaluated using three metrics: MSE, RMSE, and MAE. The table bel
 	\label{tab:comparison_of_models}
 \end{table}
 
+As shown in Table \ref{tab:comparison_of_models}, the LSTM model consistently achieved the lowest MSE (406.03), RMSE (20.15), and MAE (12.61) among all evaluated models. This suggests that, on average, the LSTM’s predictions were about 12 to 20 cases away from the actual values, which is a strong indication of reliability for practical use in public health decision-making.
 
+In contrast, traditional time series models like Seasonal ARIMA and ARIMA showed higher errors, indicating less accurate predictions. For example, the Seasonal ARIMA model had an RMSE of 34.45, which implies that its forecasts deviated from actual dengue case counts by around 34 cases on average, a significant discrepancy for health officials planning resource allocation.
 
+The Kalman Filter and hybrid KF-LSTM models showed moderate performance. Although they did not outperform LSTM, the hybrid model (KF-LSTM) still reduced errors compared to the standalone Kalman Filter.
+
+These results highlight the potential of LSTM-based models to provide timely and accurate forecasts that can support early intervention, resource planning, and policy formulation to combat dengue outbreaks in Iloilo City.
 
 \subsection{LSTM Model}
 The LSTM model was tuned for the following parameters: learning rate and units. The hyperparameter tuning was conducted for each window size, finding the best parameters for each window size. Further evaluating which window size is most suitable for the prediction model, Table \ref{tab:comparison_of_lstm} shows the evaluation metrics for each window size used in the LSTM model training.
@@ -307,6 +333,8 @@ To evaluate the LSTM model's real-world forecasting ability, a simulation was co
 	\caption{Predicted vs Actual Dengue Cases 2025}
 	\label{fig:modeltesting}
 \end{figure}
+
+Retraining the model is essential to ensure it remains accurate and responsive to the evolving trends of dengue case patterns over time. Ideally, the model should be updated whenever new data becomes available to capture recent dynamics. However, given the computational cost associated with retraining, a more practical approach is to update the model on a monthly basis. This allows the incorporation of approximately four weeks’ worth of new data, providing a meaningful update to the model’s predictive capabilities without excessive resource consumption. Furthermore, this schedule aligns with the typical data release cycle of provincial health offices, which, based on the researchers’ experience, usually occurs monthly. This balance between accuracy and efficiency ensures that the model remains both up-to-date and manageable in real-world deployment.
 
 \section{System Prototype}
 \subsection{Home Page}

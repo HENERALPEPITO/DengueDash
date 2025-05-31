@@ -8,7 +8,7 @@ Figure \ref{fig:data_summarized_snippet} summarizes the workflow for forecasting
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.75\textwidth]{Model Diagram}
+	\includegraphics[width=1\textwidth]{Model Diagram}
 	\caption{Workflow for forecasting the number of weekly dengue cases}
 	\label{fig:data_summarized_snippet}
 \end{figure}
@@ -47,8 +47,20 @@ and the target variable (dengue cases).
 \subsubsection{Exploratory Data Analysis (EDA)}
 Trends, seasonality, and correlations between reported dengue cases and weather factors were thoroughly analyzed to identify potential relationships in the dataset. To support and illustrate these findings, a series of visualizations, including time-series plots and scatterplots, were developed, to highlight key patterns and relationships within the dataset. 
 
+\subsubsection{Outbreak Detection}
+To detect outbreaks, we computed the outbreak threshold value of dengue cases using the formula, 
+
+\begin{equation}
+	\text{Outbreak Threshold Value} = \mu + 2\sigma
+\end{equation}
+
+where \(\mu\) is the historical mean and \(\sigma \) is the standard deviation.
+
+It is important to take note that definitions of dengue outbreaks differ significantly across regions and time. This computation is subject to changes depending on how the surveillance units detect outbreaks themselves.
+
 \subsection{Develop and Evaluate Deep Learning Models for Dengue Case Forecasting}
 The deep learning models were developed and trained to forecast weekly dengue cases using historical weather data (rainfall, temperature, wind, and humidity) and dengue case counts. The dataset was normalized and divided into training and testing sets, ensuring temporal continuity to avoid data leakage. The methodology for preparing and training the model are outlined below.
+
 \subsubsection{Data Preprocessing}
 The raw dataset included weekly aggregated weather variables (rainfall, temperature, wind, humidity) and dengue case counts. The "Time" column was converted to a datetime format to ensure proper temporal indexing. To standardize the data for training, MinMaxScaler was employed, normalizing the feature values and target variable to a range of 0 to 1. This step ensured that the models could efficiently process the data without being biased by feature scaling differences.
 
@@ -63,7 +75,7 @@ To prepare the data for LSTM, a sliding window approach was utilized. Sequences 
 
 \begin{table}[h!]
 	\centering
-	\resizebox{0.5\textwidth}{!}{%
+	\resizebox{0.6\textwidth}{!}{%
 		\begin{tabular}{|l|c|c|}
 			\hline
 			\textbf{Search Space} & \textbf{LSTM Units} & \textbf{Learning Rate} \\ 
@@ -76,20 +88,19 @@ To prepare the data for LSTM, a sliding window approach was utilized. Sequences 
 			\hline
 			\textbf{Sampling}   & Linear  & Log  \\ 
 			\hline
+			\multicolumn{3}{|c|}{\textbf{Tuner Configuration}} \\
+			\hline
+			\textbf{Max Trials} & \multicolumn{2}{c|}{10} \\
+			\hline
+			\textbf{Executions per Trial} & \multicolumn{2}{c|}{3} \\
+			\hline
+			\textbf{Validation Split} & \multicolumn{2}{c|}{0.2} \\
+			\hline
 		\end{tabular}%
 	}
-	\caption{Hyperparameter Tuning: Search Space}
+	\caption{Hyperparameter Tuning: Search Space and Tuner Configuration}
 	\label{tab:search_space}
 \end{table}
-
-
-
-The tuner was instanstiated with:
-\begin{itemize}
-	\item \textbf{max trials = 10:} Limiting the search to 10 different configurations
-	\item \textbf{executions per trial = 3:} Running each configuration thrice to reduce variance
-	\item \textbf{validation split = 0.2:} Reserving 20\% of the training data for validation
-\end{itemize}
 
 The hyperparameter tuning was conducted for three different window sizes of data: 5, 10, and 20. This allows the model to have the optimal hyperparameters used for each window size. Training was conducted over 100 epochs with early stopping to prevent overfitting while maintaining computational efficiency. A batch size of 1 was used, enabling the model to process individual sequences, which is suitable for smaller datasets but results in longer training times. The Adam optimizer, known for its adaptive learning capabilities and stability was employed.
 
