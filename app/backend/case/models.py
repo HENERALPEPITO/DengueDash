@@ -224,7 +224,7 @@ class Case(BaseModel, SoftDeleteMixin):
             prefix = current_year * 1000000
 
             if last_record := (
-                Case.objects.filter(case_id__startswith=str(current_year))
+                Case.all_objects.filter(case_id__startswith=str(current_year))
                 .order_by("case_id")
                 .last()
             ):
