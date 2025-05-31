@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework import permissions
-from rest_framework import status
 from rest_framework.response import Response
 from dru.serializers import (
     RegisterDRUSerializer,
@@ -14,23 +13,17 @@ from dru.serializers import (
     DRUTypeSerializer,
     RegionSerializer,
 )
-from dru.models import DRUType, DRU
-from auth.permission import IsUserAdmin
-from api.pagination import APIPagination
-
-
-User = get_user_model()
-
-
-from rest_framework.views import APIView
-from rest_framework import permissions, status
-from django.http import JsonResponse
-from django.db import transaction
 from .models import (
     DRU,
     DRUType,
 )
-from .serializers import RegisterDRUSerializer
+from dru.models import DRUType, DRU
+from auth.permission import IsUserAdmin
+from api.pagination import APIPagination
+from user.models import BlacklistedUsers
+from user.views import SoftDeleteRecordsUnderInterviewerView
+
+User = get_user_model()
 
 
 class RegisterDRUView(APIView):
@@ -235,8 +228,32 @@ class DRUProfileView(APIView):
         return Response(serializer.data)
 
 
-class DeleteDRUView(APIView):
+class DeleteDRUView(SoftDeleteRecordsUnderInterviewerView):
     permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
+
+    def soft_delete_all_associated_users_records(self, dru):
+        """Soft delete all users and records associated with the DRU."""
+        users = User.objects.filter(dru=dru)
+        for user in users:
+
+            # Revoke the token of each user
+            revoke_response = self.revoke_tokens(user)
+            if revoke_response:
+                return revoke_response
+
+            record_soft_delete = self.soft_delete_related_records(user)
+
+            BlacklistedUsers.objects.get_or_create(
+                email=user.email,
+                dru=user.dru,
+            )
+
+            user.soft_delete()
+
+            if record_soft_delete:
+                return record_soft_delete
+
+        return None
 
     def delete(self, request, dru_id):
         current_user = request.user
@@ -295,10 +312,19 @@ class DeleteDRUView(APIView):
                         },
                     )
 
-        dru_to_delete.delete()
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "DRU deleted successfully",
-            }
-        )
+        with transaction.atomic():
+            soft_delete_response = self.soft_delete_all_associated_users_records(
+                dru_to_delete
+            )
+
+            if soft_delete_response:
+                return soft_delete_response
+
+            dru_to_delete.soft_delete()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message": "DRU deleted successfully",
+                }
+            )
