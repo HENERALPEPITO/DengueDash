@@ -240,7 +240,6 @@ class SoftDeleteRecordsUnderInterviewerView(APIView):
     def soft_delete_related_records(self, user):
         """Soft delete all records related to this user"""
         try:
-            # Soft delete all cases where this user is the interviewer
             cases = Case.objects.filter(interviewer=user)
             for case in cases:
                 case.soft_delete()
