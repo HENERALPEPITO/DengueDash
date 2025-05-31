@@ -13,10 +13,6 @@ from dru.serializers import (
     DRUTypeSerializer,
     RegionSerializer,
 )
-from .models import (
-    DRU,
-    DRUType,
-)
 from dru.models import DRUType, DRU
 from auth.permission import IsUserAdmin
 from api.pagination import APIPagination
