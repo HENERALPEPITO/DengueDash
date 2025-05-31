@@ -47,10 +47,6 @@ class RegisterDRUView(APIView):
     def post(self, request):
         current_user = request.user
 
-        # Authorization check
-        # if not self._is_user_authorized(current_user):
-        #     return self._unauthorized_response()
-
         # Validation check
         validation_error = self._validate_dru_registration(current_user, request.data)
         if validation_error:
@@ -58,21 +54,6 @@ class RegisterDRUView(APIView):
 
         # Create DRU and associated user
         return self._create_dru_and_user(request)
-
-    # def _is_user_authorized(self, user):
-    #     """Check if the user is authorized to register a DRU."""
-    #     if user.is_admin or user.is_superuser:
-    #         return True
-    #     return str(user.dru.dru_type) in self.ALLOWED_DRU_TYPES
-
-    # def _unauthorized_response(self):
-    #     """Return a standardized unauthorized response."""
-    #     return JsonResponse(
-    #         {
-    #             "success": False,
-    #             "message": "You are not authorized to perform this action",
-    #         },
-    #     )
 
     def _validate_dru_registration(self, user, request_data):
         """Validate DRU type and region based on the user's DRU type."""
