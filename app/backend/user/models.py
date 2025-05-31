@@ -72,7 +72,14 @@ class UserManager(BaseUserManager):
             "is_legacy",
             True,
         )
-        extra_fields.setdefault("dru", DRU.objects.get(id=1))
+        if "dru" not in extra_fields:
+            try:
+                extra_fields["dru"] = DRU.objects.get(id=1)
+            except DRU.DoesNotExist:
+                raise ValueError(
+                    "create_superuser requires a DRU instance; "
+                    "Please run the seeders to create a default DRU."
+                )
 
         return self.create_user(
             email,
