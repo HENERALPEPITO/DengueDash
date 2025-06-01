@@ -135,8 +135,8 @@ class Command(BaseCommand):
                 is_admin=True,
                 is_verified=True,
                 is_legacy=True,
-                id_card_image="images/id_card/default_profile.jpeg",
-                profile_image="images/profile/default_id_card.jpeg",
+                profile_image="images/id_card/default_profile.jpeg",
+                id_card_image="images/profile/default_id_card.jpeg",
                 dru=DRU.objects.get(dru_name=dru["name"]),
             )
             User.objects.create_user(
