@@ -184,6 +184,17 @@ export default function SignUp() {
     setActiveTab("personal-info");
   };
 
+  const resetForm = () => {
+    form.reset();
+    setProfileImage(null);
+    setProfileImageFile(null);
+    setIdImage(null);
+    setIdImageFile(null);
+    setSelectedRegion("");
+    setSelectedSu("");
+    setActiveTab("personal-info");
+  };
+
   const onSubmit = async (values: SignUpFormValues) => {
     if (!profileImageFile || !idImageFile) {
       toast.error("Profile picture and ID are required", {
@@ -197,8 +208,8 @@ export default function SignUp() {
     const formData = {
       ...values,
       dru: parseInt(values.dru, 10),
-      profile_picture: profileImageFile,
-      id_picture: idImageFile,
+      profile_image: profileImageFile,
+      id_card_image: idImageFile,
     };
 
     console.log("Submitting form data:", formData);
@@ -215,7 +226,7 @@ export default function SignUp() {
         // todo: find another ways to fully reset the form
         // todo: makes select value empty after reset
         // todo: must find way to reset select value
-        form.reset();
+        resetForm();
       } else {
         console.log("Failed to create account:", response);
         if (typeof response.message === "string") {
