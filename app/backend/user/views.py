@@ -83,33 +83,60 @@ class PasswordUpdateView(APIView):
             )
 
 
-class AdminBrowseUserView(APIView):
+class BaseAdminBrowseUserView(APIView):
     permission_classes = (permissions.IsAuthenticated, IsUserAdmin)
 
+    def get_user_filter_kwargs(self, request, user_id):
+        raise NotImplementedError("Subclasses must implement get_user_filter_kwargs")
+
+    def get_not_found_message(self):
+        return "User not found"
+
     def get(self, request, user_id):
-        user = User.objects.filter(
-            id=user_id,
-            is_legacy=False,
-            is_verified=True,
-            dru_id=request.user.dru.id,
-        ).first()
+        filter_kwargs = self.get_user_filter_kwargs(request, user_id)
+        user = User.objects.filter(**filter_kwargs).first()
 
         if user is None:
             return JsonResponse(
                 {
                     "success": False,
-                    "message": "User not found",
-                },
-                status=status.HTTP_404_NOT_FOUND,
+                    "message": self.get_not_found_message(),
+                }
             )
 
         serializer = UserFullInfoSerializer(
             user,
-            context={
-                "request": request,
-            },
+            context={"request": request},
         )
-        return Response(serializer.data)
+        return JsonResponse(
+            {
+                "success": True,
+                "message": serializer.data,
+            }
+        )
+
+
+class AdminBrowseUserView(BaseAdminBrowseUserView):
+    def get_user_filter_kwargs(self, request, user_id):
+        return {
+            "id": user_id,
+            "is_legacy": False,
+            "is_verified": True,
+            "dru_id": request.user.dru.id,
+        }
+
+
+class AdminBrowseUnverifiedUserView(BaseAdminBrowseUserView):
+    def get_user_filter_kwargs(self, request, user_id):
+        return {
+            "id": user_id,
+            "is_legacy": False,
+            "is_verified": False,
+            "dru_id": request.user.dru.id,
+        }
+
+    def get_not_found_message(self):
+        return "Unverified user not found"
 
 
 class BaseUserListView(ListAPIView):
