@@ -39,7 +39,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/shadcn/components/ui/avatar";
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Upload, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload, User } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -55,6 +55,7 @@ import {
 } from "@/shadcn/components/ui/tabs";
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
+type ImageType = "profile" | "id";
 
 export default function SignUp() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -66,14 +67,6 @@ export default function SignUp() {
   const [selectedSu, setSelectedSu] = useState("");
   const [activeTab, setActiveTab] = useState("personal-info");
 
-  const handleNext = () => {
-    setActiveTab("verification");
-  };
-
-  const handleBack = () => {
-    setActiveTab("personal-info");
-  };
-
   const fetchDRUHierarchyData = async () => {
     try {
       const response: DRUHierarchy = await fetchService.getDRUHierarchy();
@@ -83,7 +76,10 @@ export default function SignUp() {
     }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    imageType: ImageType
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file size (5MB limit)
@@ -113,25 +109,33 @@ export default function SignUp() {
         return;
       }
 
-      setProfileImageFile(file); // Store the file for upload
+      // Store the file for upload
+      if (imageType === "profile") {
+        setProfileImageFile(file);
+      } else if (imageType === "id") {
+        setIdImageFile(file);
+      }
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileImage(e.target?.result as string);
+        if (imageType === "profile") {
+          setProfileImage(e.target?.result as string);
+        } else if (imageType === "id") {
+          setIdImage(e.target?.result as string);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleIdUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setIdImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleProfileImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    handleImageUpload(event, "profile");
+  };
+
+  const handleIdImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(event, "id");
   };
 
   useEffect(() => {
@@ -150,10 +154,40 @@ export default function SignUp() {
     },
   });
 
+  const handleNext = async () => {
+    const requiredFields = [
+      "first_name",
+      "last_name",
+      "email",
+      "sex",
+      "password",
+      "password_confirm",
+      "region",
+      "surveillance_unit",
+      "dru",
+    ] as const;
+
+    const isFormValid = await form.trigger(requiredFields);
+
+    if (isFormValid) {
+      setActiveTab("verification");
+    } else {
+      toast.error("Please fill in all required fields", {
+        description: "Make sure all required fields are completed",
+        duration: defaultToastSettings.duration,
+        dismissible: defaultToastSettings.isDismissible,
+      });
+    }
+  };
+
+  const handleBack = () => {
+    setActiveTab("personal-info");
+  };
+
   const onSubmit = async (values: SignUpFormValues) => {
-    if (!profileImageFile) {
-      toast.error("Profile picture is required", {
-        description: "Please upload a profile picture for verification",
+    if (!profileImageFile || !idImageFile) {
+      toast.error("Profile picture and ID are required", {
+        description: "Please upload the pictures for verification",
         duration: defaultToastSettings.duration,
         dismissible: defaultToastSettings.isDismissible,
       });
@@ -164,6 +198,7 @@ export default function SignUp() {
       ...values,
       dru: parseInt(values.dru, 10),
       profile_picture: profileImageFile,
+      id_picture: idImageFile,
     };
 
     try {
@@ -588,7 +623,7 @@ export default function SignUp() {
                           id="profile-upload"
                           type="file"
                           accept="image/*"
-                          onChange={handleImageUpload}
+                          onChange={handleProfileImageChange}
                           className="hidden"
                         />
                       </div>
@@ -603,7 +638,7 @@ export default function SignUp() {
                     {/* ID Upload */}
                     <div className="flex flex-col items-center space-y-4">
                       <div className="relative">
-                        <div className="w-32 h-32 border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden">
+                        <div className="w-50 h-32 border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden">
                           {idImage ? (
                             <img
                               src={idImage || "/placeholder.svg"}
@@ -627,7 +662,7 @@ export default function SignUp() {
                           id="id-upload"
                           type="file"
                           accept="image/*"
-                          onChange={handleIdUpload}
+                          onChange={handleIdImageChange}
                           className="hidden"
                         />
                       </div>
