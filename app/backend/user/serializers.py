@@ -45,12 +45,35 @@ class UserFullInfoSerializer(BaseUserSerializer):
     updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
     last_login = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
 
+    profile_image_url = serializers.SerializerMethodField()
+    id_card_image_url = serializers.SerializerMethodField()
+
     class Meta(BaseUserSerializer.Meta):
         fields = BaseUserSerializer.Meta.fields + [
             "created_at",
             "updated_at",
             "last_login",
+            "profile_image_url",
+            "id_card_image_url",
         ]
+
+    def get_profile_image_url(self, obj):
+        """Return full URL for profile image"""
+        if obj.profile_image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.profile_image.url)
+            return obj.profile_image.url
+        return None
+
+    def get_id_card_image_url(self, obj):
+        """Return full URL for ID card image"""
+        if obj.id_card_image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.id_card_image.url)
+            return obj.id_card_image.url
+        return None
 
 
 class PasswordUpdateSerializer(serializers.Serializer):

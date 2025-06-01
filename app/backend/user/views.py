@@ -103,7 +103,12 @@ class AdminBrowseUserView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = UserFullInfoSerializer(user)
+        serializer = UserFullInfoSerializer(
+            user,
+            context={
+                "request": request,
+            },
+        )
         return Response(serializer.data)
 
 
