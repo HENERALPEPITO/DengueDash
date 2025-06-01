@@ -114,16 +114,22 @@ export const axiosClient = async (
   }
 };
 
-export const axiosClientUpload = async (endpoint: string, data: any = null) => {
+export const axiosClientUpload = async (
+  endpoint: string,
+  data: any = null,
+  isAuthRequest: boolean = true
+) => {
   try {
     const config: any = {};
 
     config.headers = {
       ...config.headers,
-      "Content-Type": undefined, // Remove the header and let axios set it correctly
+      "Content-Type": "multipart/form-data",
     };
 
-    const response = await axiosProtected.post(endpoint, data, config);
+    const response = isAuthRequest
+      ? await axiosProtected.post(endpoint, data, config)
+      : await axiosOpen.post(endpoint, data, config);
     return response.data;
   } catch (error) {
     console.error(`Error uploading ${endpoint}`, error);
