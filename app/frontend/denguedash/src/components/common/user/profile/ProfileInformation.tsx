@@ -30,7 +30,14 @@ export default function ProfileInformation(
                 />
               )}
               <AvatarFallback className="text-2xl font-semibold bg-gray-100 text-gray-600">
-                KW
+                {userData?.full_name
+                  ? userData.full_name
+                      .split(" ")
+                      .map((name) => name[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)
+                  : "??"}
               </AvatarFallback>
             </Avatar>
           </div>
