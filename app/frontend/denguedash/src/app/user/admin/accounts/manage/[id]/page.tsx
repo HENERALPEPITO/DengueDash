@@ -26,11 +26,18 @@ export default function UserProfileView({ params }: any) {
       setIsLoading(true);
       try {
         const { id } = await params;
-        const response: UserDetailInterface =
+        const response: BaseServiceResponse =
           await fetchService.getUserDetails(id);
-        setUserData(response);
+
+        if (!response.success) {
+          router.push("/user/admin/accounts/manage/?status=not-found");
+          return;
+        }
+
+        setUserData(response.message as unknown as UserDetailInterface);
       } catch (error) {
         console.error("Failed to fetch user details:", error);
+        router.push("/user/admin/accounts/manage/?status=error");
       } finally {
         setIsLoading(false);
       }

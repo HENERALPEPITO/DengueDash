@@ -88,3 +88,10 @@ gunicorn.pid
 # Ignore exported models and metadata
 forecasting/ml-dl-models/*
 !forecasting/ml-dl-models/.gitkeep
+
+# Ignore all files in mediafiles folder
+mediafiles/*
+
+# But keep the default images (adjust paths as needed)
+!mediafiles/images/profile/default_profile.jpeg
+!mediafiles/images/id_card/default_id_card.jpeg

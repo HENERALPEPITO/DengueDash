@@ -143,6 +143,15 @@ const getUserDetails = async (userId: number) => {
   return axiosClient(`user/${userId}`, OPERATION, DEFAULT_DATA, DEFAULT_PARAMS);
 };
 
+const getUnverifiedUserDetails = async (userId: number) => {
+  return axiosClient(
+    `user/unverified/${userId}/`,
+    OPERATION,
+    DEFAULT_DATA,
+    DEFAULT_PARAMS
+  );
+};
+
 const getDRUList = async (page: number, itemsPerPage: number = 8) => {
   return axiosClient("dru/list/", OPERATION, DEFAULT_DATA, {
     page,
@@ -178,6 +187,7 @@ const fetchService = {
   getBlacklistedAccounts,
   getMyUserDetails,
   getUserDetails,
+  getUnverifiedUserDetails,
   getDRUList,
   getDRUProfile,
   getDRUTypes,

@@ -7,6 +7,24 @@ from django.contrib.auth.models import (
 from core.models import BaseModel
 from dru.models import DRU
 from auth.models import SoftDeleteMixin
+import os
+import uuid
+
+
+def user_image_path(_, image_type, filename):
+    """Generate file path for user images"""
+    ext = filename.split(".")[-1]
+    # Generate a unique filename using UUID
+    unique_filename = f"{uuid.uuid4().hex}.{ext}"
+    return os.path.join(f"images/{image_type}/", unique_filename)
+
+
+def profile_image_upload_path(instance, filename):
+    return user_image_path(instance, "profile", filename)
+
+
+def id_card_image_upload_path(instance, filename):
+    return user_image_path(instance, "id_card", filename)
 
 
 class BlacklistedUsers(models.Model):
@@ -136,6 +154,22 @@ class User(
         related_name="user",
     )
 
+    # todo: make the images required fields
+
+    profile_image = models.ImageField(
+        upload_to=profile_image_upload_path,
+        blank=False,
+        null=False,
+        default="images/profile/default_profile.jpeg",
+    )
+
+    id_card_image = models.ImageField(
+        upload_to=id_card_image_upload_path,
+        blank=False,
+        null=False,
+        default="images/id_card/default_id_card.jpeg",
+    )
+
     is_admin = models.BooleanField(default=False)
     is_legacy = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
@@ -153,3 +187,5 @@ class User(
 
     def __str__(self):
         return self.email
+
+    # todo: delete images in mediafiles after hard delete

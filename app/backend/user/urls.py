@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     AdminBrowseUserView,
+    AdminBrowseUnverifiedUserView,
     MyUserView,
     UsersListView,
     UsersUnverifiedListView,
@@ -43,6 +44,11 @@ urlpatterns = [
         "<int:user_id>/",
         AdminBrowseUserView.as_view(),
         name="user-detail",
+    ),
+    path(
+        "unverified/<int:user_id>/",
+        AdminBrowseUnverifiedUserView.as_view(),
+        name="user-detail-unverified",
     ),
     path(
         "verify/<int:user_id>/",
