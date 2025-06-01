@@ -93,6 +93,5 @@ forecasting/ml-dl-models/*
 mediafiles/*
 
 # But keep the default images (adjust paths as needed)
-!mediafiles/images/
 !mediafiles/images/profile/default_profile.jpeg
 !mediafiles/images/id_card/default_id_card.jpeg
