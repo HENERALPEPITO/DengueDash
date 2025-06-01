@@ -3,6 +3,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.token_blacklist.models import (
     OutstandingToken,
     BlacklistedToken,
@@ -139,6 +140,7 @@ class UsersUnverifiedListView(BaseUserListView):
 
 class RegisterUserView(APIView):
     permission_classes = (permissions.AllowAny,)
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         email = request.data.get("email")
