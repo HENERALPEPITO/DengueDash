@@ -13,12 +13,11 @@ const submitForm = async (formData: any) => {
 };
 
 const submitBulkForm = async (formData: any) => {
-  // return axiosClient("cases/create/bulk/", OPERATION, formData, DEFAULT_PARAMS);
   return axiosClientUpload("cases/create/bulk/", formData);
 };
 
 const signUpUser = async (formData: SignUpUserInterface) => {
-  return axiosClient("user/register/", OPERATION, formData, DEFAULT_PARAMS);
+  return axiosClientUpload("user/register/", formData, false);
 };
 
 const registerDRU = async (formData: RegisterDRUInterface) => {
