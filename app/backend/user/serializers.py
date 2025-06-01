@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from user.models import BlacklistedUsers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework.validators import UniqueValidator
+from user.models import BlacklistedUsers
 
 User = get_user_model()
 
@@ -44,12 +45,35 @@ class UserFullInfoSerializer(BaseUserSerializer):
     updated_at = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
     last_login = serializers.DateTimeField(format="%Y-%m-%d-%H-%M-%S")
 
+    profile_image_url = serializers.SerializerMethodField()
+    id_card_image_url = serializers.SerializerMethodField()
+
     class Meta(BaseUserSerializer.Meta):
         fields = BaseUserSerializer.Meta.fields + [
             "created_at",
             "updated_at",
             "last_login",
+            "profile_image_url",
+            "id_card_image_url",
         ]
+
+    def get_profile_image_url(self, obj):
+        """Return full URL for profile image"""
+        if obj.profile_image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.profile_image.url)
+            return obj.profile_image.url
+        return None
+
+    def get_id_card_image_url(self, obj):
+        """Return full URL for ID card image"""
+        if obj.id_card_image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.id_card_image.url)
+            return obj.id_card_image.url
+        return None
 
 
 class PasswordUpdateSerializer(serializers.Serializer):
@@ -112,6 +136,24 @@ class BlacklistedUsersSerializer(serializers.ModelSerializer):
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
+
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.all_objects.all(),
+                message="A user with this email address already exists.",
+            )
+        ],
+    )
+
+    profile_image = serializers.ImageField(
+        required=False,
+    )
+    id_card_image = serializers.ImageField(
+        required=False,
+    )
+
     password = serializers.CharField(write_only=True, required=True)
     password_confirm = serializers.CharField(write_only=True, required=True)
     is_verified = serializers.BooleanField(required=False)
@@ -130,7 +172,41 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             "dru",
             "is_verified",
             "is_admin",
+            "profile_image",
+            "id_card_image",
         ]
+
+    def validate_uploaded_image_file(self, image_file):
+        # Check file size (5MB limit)
+        if image_file.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError(
+                "Image file too large. Maximum size is 5MB"
+            )
+
+        # Check file type
+        allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+        if image_file.content_type not in allowed_types:
+            raise serializers.ValidationError(
+                "Unsupported image format. Use JPEG, PNG, GIF, or WebP"
+            )
+
+        return None
+
+    def validate_profile_image(self, value):
+        if not value:
+            raise serializers.ValidationError("Profile image is required")
+
+        self.validate_uploaded_image_file(value)
+
+        return value
+
+    def validate_id_card_image(self, value):
+        if not value:
+            raise serializers.ValidationError("ID card image is required")
+
+        self.validate_uploaded_image_file(value)
+
+        return value
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password_confirm"]:
@@ -164,15 +240,10 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         validated_data["is_verified"] = False
         validated_data["is_admin"] = False
 
-        # todo: delete this
-        # request = self.context.get("request")
-        # if request and request.user.is_authenticated and request.user.is_admin:
-        #     validated_data.setdefault("is_verified", True)
-        # else:
-        #     validated_data["is_verified"] = False
-        #     validated_data["is_admin"] = False
-
-        return User.objects.create_user(password=password, **validated_data)
+        return User.objects.create_user(
+            password=password,
+            **validated_data,
+        )
 
 
 class VerifyUserSerializer(serializers.ModelSerializer):

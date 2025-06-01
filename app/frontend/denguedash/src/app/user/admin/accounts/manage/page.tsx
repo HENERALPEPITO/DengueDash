@@ -22,25 +22,39 @@ export default function ManageAccounts() {
 
   useEffect(() => {
     const status = searchParams.get("status");
-    if (status === "user-deleted" && !toastShownRef.current) {
-      // Prevent showing the toast again
-      toastShownRef.current = true;
+    if (!toastShownRef.current) {
+      if (status === "approved") {
+        toastShownRef.current = true;
+        toast.success("User Approved", {
+          description: "The selected user has been successfully approved",
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+      } else if (status === "user-deleted") {
+        toastShownRef.current = true;
 
-      toast.success("User Deleted", {
-        description: "The selected user has been successfully deleted",
-        duration: defaultToastSettings.duration,
-        dismissible: defaultToastSettings.isDismissible,
-      });
-
-      // Remove the query parameter from the URL to prevent showing the toast again on refresh
-      // This creates a new URL without the status parameter
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete("status");
-
-      // Replace the current URL without the status parameter
-      // Using replace() instead of push() to avoid adding to the browser history
-      router.replace(newUrl.pathname + newUrl.search);
+        toast.success("User Deleted", {
+          description: "The selected user has been successfully deleted",
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+      } else if (status === "not-found") {
+        toastShownRef.current = true;
+        toast.error("User Not Found", {
+          description: "The requested user does not exist or has been deleted.",
+          duration: defaultToastSettings.duration,
+          dismissible: defaultToastSettings.isDismissible,
+        });
+      }
     }
+    // Remove the query parameter from the URL to prevent showing the toast again on refresh
+    // This creates a new URL without the status parameter
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete("status");
+
+    // Replace the current URL without the status parameter
+    // Using replace() instead of push() to avoid adding to the browser history
+    router.replace(newUrl.pathname + newUrl.search);
   }, [searchParams, router]);
 
   return (

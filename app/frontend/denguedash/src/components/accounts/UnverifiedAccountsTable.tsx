@@ -17,12 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 import CustomPagination from "../common/CustomPagination";
 import { Skeleton } from "@/shadcn/components/ui/skeleton";
 import { Button } from "@/shadcn/components/ui/button";
-import patchService from "@/services/patch.service";
-import { CustomAlertDialog } from "../common/CustomAlertDialog";
-import { BaseServiceResponse } from "@/interfaces/services/services.interface";
-import deleteService from "@/services/delete.service";
-import { toast } from "sonner";
-import { defaultToastSettings } from "@/lib/utils/common-variables.util";
+import Link from "next/link";
 
 export default function UnverifiedAccountsTable() {
   const [users, setUsers] = useState<UnverifiedUserBriefDetail[]>([]);
@@ -60,46 +55,6 @@ export default function UnverifiedAccountsTable() {
     setCurrentPage(page);
   };
 
-  const approveUser = async (userId: number) => {
-    const response: BaseServiceResponse =
-      await patchService.approveUserVerification(userId);
-    if (response.success) {
-      toast.success("User Approved", {
-        description: "The selected user has been successfully approved",
-        duration: defaultToastSettings.duration,
-        dismissible: defaultToastSettings.isDismissible,
-      });
-      fetchUsers(currentPage);
-      // todo: email the user that their account has been approved
-    } else {
-      toast.error("Failed to approve user", {
-        description: response.message,
-        duration: defaultToastSettings.duration,
-        dismissible: defaultToastSettings.isDismissible,
-      });
-    }
-  };
-
-  const deleteUnverifiedUser = async (userId: number) => {
-    const response: BaseServiceResponse =
-      await deleteService.deleteUser(userId);
-    if (response.success) {
-      toast.success("User Deleted", {
-        description: "The selected user has been successfully deleted",
-        duration: defaultToastSettings.duration,
-        dismissible: defaultToastSettings.isDismissible,
-      });
-      fetchUsers(currentPage);
-      // todo: email the user that their account has been disapproved
-    } else {
-      toast.error("Failed to delete user", {
-        description: response.message,
-        duration: defaultToastSettings.duration,
-        dismissible: defaultToastSettings.isDismissible,
-      });
-    }
-  };
-
   return (
     <div className="container mx-auto p-4 border border-gray-200 rounded-lg">
       <Table>
@@ -132,24 +87,10 @@ export default function UnverifiedAccountsTable() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.sex_display}</TableCell>
                 <TableCell>{user.created_at}</TableCell>
-                <TableCell className="flex gap-3">
-                  <CustomAlertDialog
-                    title="Approve User"
-                    description="Are you sure you want to approve this user? This action cannot be undone."
-                    actionLabel="Approve"
-                    onAction={() => approveUser(user.id)}
-                  >
-                    <Button variant={"default"}>Approve</Button>
-                  </CustomAlertDialog>
-                  <CustomAlertDialog
-                    title="Approve User"
-                    description="Are you sure you want to delete this user? This action cannot be undone."
-                    actionLabel="Delete"
-                    variant="destructive"
-                    onAction={() => deleteUnverifiedUser(user.id)}
-                  >
-                    <Button variant={"destructive"}>Delete</Button>
-                  </CustomAlertDialog>
+                <TableCell>
+                  <Button variant={"outline"} asChild>
+                    <Link href={`pending/${user.id}`}>Open</Link>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
