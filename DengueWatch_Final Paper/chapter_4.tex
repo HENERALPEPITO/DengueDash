@@ -432,7 +432,7 @@ To update the case, the user can click the "Update Case" button, where a dialog 
 
 \subsubsection{Forecasting}
 
-The piece de resistance of the web application's feature is the Forecasting Page. This is where users can forecast dengue cases for the next few weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. The said file stores the model's architecture and the learned parameters, which include the weights and biases to predict cases without training the data again.  Furthermore, it requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) to form a sequence based on the window size, and the forecasted weather data via OpenWeatherAPI. Due to the limitations posed to the current subscribed student plan in the said API, only two weeks of forecasted weather data can be fetched. As a result, the web application can predict dengue cases for the next two following weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the said API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
+The pièce de résistance of the web application's features is the Forecasting Page. This is where users can forecast dengue cases for the next few weeks. To predict, the application utilizes the exported LSTM model in a Keras format derived from training the consolidated data from the database. The said file stores the model's architecture and the learned parameters, which include the weights and biases to predict cases without training the data again.  Furthermore, it requires the recent weekly dengue cases and weather variable data (temperature, humidity, and rainfall) to form a sequence based on the window size, and the forecasted weather data via OpenWeatherAPI. Due to the limitations posed to the current subscribed student plan in the said API, only two weeks of forecasted weather data can be fetched. As a result, the web application can predict dengue cases for the next two following weeks. Moving forward, the Forecasting page, as shown in Figure \ref{fig:forecasting}, introduces a user-friendly interface that shows the current cases for the week and the predictions for the next two weeks with a range of 90 percent to 110 percent confidence interval that is presented in a simple but organized manner. There is also a line chart that shows the number of cases from the last 5 weeks plus the forecasted weekly cases. In addition, the current weather data for a specific week is also shown, as well as the forecasted weather data fetched from the said API. Lastly, locations where dengue cases have been reported for the current week are listed in the Location Risk Assessment component. 
 
 \begin{figure}[H]
 	\centering
@@ -468,7 +468,7 @@ With LSTM being the best-performing model among the models used in forecasting d
 
 \subsubsection{Managing Accounts}
 
-Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance unit have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. The same figure also shows the expanded details of the user, which include personal information and brief activity details within the system. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. However, the blacklist status can be reverted by clicking the "Unban" button, which would make the user of the email able to register to the web application again as shown in Figure \ref{fig:blacklisted_accounts}. 
+Proper management of accounts is important to protect the integrity and confidentiality of data. Thus, it is crucial for administrators to track their users and control the flow of information. As discussed in the user registration of encoders, admin users from a specific DRU or surveillance unit have the power to grant them access to the web application. Figure \ref{fig:pending_accounts} illustrates the interface for this scenario, as the admins can approve or reject their applications. Once approved, these users can access the features given to encoders and may be promoted to have administrative access, as shown in Figure \ref{fig:account_details}. Both Figure \ref{fig:pending_accounts} and \ref{fig:account_details} also show the expanded details of the user, which include personal information, proof of identification, and brief activity details within the system. When deleting an account, the user's email will be blacklisted and illegible to use when creating another account, and all the cases reported by this user will be soft-deleted. However, the blacklist status can be reverted by clicking the "Unban" button, which would make the user of the email able to register to the web application again as shown in Figure \ref{fig:blacklisted_accounts}. 
 
 \begin{figure}[H]
 	\centering
@@ -479,13 +479,13 @@ Proper management of accounts is important to protect the integrity and confiden
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{pending_accounts}
-	\caption{List of Pending Accounts}
+	\caption{User Approval Page}
 	\label{fig:pending_accounts}
 \end{figure}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{account_details}
-	\caption{Account Details}
+	\caption{Account Management}
 	\label{fig:account_details}
 \end{figure}
 \begin{figure}[H]
