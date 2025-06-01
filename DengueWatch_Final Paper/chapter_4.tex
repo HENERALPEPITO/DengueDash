@@ -353,19 +353,18 @@ The Home Page is intended for all visitors to the web application. The Analytics
 \end{figure}
 
 \subsection{User Registration, Login, and Authentication}
-The registration page, as shown in \ref{fig:signup_page_1} and \ref{fig:signup_page_2}, serves as a gateway to access the authenticated pages of the web application. Only prospective encoders can register an account since administrator accounts are only made by existing administrator accounts to protect the data's integrity in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Because of this, proper identification (user's picture and employee identification card) is mandatory to help the admins verify the identity of the registree. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page for the type of user it belongs to. Logging out, on the other hand, will remove both the access and refresh tokens from the browser and will blacklist the latter token to make it unusable for security purposes. 
+The registration page, as shown in \ref{fig:signup_page_1} and \ref{fig:signup_page_2}, serves as a gateway to access the authenticated pages of the web application. Only prospective encoders can register an account, as administrator accounts are created by existing administrator accounts to protect the integrity of the data in production. After registering, the "encoder account" cannot access the authorized pages yet as it needs to be verified first by an administrator managing the unit the user entered. Because of this, proper identification (user's picture and employee identification card) is mandatory to help the admins verify the identity of the registrant. Once verified, the user can log in to the system through the page shown in Figure \ref{fig:login_page}. After entering the correct credentials, which consist of an email and password, the system uses HTTP-only cookies containing JSON Web Tokens (JWT) to prevent vulnerability to Cross-site Scripting (XSS) attacks. It will then proceed to the appropriate page for the type of user it belongs to. Logging out, on the other hand, will remove both the access and refresh tokens from the browser and will blacklist the latter token to make it unusable for security purposes. 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{signup_page_1}
-	\caption{Sign Up Page}
+	\includegraphics[width=0.8\textwidth]{signup_page_1}
+	\caption{Personal Information Tab of Sign Up Page}
 	\label{fig:signup_page_1}
 \end{figure}
-
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{signup_page_2}
-	\caption{User Identification when Signing Up}
+	\caption{Verification Tab of Sign Up Page}
 	\label{fig:signup_page_2}
 \end{figure}
 
@@ -379,21 +378,23 @@ The registration page, as shown in \ref{fig:signup_page_1} and \ref{fig:signup_p
 \subsection{Encoder Interface}
 \subsubsection{Case Report Form}
 Figures \ref{fig:case_report_form_1} and \ref{fig:case_report_form_2} show the digitized counterpart of the form obtained from the Iloilo Provincial Epidemiology and Surveillance Unit. As the system aims to support expandability for future features, some fields were modified to accommodate more detailed input. It is worth noting that all of the included fields adhere to the latest Philippine Integrated Disease and Surveillance Response (PIDSR) Dengue Forms, which the referenced form was based on. By doing this, if implemented on a national scale, the transition between targeted users will be easier. Moreover, the case form includes the patient's basic information, dengue vaccination status, consultation details, laboratory results, and the outcome. On the other hand, encoders can also create case records using a "bulk upload" feature that makes use of a formatted CSV file template. As shown in Figure \ref{fig:bulk_upload}, an encoder can download the template using the "Download Template" button, and insert multiple records inside the file, then upload it by clicking the "Click to upload" button. The web application automatically checks the file for data inconsistencies and validation. 
+
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth, height=0.6\textheight, keepaspectratio]{case_report_form_1}
+	\includegraphics[width=0.8\textwidth]{case_report_form_1}
 	\caption{First Part of Case Report Form}
 	\label{fig:case_report_form_1}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth, height=0.6\textheight, keepaspectratio]{case_report_form_2}
+	\includegraphics[width=0.8\textwidth]{case_report_form_2}
 	\caption{Second Part of Case Report Form}
 	\label{fig:case_report_form_2}
 \end{figure}
+
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth, height=0.6\textheight, keepaspectratio]{bulk_upload}
+	\includegraphics[width=1\textwidth]{bulk_upload}
 	\caption{Bulk Upload of Cases using CSV}
 	\label{fig:bulk_upload}
 \end{figure}
@@ -448,7 +449,7 @@ With LSTM being the best-performing model among the models used in forecasting d
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{retraining_configs}
+	\includegraphics[width=0.8\textwidth]{retraining_configs}
 	\caption{Retraining Configurations}
 	\label{fig:retraining_configs}
 \end{figure}
@@ -471,7 +472,7 @@ Proper management of accounts is important to protect the integrity and confiden
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{verified_accounts}
+	\includegraphics[width=0.8\textwidth]{verified_accounts}
 	\caption{List of Verified Accounts}
 	\label{fig:verified_accounts}
 \end{figure}
