@@ -188,9 +188,4 @@ class User(
     def __str__(self):
         return self.email
 
-    def delete(self, *args, **kwargs):
-        """Override delete to remove profile image file"""
-        if self.profile_image:
-            if os.path.isfile(self.profile_image.path):
-                os.remove(self.profile_image.path)
-        super().delete(*args, **kwargs)
+    # todo: delete images in mediafiles after hard delete
