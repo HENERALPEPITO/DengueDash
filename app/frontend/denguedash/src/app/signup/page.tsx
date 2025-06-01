@@ -201,6 +201,8 @@ export default function SignUp() {
       id_picture: idImageFile,
     };
 
+    console.log("Submitting form data:", formData);
+
     try {
       const response: BaseServiceResponse | BaseErrorResponse =
         await postService.signUpUser(formData);
@@ -285,10 +287,7 @@ export default function SignUp() {
 
               <TabsContent value="personal-info" className="space-y-6 mt-6">
                 <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                  >
+                  <form className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* First Name */}
                       <FormField
@@ -686,7 +685,7 @@ export default function SignUp() {
                       Back
                     </Button>
                     <Button
-                      type="submit"
+                      onClick={form.handleSubmit(onSubmit)}
                       className="flex-1 h-12 text-lg font-semibold"
                     >
                       Create Account
