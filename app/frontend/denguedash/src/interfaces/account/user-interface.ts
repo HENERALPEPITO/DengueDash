@@ -42,6 +42,8 @@ export interface MyUserInterface {
   role: string;
   dru: string;
   dru_type: string;
+  id_card_image_url: string;
+  profile_image_url: string;
 }
 
 export interface UserDetailInterface extends MyUserInterface {
