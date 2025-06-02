@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.validators import UniqueValidator
 from user.models import BlacklistedUsers
+from django.conf import settings
 
 User = get_user_model()
 
@@ -61,18 +62,29 @@ class UserFullInfoSerializer(BaseUserSerializer):
         """Return full URL for profile image"""
         if obj.profile_image:
             request = self.context.get("request")
+
+            url = obj.profile_image.url
             if request:
-                return request.build_absolute_uri(obj.profile_image.url)
-            return obj.profile_image.url
+                return request.build_absolute_uri(url)
+            # Fallback: use SITE_DOMAIN from settings if available
+            site_domain = getattr(settings, "SITE_DOMAIN", None)
+            if site_domain:
+                return f"{site_domain}{url}"
+            return url
         return None
 
     def get_id_card_image_url(self, obj):
         """Return full URL for ID card image"""
         if obj.id_card_image:
             request = self.context.get("request")
+            url = obj.id_card_image.url
             if request:
-                return request.build_absolute_uri(obj.id_card_image.url)
-            return obj.id_card_image.url
+                return request.build_absolute_uri(url)
+            # Fallback: use SITE_DOMAIN from settings if available
+            site_domain = getattr(settings, "SITE_DOMAIN", None)
+            if site_domain:
+                return f"{site_domain}{url}"
+            return url
         return None
 
 
