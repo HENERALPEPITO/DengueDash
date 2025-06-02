@@ -131,7 +131,7 @@ The SARIMA modeling process began with data preprocessing, which included handli
 
 The Kalman Filter's Expectation-Maximization (EM) method was employed for training, iteratively estimating model parameters over 10 iterations. After training, the smoothing method was used to compute the refined state estimates across the training data. Observation matrices for the test data were constructed in the same manner as for the training set, ensuring compatibility with the learned model parameters. On the test data, the Kalman Filter applied these parameters to predict and correct the estimated dengue cases, providing more stable and accurate forecasts compared to direct regression models. Additionally, a hybrid Kalman Filter–LSTM (KF-LSTM) model was developed to combine the strengths of both approaches. In this setup, the LSTM model was first used to predict dengue cases based on historical data and weather features. The Kalman Filter was then applied as a post-processing step to the LSTM predictions, smoothing out noise and correcting potential errors.
 
-\subsubsubsection{\textbf{Model Evaluation}}
+\subsubsection{\textbf{Model Evaluation}}
 \begin{itemize}
 	\item \textbf{MSE} represents the average of the squared differences between predicted and actual values. It penalizes larger errors more heavily.
 	\item \textbf{RMSE}, the square root of MSE, provides a more interpretable value in the same units as the target (i.e., number of dengue cases).
