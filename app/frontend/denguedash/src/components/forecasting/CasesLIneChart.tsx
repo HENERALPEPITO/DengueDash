@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
+  Legend,
 } from "recharts";
 
 type TrendAndPredictionLineChartProps = {
@@ -40,8 +41,15 @@ export default function TrendAndPredictionLineChart(
     const historicalChartData = historicalData.map((item) => ({
       label: item.label,
       historical: item.case_count,
+      outbreak_threshold: item.outbreak_threshold,
       forecast: null,
     }));
+
+    // Get the last outbreak_threshold value from historical data
+    const lastOutbreakThreshold =
+      historicalChartData.length > 0
+        ? historicalChartData[historicalChartData.length - 1].outbreak_threshold
+        : null;
 
     // Forecasted data [When "Generated Predictions" is clicked]
     const forecastedChartData =
@@ -49,6 +57,7 @@ export default function TrendAndPredictionLineChart(
         label: "Week " + item.week,
         historical: null,
         forecast: item.predicted_cases,
+        outbreak_threshold: lastOutbreakThreshold, // extend threshold
       })) || [];
 
     if (historicalChartData.length > 0 && forecastedChartData.length > 0) {
@@ -85,10 +94,16 @@ export default function TrendAndPredictionLineChart(
       return (
         <div className="bg-white p-2 border border-gray-200 shadow-md rounded">
           <p className="font-medium">{label}</p>
-          <p className="text-sm">
+          <p
+            className="text-sm"
+            style={{ color: isForecast ? "#FF6B6B" : "#10B981" }}
+          >
             {isForecast
               ? `Forecast: ${dataPoint.forecast}`
               : `Historical: ${dataPoint.historical}`}
+          </p>
+          <p className="text-sm" style={{ color: "#d893e1" }}>
+            Outbreak Threshold: {dataPoint.outbreak_threshold || "N/A"}
           </p>
         </div>
       );
@@ -104,6 +119,20 @@ export default function TrendAndPredictionLineChart(
     ]);
 
     return Math.max(...allValues, 50);
+  }, [chartData]);
+
+  const maxOutbreakThreshold = useMemo(() => {
+    return Math.max(
+      ...chartData
+        .filter(
+          (item) => item.historical !== null && "outbreak_threshold" in item
+        )
+        .map(
+          (item) =>
+            (item as { outbreak_threshold: number }).outbreak_threshold || 0
+        ),
+      50
+    );
   }, [chartData]);
 
   // Custom dot renderer to correctly show historical vs forecast points
@@ -132,8 +161,30 @@ export default function TrendAndPredictionLineChart(
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" padding={{ left: 10, right: 10 }} />
-          <YAxis domain={[0, Math.ceil(maxValue * 1.2)]} tickCount={5} />
+
+          {/* Single Y-axis for both lines */}
+          <YAxis
+            domain={[
+              0,
+              Math.max(
+                Math.ceil(maxValue * 1.2),
+                Math.ceil(maxOutbreakThreshold * 1.2)
+              ),
+            ]}
+            tickCount={5}
+          />
+
           <Tooltip content={<CustomTooltip />} />
+          <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+
+          <Line
+            type="linear"
+            dataKey="outbreak_threshold"
+            stroke="#d893e1"
+            name="Outbreak Threshold"
+            strokeWidth={3}
+            dot={false}
+          />
 
           {/* Main line with custom dots */}
           <Line
@@ -149,6 +200,7 @@ export default function TrendAndPredictionLineChart(
             dot={<CustomizedDot />}
             activeDot={{ r: 6 }}
             connectNulls
+            name="Historical/Forecast Data"
           />
 
           {/* Use ReferenceLine component for exact alignment */}

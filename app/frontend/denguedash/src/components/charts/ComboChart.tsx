@@ -18,6 +18,7 @@ type ComboChartProps = {
 };
 
 export default function ComboChart({ data }: ComboChartProps) {
+  console.log("ComboChart data", data);
   return (
     <div className="w-full h-96 mx-2">
       <ResponsiveContainer width="100%" height="100%">
@@ -82,6 +83,15 @@ export default function ComboChart({ data }: ComboChartProps) {
             dataKey="death_count"
             stroke="#ff6384"
             name="Deaths"
+            strokeWidth={3}
+            dot={false}
+          />
+          <Line
+            yAxisId="right"
+            type="linear"
+            dataKey="outbreak_threshold"
+            stroke="#d893e1"
+            name="Outbreak Threshold"
             strokeWidth={3}
             dot={false}
           />

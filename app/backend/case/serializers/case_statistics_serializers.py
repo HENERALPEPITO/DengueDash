@@ -22,3 +22,4 @@ class DateStatSerializer(serializers.Serializer):
     label = serializers.CharField()
     case_count = serializers.IntegerField()
     death_count = serializers.IntegerField()
+    outbreak_threshold = serializers.IntegerField()

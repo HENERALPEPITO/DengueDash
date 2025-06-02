@@ -17,86 +17,64 @@ This repository contains the code and the paper for the DengueDash, a web applic
 
 Before you begin, ensure you have met the following requirements:
 
+- Have a GPU that supports CUDA and Tensorflow
 - Download and Install [Python](https://www.python.org/downloads/)
-- Download and install [Postman](https://www.postman.com/downloads/) (for Testing the API)
-- Download and install [SQLite](https://www.sqlite.org/download.html) (To view the Database. The project is currently using SQLite as its database structure)
-- Download and install [Node.js](https://nodejs.org/)
+- Download and Install [Node.js](https://nodejs.org/)
+- Download and Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ## Installation and Setup
 
 ### Setting Up the Backend
 
-1. **Install Prerequisite Packages:**
-
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-2. **Navigate to the Backend Directory**
+1. **Navigate to the Backend Directory**
 
    ```sh
    cd app/backend
    ```
 
-3. **Run Migrations**
+2. **Import Database**
+
+   - Download the db from https://drive.google.com/drive/folders/10dIZxSu8B0-3vvuU8fy_ivHPWx0EIsJ6?usp=sharing
+
+   - Put the db.sqlite3 file to current directory
 
    ```sh
-   py manage.py makemigrations
+   app/backend
    ```
 
-   and
+3. **Create environment variables:**
+
+   - Create a .env file
+   - SAMPLE KEY: XzF0KcFHcRh9rng2RVv3D9mwxr6LEoU_tinkRrEu8-A=
+
+   ###### .env
+
+   ```
+   SECRET_KEY=<YOUR_SECRET_KEY>
+   DEBUG=True
+   DJANGO_ALLOWED_HOSTS=localhost
+   CSRF_TRUSTED_ORIGINS=http://localhost
+   ```
+
+4. **Build Docker Image**
 
    ```sh
-   py manage.py migrate
+   docker-compose build
    ```
 
-4. **Seed the Database (must be in order)**
+   - This will install all the dependencies for the API
 
-   - User Classifications
+5. **Run the Docker Image**
 
    ```sh
-   py manage.py user_classification_seeder
+   docker-compose up
    ```
 
-   - DRU Types
+6. **Stopping the Docker Image**
 
    ```sh
-   py manage.py dru_type_seeder
+   docker-compose down
    ```
-
-   - DRU
-
-   ```sh
-   py manage.py dru_seeder
-   ```
-
-5. **Create a superuser**
-
-   ```sh
-   py manage.py createsuperuser
-   ```
-
-   Input and follow the instructions
-
-6. **Seed the Database using Fake Data (Optional but Recommended)**
-
-   - Patient and Case Data
-
-   ```sh
-   py manage.py patient_case_seeder
-   ```
-
-7. **Run the Django Server**
-
-   ```sh
-   py manage.py runserver
-   ```
-
-8. **Check if API is working using Postman**
-
-   - Open Postman
-   - Use `GET` and input the following URI
-     `http://127.0.0.1:8000/api/quick-stat?year=2024`
 
 ### Setting Up the Frontend
 
@@ -111,19 +89,19 @@ Before you begin, ensure you have met the following requirements:
 2. **Install Dependencies**
 
    ```sh
-   npm install
+   npm install --legacy-peer-deps
    ```
 
 3. **Create environment variables:**
 
-   - Create a .env file in both backend and frontend directories
-
-   - Input the following line (Backend):
+   - Create a .env
+   - SAMPLE KEY: XzF0KcFHcRh9rng2RVv3D9mwxr6LEoU_tinkRrEu8-A=
 
    ###### .env
 
    ```
-   SECRET_KEY=<YOUR_SECRET_KEY>
+   NEXT_PUBLIC_DJANGO_URL = http://localhost:8000/api/
+   JWT_SECRET=<YOUR_SECRET_KEY>
    ```
 
    - Input the following lines (Frontend):

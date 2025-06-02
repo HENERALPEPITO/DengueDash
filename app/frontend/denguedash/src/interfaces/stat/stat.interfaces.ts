@@ -2,6 +2,7 @@ export interface ByDateInterface {
   label: string;
   case_count: number;
   death_count: number;
+  outbreak_threshold: number;
 }
 
 export interface ByLocationInterface {
