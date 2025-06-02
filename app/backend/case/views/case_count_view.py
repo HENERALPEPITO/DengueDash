@@ -149,6 +149,11 @@ class BaseDengueDateStatView(APIView):
                 ),
                 "case_count": item["case_count"],
                 "death_count": item["death_count"],
+                # todo: must not use hardcoded outbreak threshold
+                # configure this on each location (city, province, region)
+                # formula: mu + 2 * sigma
+                # where mu is the mean and sigma is the standard deviation of the case counts
+                "outbreak_threshold": 98,
             }
             for item in stats
         ]
