@@ -11,10 +11,6 @@ import { Skeleton } from "@/shadcn/components/ui/skeleton";
 
 type CasesCardsProps = {
   thisWeekCases: number;
-  riskLevel: {
-    level: string;
-    color: string;
-  };
   predictions: ModelPredictions;
 };
 
@@ -29,9 +25,6 @@ export default function CasesCards(props: CasesCardsProps) {
           <div className="flex flex-col items-center">
             <div className="text-5xl font-bold mb-2">{props.thisWeekCases}</div>
             <div className="text-sm text-muted-foreground">Reported Cases</div>
-            <Badge className={`mt-4 ${props.riskLevel.color}`}>
-              {props.riskLevel.level.toUpperCase()} RISK
-            </Badge>
           </div>
         </CardContent>
       </Card>
@@ -53,9 +46,6 @@ export default function CasesCards(props: CasesCardsProps) {
                 <div className="text-sm text-muted-foreground">
                   Predicted Cases
                 </div>
-                <Badge className={`mt-4 ${props.riskLevel.color}`}>
-                  {props.riskLevel.level.toUpperCase()} RISK
-                </Badge>
               </div>
             </CardContent>
           </Card>
@@ -75,9 +65,6 @@ export default function CasesCards(props: CasesCardsProps) {
                 <div className="text-sm text-muted-foreground">
                   Predicted Cases
                 </div>
-                <Badge className={`mt-4 ${props.riskLevel.color}`}>
-                  {props.riskLevel.level.toUpperCase()} RISK
-                </Badge>
               </div>
             </CardContent>
           </Card>
@@ -97,7 +84,6 @@ export default function CasesCards(props: CasesCardsProps) {
               <div className="flex flex-col items-center">
                 <Skeleton className="h-16 w-16 rounded-full mb-2" />
                 <Skeleton className="h-4 w-24 rounded-full mb-4" />
-                <Skeleton className="h-6 w-20 rounded-full" />
               </div>
             </CardContent>
           </Card>
@@ -115,7 +101,6 @@ export default function CasesCards(props: CasesCardsProps) {
               <div className="flex flex-col items-center">
                 <Skeleton className="h-16 w-16 rounded-full mb-2" />
                 <Skeleton className="h-4 w-24 rounded-full mb-4" />
-                <Skeleton className="h-6 w-20 rounded-full" />
               </div>
             </CardContent>
           </Card>

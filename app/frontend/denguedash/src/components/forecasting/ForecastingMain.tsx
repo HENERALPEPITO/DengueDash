@@ -62,14 +62,6 @@ export default function ForecastingMain() {
     );
   }, [currentWeekDengueData]);
 
-  const getRiskLevel = (cases: number) => {
-    if (cases < 10)
-      return { level: "low", color: "bg-green-100 text-green-800" };
-    if (cases < 20)
-      return { level: "medium", color: "bg-yellow-100 text-yellow-800" };
-    return { level: "high", color: "bg-red-100 text-red-800" };
-  };
-
   const handlePredict = async () => {
     setIsPredicting(true);
     try {
@@ -178,11 +170,7 @@ export default function ForecastingMain() {
         )}
 
         {/* Prediction Cards */}
-        <CasesCards
-          predictions={predictions}
-          riskLevel={getRiskLevel(thisWeekCases)}
-          thisWeekCases={thisWeekCases}
-        />
+        <CasesCards predictions={predictions} thisWeekCases={thisWeekCases} />
 
         {/* Trend chart */}
         <Card className="mb-6">
@@ -207,10 +195,7 @@ export default function ForecastingMain() {
 
         {/* Additional helpful components */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <CasesRiskLocations
-            currentWeekDengueData={currentWeekDengueData}
-            getRiskLevel={getRiskLevel}
-          />
+          <CasesRiskLocations currentWeekDengueData={currentWeekDengueData} />
           <Card>
             <CardHeader>
               <CardTitle>Prevention Measures</CardTitle>

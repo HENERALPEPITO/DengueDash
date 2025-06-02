@@ -12,10 +12,6 @@ import { MapPin } from "lucide-react";
 
 type CasesRiskLocationsProps = {
   currentWeekDengueData: ByLocationInterface[];
-  getRiskLevel: (caseCount: number) => {
-    level: string;
-    color: string;
-  };
 };
 
 export default function CasesRiskLocations(props: CasesRiskLocationsProps) {
@@ -41,15 +37,6 @@ export default function CasesRiskLocations(props: CasesRiskLocationsProps) {
                   <span className="text-sm whitespace-nowrap">
                     {location.case_count} cases
                   </span>
-                  <Badge
-                    className={`whitespace-nowrap ${
-                      props.getRiskLevel(location.case_count).color
-                    }`}
-                  >
-                    {props
-                      .getRiskLevel(location.case_count)
-                      .level.toUpperCase()}
-                  </Badge>
                 </div>
               </div>
             ))}
